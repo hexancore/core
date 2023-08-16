@@ -6,7 +6,11 @@
   },
   "engine-strict": true,
   "description": "Core to build hexagonal architecture designed apps",
-  "author": "Mararok",
+  "author": {
+    "name": "Andrzej Wasiak",
+    "email": "contact@andrzejwasiak.pl",
+    "url": "https://andrzejwasiak.pl"
+  },
   "license": "MIT",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
