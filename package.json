@@ -48,12 +48,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hexancore/hexancore.git"
+    "url": "git+https://github.com/hexancore/core.git"
   },
   "publishConfig": {
     "access": "public"
   },
-  "homepage": "https://github.com/hexancore/hexancore.git",
+  "homepage": "https://github.com/hexancore/core.git",
   "scripts": {
     "build": "nest -p tsconfig.build.json build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
