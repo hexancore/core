@@ -1,4 +1,15 @@
-import { CurrentTime, LogicError, AR, INTERNAL_ERROR, ERRA, DomainErrors, ImmutableDate, OK, wrapToArray, EnumEntityErrorTypeWrapper } from '@hexancore/common';
+import {
+  CurrentTime,
+  LogicError,
+  AR,
+  INTERNAL_ERROR,
+  ERRA,
+  DomainErrors,
+  ImmutableDate,
+  OK,
+  wrapToArray,
+  EnumEntityErrorTypeWrapper,
+} from '@hexancore/common';
 import { AbstractEntityCommon, EntityIdTypeOf } from '../Entity/AbstractEntityCommon';
 
 export const ENTITY_REPOSITORY_META_PROPERTY = '__HC_ENTITY_REPOSITORY_META';
@@ -11,7 +22,8 @@ export interface CommonEntityRepositoryMeta {
 }
 
 export class EntityPropertiesNowInjector {
-  private properties: string[];
+  public constructor(private properties: string[]) {
+  }
 
   public inject(now: ImmutableDate, entity: Object) {
     this.properties.forEach((propertyName: string) => {
@@ -62,6 +74,7 @@ export abstract class AbstractEntityPersister<T extends AbstractEntityCommon<any
       if (props.length === 0) {
         this.nowInjector = false;
       }
+      this.nowInjector = new EntityPropertiesNowInjector(props);
     }
   }
 
@@ -93,7 +106,7 @@ export abstract class AbstractEntityPersister<T extends AbstractEntityCommon<any
 
   private ENTITY_ERRA<T>(type: string, data?: any): AR<T> {
     const entity = this.META.entityNameSnake;
-    const entityErrors:EnumEntityErrorTypeWrapper<any> = this.domainErrors.entity[entity];
+    const entityErrors: EnumEntityErrorTypeWrapper<any> = this.domainErrors.entity[entity];
     if (!entityErrors) {
       return ERRA(INTERNAL_ERROR(new LogicError('Undefined entity domain errors: ' + entity)));
     }
