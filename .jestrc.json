@@ -10,8 +10,8 @@
     "^@/(.*)$": "<rootDir>/src/$1"
   },
   "testMatch": ["<rootDir>/test/**/*.test.ts"],
-  "setupFiles": ["<rootDir>/test/config.ts"],
-  "setupFilesAfterEnv": ["jest-expect-message"],
+  "setupFiles": [],
+  "setupFilesAfterEnv": ["jest-expect-message", "<rootDir>/test/config.ts"],
   "coverageDirectory": "./test/coverage",
   "testEnvironment": "node"
 }

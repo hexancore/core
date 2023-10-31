@@ -45,10 +45,11 @@ class Author extends AbstractAggregateRoot<AuthorId> {
 }
 
 const TestDomainError = DefineDomainErrors(
+  'test',
   new (class Test {
-    entity_book: standard_entity_errors = 'not_found';
-    entity_author: standard_entity_errors | 'custom_1' = 'not_found';
-    other_error = '';
+    public entity_book: standard_entity_errors = 'not_found';
+    public entity_author: standard_entity_errors | 'custom_1' = 'not_found';
+    public other_error = '';
   })(),
 );
 

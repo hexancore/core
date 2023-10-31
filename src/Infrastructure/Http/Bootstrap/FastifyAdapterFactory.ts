@@ -1,76 +1,90 @@
 import { FastifyAdapter } from '@nestjs/platform-fastify';
-import multipartPlugin, { FastifyMultipartBaseOptions } from '@fastify/multipart';
-import cookiePlugin, { FastifyCookieOptions } from '@fastify/cookie';
-import corsPlugin, { FastifyCorsOptions, FastifyCorsOptionsDelegate } from '@fastify/cors';
+import multipartPlugin from '@fastify/multipart';
+import cookiePlugin from '@fastify/cookie';
+import corsPlugin from '@fastify/cors';
 import { UncaughtErrorCatcher } from '../UncaughtErrorCatcher';
+import { FastifyHttp2Options, FastifyHttp2SecureOptions, FastifyHttpsOptions, FastifyServerOptions } from 'fastify';
 
-export type FastifyAdapterFactory = () => Promise<FastifyAdapter>;
 export type FastifyAdapterErrorHandler = Parameters<FastifyAdapter['setErrorHandler']>[0];
 
-export interface FastifyAdapterFactoryOptions {
-  adapter: {
-    pluginTimeout: number;
-    errorHandler: FastifyAdapterErrorHandler;
-  };
-  plugin: {
-    multipart: FastifyMultipartBaseOptions;
-    cookie: FastifyCookieOptions;
-    cors: FastifyCorsOptions | FastifyCorsOptionsDelegate;
-  };
+export interface FPluginRegisterOptions<PC = any, O = Record<string, any>> {
+  name: string;
+  pluginClass: PC;
+  options: O;
 }
 
-export function createFastifyAdapterFactoryOptions(
-  filter: UncaughtErrorCatcher,
-  replaces: Partial<FastifyAdapterFactoryOptions> = {},
-): FastifyAdapterFactoryOptions {
-  const options = {
-    adapter: {
-      pluginTimeout: 20000,
-      errorHandler: createFastifyErrorHandler(filter),
-    },
-    plugin: {
-      multipart: {
-        limits: {
-          fieldNameSize: 100,
-          fieldSize: 16384,
-          fields: 10,
-          fileSize: 1000000, // 1MB
-          files: 1,
-          headerPairs: 2000,
-        },
-      },
-      cookie: {
-        secret: 'test',
-        parseOptions: {},
-      },
-      cors: {
-        origin: true,
-        allowedHeaders: ['Origin', 'X-Requested-With', 'Accept', 'Content-Type', 'Authorization'],
-        credentials: true,
-        maxAge: 300,
-        methods: ['GET', 'PUT', 'OPTIONS', 'POST', 'DELETE'],
+export const STD_PLUGINS: Record<string, FPluginRegisterOptions> = {
+  multipart: {
+    name: 'multipart',
+    pluginClass: multipartPlugin,
+    options: {
+      limits: {
+        fieldNameSize: 100,
+        fieldSize: 16384,
+        fields: 10,
+        fileSize: 1000000, // 1MB
+        files: 1,
+        headerPairs: 2000,
       },
     },
-  };
-  return { ...options, ...replaces };
+  },
+  cookie: {
+    name: 'cookie',
+    pluginClass: cookiePlugin,
+    options: {
+      secret: 'test',
+      parseOptions: {},
+    },
+  },
+  cors: {
+    name: 'cors',
+    pluginClass: corsPlugin,
+    options: {
+      origin: true,
+      allowedHeaders: ['Origin', 'X-Requested-With', 'Accept', 'Content-Type', 'Authorization'],
+      credentials: true,
+      maxAge: 300,
+      methods: ['GET', 'PUT', 'HEAD', 'OPTIONS', 'POST', 'DELETE'],
+    },
+  },
+};
+
+export interface FAdapterFactoryOptions {
+  errorCatcher: UncaughtErrorCatcher;
+  adapter: FastifyHttp2Options<any> | FastifyHttp2SecureOptions<any> | FastifyHttpsOptions<any> | FastifyServerOptions<any>;
+  plugins: FPluginRegisterOptions[];
 }
 
-export function createFastifyErrorHandler(filter: UncaughtErrorCatcher): FastifyAdapterErrorHandler {
-  return (error: Error, _request: any, reply: any) => {
-    filter.processInternalError(error, reply);
-  };
-}
+export class FastifyAdapterFactory {
+  public static async create(options: FAdapterFactoryOptions): Promise<FastifyAdapter> {
+    options.adapter.pluginTimeout = options.adapter.pluginTimeout ?? 20000;
+    const a = new FastifyAdapter(options.adapter);
 
-export async function createFastifyAdapter(options: FastifyAdapterFactoryOptions): Promise<FastifyAdapter> {
-  const a = new FastifyAdapter({
-    pluginTimeout: options.adapter.pluginTimeout,
-  });
+    const errorHandler = this.createErrorHandler(options.errorCatcher);
+    a.setErrorHandler(errorHandler);
 
-  a.setErrorHandler(options.adapter.errorHandler);
+    for (const p of options.plugins) {
+      await a.register(p.pluginClass, p.options);
+    }
 
-  await a.register(multipartPlugin, options.plugin.multipart);
-  await a.register(cookiePlugin, options.plugin.cookie);
-  await a.register(corsPlugin, options.plugin.cors);
+    a.getInstance().decorateRequest('session');
 
-  return a;
+    return a as any;
+  }
+
+  private static createErrorHandler(errorCatcher: UncaughtErrorCatcher): FastifyAdapterErrorHandler {
+    return (error: Error, _request: any, reply: any) => {
+      errorCatcher.processInternalError(error, reply);
+    };
+  }
+
+  public static createDefaultOptions(errorCatcher: UncaughtErrorCatcher): FAdapterFactoryOptions {
+    return {
+      errorCatcher,
+      adapter: {
+        pluginTimeout: 20000,
+      },
+      plugins: [STD_PLUGINS.cookie, STD_PLUGINS.cors, STD_PLUGINS.multipart],
+    };
+  }
 }
