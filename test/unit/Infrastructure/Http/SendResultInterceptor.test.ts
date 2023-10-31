@@ -1,3 +1,6 @@
+/**
+ * @group unit/core
+ */
 import { firstValueFrom } from 'rxjs';
 import { OK } from '@hexancore/common';
 import { SendResultInterceptor } from '@/Infrastructure/Http/SendResultInterceptor';
@@ -29,7 +32,7 @@ describe('SendResultInterceptor', () => {
     const current = await firstValueFrom(interceptor.intercept(context, next));
 
     response.expectStatusCodeToEqual(200);
-    response.expectBodyToEqual({ data: 'example' })
+    response.expectBodyToEqual({ data: 'example' });
     expect(current).toBeNull();
   });
 });

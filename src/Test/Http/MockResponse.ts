@@ -36,25 +36,25 @@ export class MockResponse {
     return this;
   }
 
-  public send(data: any) {
+  public send(data: any): MockResponse {
     this._sent = true;
     this._body = data;
     return this;
   }
 
-  public get sent() {
+  public get sent(): boolean {
     return this._sent;
   }
 
-  public getHeader(name: string) {
+  public getHeader(name: string): string {
     return this.headers.get(name);
   }
 
-  public hasHeader(name: string) {
+  public hasHeader(name: string): boolean {
     return this.headers.has(name);
   }
 
-  public get body() {
+  public get body(): any {
     return this._body;
   }
 

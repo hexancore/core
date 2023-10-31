@@ -1,3 +1,6 @@
+/**
+ * @group unit/core
+ */
 import { ValueObject, UIntValue } from '@hexancore/common';
 import {
   AbstractAggregateRoot,

@@ -2,9 +2,46 @@ import { AppError, AppErrorCode, AsyncResult, ErrorHelper, INTERNAL_ERROR_TYPE, 
 import { FastifyRequest, FastifyReply } from 'fastify';
 import * as http2 from 'http2';
 import { HttpStatus } from '@nestjs/common';
+import { CookieSerializeOptions, UnsignResult } from '@fastify/cookie';
 
-export declare type FRequest = FastifyRequest;
-export declare type FResponse = FastifyReply<http2.Http2Server>;
+export interface FRequestCookie {
+  cookies: { [cookieName: string]: string | undefined };
+
+  /**
+   * Unsigns the specified cookie using the secret provided.
+   * @param value Cookie value
+   */
+  unsignCookie(value: string): UnsignResult;
+}
+
+export declare type FRequest = FastifyRequest & FRequestCookie;
+
+export interface FResponseCookie {
+  cookies: { [cookieName: string]: string | undefined };
+
+  /**
+   * Set response cookie
+   * @name setCookie
+   * @param name Cookie name
+   * @param value Cookie value
+   * @param options Serialize options
+   */
+  setCookie(name: string, value: string, options?: CookieSerializeOptions): this;
+
+  /**
+   * @alias setCookie
+   */
+  cookie(name: string, value: string, options?: CookieSerializeOptions): this;
+
+  /**
+   * clear response cookie
+   * @param name Cookie name
+   * @param options Serialize options
+   */
+  clearCookie(name: string, options?: CookieSerializeOptions): this;
+}
+
+export declare type FResponse = FastifyReply<http2.Http2Server> & FResponseCookie;
 
 export declare type HttpMethod = 'DELETE' | 'GET' | 'HEAD' | 'PATCH' | 'POST' | 'PUT' | 'OPTIONS';
 
@@ -55,7 +92,8 @@ export function sendErrorResponse(error: AppError, response: FResponse): void {
 
 export function sendResultResponse(result: Result<any>, response: FResponse, successCode: HttpStatus = HttpStatus.OK): void {
   if (result.isError()) {
-    sendErrorResponse(result.v, response);
+    sendErrorResponse(result.e, response);
+    return;
   }
 
   if (result.v === null) {
