@@ -64,7 +64,7 @@
     "test:watch": "jest --config .jestrc.json --runInBand --watchAll",
     "test:cov": "jest --config .jestrc.json --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --config .jestrc.json --runInBand",
-    "prepublish": "yarn test && rm -fr ./lib && yarn run build"
+    "prepublish": "yarn lint && yarn test && rm -fr ./lib && yarn run build"
   },
   "peerDependencies": {
     "@nestjs/bull": "^10.0.1",

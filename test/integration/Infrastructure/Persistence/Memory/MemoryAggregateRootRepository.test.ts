@@ -109,7 +109,7 @@ describe('MemoryAggregateRootRepository', () => {
     book.id = BookId.cs(1);
     author.books.add(book);
 
-    let rp = await authorRepository.persist(author);
+    const rp = await authorRepository.persist(author);
     expect(rp).toEqual(OK(true));
 
     const r = await authorRepository.getAllAsArray();

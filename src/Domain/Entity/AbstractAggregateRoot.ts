@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { AbstractValueObject } from '@hexancore/common';
 import { AbstractEntityCommon, ENTITY_META_PROPERTY } from './AbstractEntityCommon';
 

@@ -32,7 +32,7 @@ export class HcHttpModule implements NestModule {
   public async configure(consumer: MiddlewareConsumer): Promise<any> {
 
     this.adapter.getInstance().addHook('preHandler', (req,_res,next) => {
-      req.cookies = req.raw["cookies"];
+      req['cookies'] = req.raw["cookies"];
       req['session'] = req.raw["session"];
       next();
     });

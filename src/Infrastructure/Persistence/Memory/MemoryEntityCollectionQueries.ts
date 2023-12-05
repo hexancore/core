@@ -26,6 +26,7 @@ export class MemoryEntityCollectionQueries<
   public constructor(public r: RepositoryType) {}
 
   public all(): AsyncGenerator<Result<T>, void, void> {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const that = this;
     async function* g() {
       const entities = await that.r.getBy({
