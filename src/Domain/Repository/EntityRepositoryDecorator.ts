@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { pascalCaseToCamelCase, pascalCaseToSnakeCase } from '@hexancore/common';
 import { ENTITY_REPOSITORY_META_PROPERTY } from './AbstractEntityRepositoryPersister';
 

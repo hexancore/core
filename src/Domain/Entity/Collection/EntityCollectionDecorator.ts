@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { pascalCaseToCamelCase } from '@hexancore/common';
 import { EntityCollectionImpl } from './EntityCollectionImpl';
 

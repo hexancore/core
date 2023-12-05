@@ -52,7 +52,7 @@ export abstract class AbstractEntityCommon<ID extends AbstractValueObject<ID>> {
   /**
    * @return true if entity has any property changes
    */
-  get __modified(): boolean {
+  public get __modified(): boolean {
     return this.__modifiedProperties && this.__modifiedProperties.size > 0;
   }
 

@@ -5,10 +5,10 @@ import {
   INTERNAL_ERROR,
   ERRA,
   DomainErrors,
-  ImmutableDate,
   OK,
   wrapToArray,
   EnumEntityErrorTypeWrapper,
+  DateTime,
 } from '@hexancore/common';
 import { AbstractEntityCommon, EntityIdTypeOf } from '../Entity/AbstractEntityCommon';
 
@@ -16,22 +16,23 @@ export const ENTITY_REPOSITORY_META_PROPERTY = '__HC_ENTITY_REPOSITORY_META';
 
 export interface CommonEntityRepositoryMeta {
   module: string;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   entityClass: Function;
   entityName: string;
   entityNameSnake: string;
 }
 
-export class EntityPropertiesNowInjector {
+export class EntityPropertiesNowInjector<T extends AbstractEntityCommon<any>,> {
   public constructor(private properties: string[]) {
   }
 
-  public inject(now: ImmutableDate, entity: Object) {
+  public inject(now: DateTime, entity: T):void {
     this.properties.forEach((propertyName: string) => {
       entity[propertyName] = entity[propertyName] ?? now;
     });
   }
 
-  public injectMany(now: ImmutableDate, entities: Object[]) {
+  public injectMany(now: DateTime, entities: T[]): void {
     this.properties.forEach((propertyName: string) => {
       entities.forEach((e) => {
         e[propertyName] = e[propertyName] ?? now;
@@ -42,7 +43,7 @@ export class EntityPropertiesNowInjector {
 
 export abstract class AbstractEntityPersister<T extends AbstractEntityCommon<any>, EID extends EntityIdTypeOf<T> = EntityIdTypeOf<T>> {
   public ct: CurrentTime;
-  protected nowInjector: EntityPropertiesNowInjector | undefined | false;
+  protected nowInjector: EntityPropertiesNowInjector<T> | undefined | false;
 
   public constructor(protected META: CommonEntityRepositoryMeta, protected domainErrors: DomainErrors<any>) {
     this.ct = CurrentTime.i;
