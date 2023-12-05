@@ -903,6 +903,7 @@ __metadata:
     deep-equal: "npm:^2.0.5"
     dotenv: "npm:^16.0.3"
     eslint: "npm:^8.3.0"
+    eslint-plugin-unused-imports: "npm:^3.0.0"
     fastify: "npm:4.21.0"
     fastify-swagger: "npm:^5.2.0"
     file-type: "npm:^16.4.0"
@@ -3781,6 +3782,28 @@ __metadata:
   version: 4.0.0
   resolution: "escape-string-regexp@npm:4.0.0"
   checksum: 9497d4dd307d845bd7f75180d8188bb17ea8c151c1edbf6b6717c100e104d629dc2dfb687686181b0f4b7d732c7dfdc4d5e7a8ff72de1b0ca283a75bbb3a9cd9
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-unused-imports@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "eslint-plugin-unused-imports@npm:3.0.0"
+  dependencies:
+    eslint-rule-composer: "npm:^0.3.0"
+  peerDependencies:
+    "@typescript-eslint/eslint-plugin": ^6.0.0
+    eslint: ^8.0.0
+  peerDependenciesMeta:
+    "@typescript-eslint/eslint-plugin":
+      optional: true
+  checksum: b1a5f3359e6191e6edbb71480242b1f830f4ffe20778fb9df8e6045ac2bf98211206b104cbfecb3a204b1963cf11decbd28c925ce908068d81959bc037a521ea
+  languageName: node
+  linkType: hard
+
+"eslint-rule-composer@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "eslint-rule-composer@npm:0.3.0"
+  checksum: 1f0c40d209e1503a955101a0dbba37e7fc67c8aaa47a5b9ae0b0fcbae7022c86e52b3df2b1b9ffd658e16cd80f31fff92e7222460a44d8251e61d49e0af79a07
   languageName: node
   linkType: hard
 

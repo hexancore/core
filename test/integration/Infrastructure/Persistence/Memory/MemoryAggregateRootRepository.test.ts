@@ -6,18 +6,14 @@ import {
   AbstractAggregateRoot,
   AbstractEntity,
   AggregateRootRepository,
-  ENTITY_COLLECTIONS_META_PROPERTY,
   EntityCollection,
   EntityCollectionInterface,
-  EntityCollectionQueries,
   EntityRepository,
-  ROOT_ID_PROPERTY_META_PROPERTY,
 } from '@';
 import { AggregateRootRepositoryInterface } from '@/Domain/Repository/AggregateRootRepositoryInterface';
 import { MemoryAggregateRootRepository } from '@/Infrastructure/Persistence/Memory/MemoryAggregateRootRepository';
-import { MemoryEntityCollectionQueries } from '@/Infrastructure/Persistence/Memory/MemoryEntityCollectionQueries';
 import { MemoryEntityRepository } from '@/Infrastructure/Persistence/Memory/MemoryEntityRepository';
-import { ValueObject, UIntValue, DefineDomainErrors, standard_entity_errors, DomainErrors, AR, AsyncResult, OK, ERR } from '@hexancore/common';
+import { ValueObject, UIntValue, DefineDomainErrors, standard_entity_errors, DomainErrors, AR, OK, ERR } from '@hexancore/common';
 
 @ValueObject('Test')
 class BookId extends UIntValue {}

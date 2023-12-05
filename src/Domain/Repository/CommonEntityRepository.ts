@@ -1,4 +1,4 @@
-import { AR, AbstractValueObject, DomainErrors } from '@hexancore/common';
+import { AR, DomainErrors } from '@hexancore/common';
 import { AbstractEntity } from '../Entity/AbstractEntity';
 import { EntityIdTypeOf } from '../Entity/AbstractEntityCommon';
 import { AbstractEntityPersister } from './AbstractEntityRepositoryPersister';

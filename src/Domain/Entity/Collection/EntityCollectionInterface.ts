@@ -1,4 +1,4 @@
-import { AbstractValueObject as AVO, AR, Result } from '@hexancore/common';
+import { AR, Result } from '@hexancore/common';
 import { AbstractEntity } from '../AbstractEntity';
 import { EntityIdTypeOf } from '../AbstractEntityCommon';
 import { EntityCollectionQueries } from './EntityCollectionQueries';

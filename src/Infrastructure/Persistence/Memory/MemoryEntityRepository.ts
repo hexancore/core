@@ -1,5 +1,5 @@
 import { AR } from '@hexancore/common';
-import { AbstractEntity, AbstractEntityRepository, AggregateRootIdTypeOf, EntityCollectionQueries, EntityIdTypeOf } from '../../../Domain';
+import { AbstractEntity, AbstractEntityRepository, EntityCollectionQueries } from '../../../Domain';
 import { MemoryEntityRepositoryPersister } from './MemoryEntityRepositoryPersister';
 import { MemoryEntityCollectionQueries } from './MemoryEntityCollectionQueries';
 

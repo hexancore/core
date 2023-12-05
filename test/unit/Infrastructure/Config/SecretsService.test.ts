@@ -6,7 +6,7 @@ import { SecretsService, SecretsServiceErrors } from '@/Infrastructure/Config/Se
 import path from 'path';
 import { mkdirSync } from 'fs';
 import fs from 'fs-extra';
-import { ERR, OK } from '@hexancore/common';
+import { OK } from '@hexancore/common';
 
 describe('SecretsService', () => {
 

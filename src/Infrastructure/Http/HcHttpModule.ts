@@ -1,6 +1,6 @@
 import { HttpOrderedInterceptorGroup } from '@/Infrastructure/Http/HttpOrderedInterceptorGroup';
-import { Global, MiddlewareConsumer, Module, NestModule, OnModuleInit, RequestMethod } from '@nestjs/common';
-import { APP_GUARD, APP_INTERCEPTOR, HttpAdapterHost, ModuleRef } from '@nestjs/core';
+import { Global, MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import { APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
 import { CookieParserMiddleware } from './CookieParserMiddleware';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 

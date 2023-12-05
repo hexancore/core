@@ -1,5 +1,4 @@
 import {
-  AbstractEntityRepository,
   AbstractEntity,
   EntityCollectionQueriesImpl,
   EntityCollectionImpl,
@@ -7,7 +6,7 @@ import {
   AggregateRootOf,
   AbstractAggregateRoot,
 } from '../../../Domain';
-import { Result, P, ERRA, OKA, AR } from '@hexancore/common';
+import { Result, ERRA, OKA, AR } from '@hexancore/common';
 import { MemoryEntityRepository } from './MemoryEntityRepository';
 
 export interface MemoryEntityCollectionQueriesOptions<R extends MemoryEntityRepository<any>> {

@@ -4,7 +4,7 @@
 
 import { CommandBus, EventBus, ICommand, IEvent, IQuery, QueryBus } from '@nestjs/cqrs';
 import { Mocker } from '@hexancore/mocker';
-import { Email, ERR, ERRA, OK, OKA, AR } from '@hexancore/common';
+import { Email, ERR, ERRA, OK, OKA } from '@hexancore/common';
 import { GeneralBus } from '@/Application/GeneralBus';
 import { DefaultGeneralBus } from '@/Application/DefaultGeneralBus';
 
