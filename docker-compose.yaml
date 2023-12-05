@@ -7,7 +7,7 @@ services:
     ports:
       - ${REDIS_HOST_PORT:-20010}:6379
     volumes:
-      - ./tmp/redis2:/bitnami/redis/data
+      - ./tmp/redis:/bitnami/redis/data
       - ./docker/redis:/bitnami/redis/config:ro
     environment:
       - 'REDIS_CLUSTER_REPLICAS=0'
