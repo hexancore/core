@@ -1,6 +1,7 @@
+import { HcHttpModule } from '@';
 import { HttpAppTestWrapper } from '@/Test/Http/HttpAppTestHelper';
 import { OK } from '@hexancore/common';
-import { Controller, Get, Module, Post, Res, Body } from '@nestjs/common';
+import { Controller, Get, Module, Post, Res, Body, HttpStatus } from '@nestjs/common';
 
 interface Fruit {
   name: string;
@@ -28,6 +29,7 @@ class FruitsController {
 
 @Module({
   controllers: [FruitsController],
+  imports: [HcHttpModule]
 })
 class FruitModule {}
 
@@ -42,7 +44,7 @@ describe('HttpApp', () => {
   });
 
   test('Http Communication', async () => {
-    await app.post('/fruits', { name: 'banana' }).expectNoContent();
+    await app.post('/fruits', { name: 'banana' }).expectStatusCode(HttpStatus.CREATED);
     await app.get('/fruits').expectJson([{ name: 'banana' }]);
   });
 });

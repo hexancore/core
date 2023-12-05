@@ -2,10 +2,9 @@ import { NestApplicationOptions } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { UncaughtErrorCatcher } from '../UncaughtErrorCatcher';
-import { SendResultInterceptor } from '../SendResultInterceptor';
 import { setupSwagger } from './SwaggerSetupHelper';
 import { toNestLogger } from '@/Util';
-import { FAdapterFactoryOptions, FastifyAdapterFactory, STD_PLUGINS } from './FastifyAdapterFactory';
+import { FAdapterFactoryOptions, FastifyAdapterFactory} from './FastifyAdapterFactory';
 import { getLogger, Logger } from '@hexancore/common';
 
 export interface HttpAppFactoryOptions {
@@ -34,7 +33,6 @@ export async function createHttpApp(options: HttpAppFactoryOptions): Promise<Nes
   const app = await NestFactory.create<NestFastifyApplication>(options.mainModule, adapter as FastifyAdapter, appOptions);
 
   app.useGlobalFilters(errorCatcher);
-  app.useGlobalInterceptors(new SendResultInterceptor());
 
   if (options.swagger ?? true) {
     setupSwagger(app);

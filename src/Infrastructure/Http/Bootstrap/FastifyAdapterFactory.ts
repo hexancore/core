@@ -64,7 +64,7 @@ export class FastifyAdapterFactory {
     a.setErrorHandler(errorHandler);
 
     for (const p of options.plugins) {
-      await a.register(p.pluginClass, p.options);
+      await a.getInstance().register(p.pluginClass, p.options);
     }
 
     a.getInstance().decorateRequest('session');
