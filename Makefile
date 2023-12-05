@@ -1,7 +1,7 @@
 PROJECT = hexancore
 
 up:
-	mkdir -p ./tmp
+	mkdir -p ./tmp/redis
 	chmod 777 -R ./tmp
 	chmod 777 -R ./docker
 	docker compose -p $(PROJECT) --env-file ./docker/.env up -d
@@ -14,4 +14,4 @@ down:
 	docker compose -p $(PROJECT) down
 
 act:
-	act workflow_dispatch --input releaseType=minor 
+	act workflow_dispatch --input releaseType=minor
