@@ -10,7 +10,7 @@ module.exports = {
     sourceType: 'module',
     extraFileExtensions: ['vue'],
   },
-  plugins: ['@typescript-eslint'],
+  plugins: ['@typescript-eslint', "unused-imports"],
   extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
   rules: {
     '@typescript-eslint/no-explicit-any': 'off',
@@ -32,5 +32,6 @@ module.exports = {
     'array-bracket-newline': 'off',
     'function-call-argument-newline': 'off',
     'no-console': 'off',
+    "unused-imports/no-unused-imports": "warn",
   },
 };

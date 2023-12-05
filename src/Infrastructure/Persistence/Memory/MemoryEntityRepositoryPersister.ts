@@ -1,5 +1,5 @@
 import { AbstractEntityCommon, AbstractEntityPersister, CommonEntityRepositoryMeta, EntityIdTypeOf } from '@/Domain';
-import { AR, AbstractValueObject, AsyncResult, DomainErrors, OK, OKA, wrapToArray } from '@hexancore/common';
+import { AR, AbstractValueObject, AsyncResult, DomainErrors, OKA, wrapToArray } from '@hexancore/common';
 
 export class MemoryEntityRepositoryPersister<
   T extends AbstractEntityCommon<any>,

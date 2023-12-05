@@ -1,4 +1,4 @@
-import { R, SAR } from '@hexancore/common';
+import { SAR } from '@hexancore/common';
 import { HttpArgumentsHost } from '@nestjs/common/interfaces';
 
 export interface GroupableInterceptor<A, DT = any, RT = DT> {

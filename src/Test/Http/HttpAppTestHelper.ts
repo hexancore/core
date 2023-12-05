@@ -1,6 +1,6 @@
 import * as http from 'http';
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
-import { InjectPayload, Response } from 'light-my-request';
+import { InjectPayload } from 'light-my-request';
 import { createHttpApp } from '@/Infrastructure/Http/Bootstrap/HttpAppFactory';
 import { TestHttpResponse } from './TestHttpResponse';
 import { HttpMethod } from '@/Infrastructure';

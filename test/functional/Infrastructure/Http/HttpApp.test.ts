@@ -1,7 +1,7 @@
 import { HcHttpModule } from '@';
 import { HttpAppTestWrapper } from '@/Test/Http/HttpAppTestHelper';
 import { OK } from '@hexancore/common';
-import { Controller, Get, Module, Post, Res, Body, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Module, Post, Body, HttpStatus } from '@nestjs/common';
 
 interface Fruit {
   name: string;

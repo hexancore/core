@@ -1,4 +1,4 @@
-import { InjectPayload, Response } from 'light-my-request';
+import { Response } from 'light-my-request';
 import { HttpStatus } from '@nestjs/common';
 
 export class TestHttpResponse implements PromiseLike<Response> {

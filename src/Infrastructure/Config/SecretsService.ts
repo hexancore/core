@@ -1,4 +1,4 @@
-import { DefineInfrastructureErrors, ERR, INTERNAL_ERR, OK, R } from '@hexancore/common';
+import { ERR, OK, R } from '@hexancore/common';
 import { existsSync, readFileSync } from 'fs';
 
 export interface BasicAuthSecret {

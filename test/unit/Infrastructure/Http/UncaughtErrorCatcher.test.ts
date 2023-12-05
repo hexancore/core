@@ -5,7 +5,7 @@
 import { M, Mocker } from '@hexancore/mocker';
 import { AppError, AppErrorProps } from '@hexancore/common';
 import { LoggerService, UnauthorizedException, ArgumentsHost, NotFoundException, HttpStatus } from '@nestjs/common';
-import { ContextType, HttpArgumentsHost } from '@nestjs/common/interfaces';
+import { HttpArgumentsHost } from '@nestjs/common/interfaces';
 import { FResponse } from '@';
 import { UncaughtErrorCatcher } from '@/Infrastructure/Http/UncaughtErrorCatcher';
 
