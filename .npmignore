@@ -1,11 +1,11 @@
-./test/
+test/
 tsconfig.build.json
 tsconfig.common.json
 tsconfig.json
 src/
 *.tsbuildinfo
 yarn-error.log
-.yalc
+.yalc/
 yalc.lock
 .yarn/
 yarn.lock
@@ -19,3 +19,8 @@ yarn.lock
 .jestrc.json
 config/
 CONTRIBUTION.md
+tmp/
+docker-compose.yaml
+docker/
+node_modules/
+Makefile

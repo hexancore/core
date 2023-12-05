@@ -7,12 +7,12 @@ services:
     ports:
       - ${REDIS_HOST_PORT:-20010}:6379
     volumes:
-      - ./tmp/docker/redis/0:/bitnami/redis/data
-      - ./docker/redis:/bitnami/redis/config
+      - ./tmp/redis2:/bitnami/redis/data
+      - ./docker/redis:/bitnami/redis/config:ro
     environment:
       - 'REDIS_CLUSTER_REPLICAS=0'
       - 'REDIS_NODES=127.0.0.1:6379 127.0.0.1:6379 127.0.0.1:6379'
-      - 'REDIS_CLUSTER_CREATOR=yes'
+      - 'REDIS_CLUSTER_CREATOR=no'
       - 'REDIS_CLUSTER_DYNAMIC_IPS=no'
       - 'REDIS_CLUSTER_ANNOUNCE_IP=127.0.0.1'
       - 'REDIS_CLUSTER_ANNOUNCE_PORT=${REDIS_HOST_PORT:-20010}'

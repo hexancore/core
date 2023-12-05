@@ -1,22 +1,45 @@
-import { Mocker } from '@hexancore/mocker';
-import { CallHandler, ExecutionContext } from '@nestjs/common';
-import { HttpArgumentsHost } from '@nestjs/common/interfaces';
+import { CallHandler } from '@nestjs/common';
 import { of } from 'rxjs';
 import { MockResponse } from './MockResponse';
+import { MockRequest } from './MockRequest';
+import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
 
-export class ExecutionContextTestHelper {
-  public static createHttp(response: MockResponse): ExecutionContext {
-    const context = Mocker.of<ExecutionContext>();
-    const httpArgumentsHost = Mocker.of<HttpArgumentsHost>();
-    httpArgumentsHost.expects('getResponse').andReturn(response);
-    context.expects('switchToHttp').andReturn(httpArgumentsHost.i);
-
-    return context.i;
+export class MockHttpExecutionContext extends ExecutionContextHost {
+  public constructor(public request?: MockRequest, public response?: MockResponse, public next?: () => void) {
+    super([request, response, next]);
   }
 
-  public static createCallHandler(handleReturn: any): CallHandler {
+  public getRequest<T = MockRequest>(): T {
+    return this.request as any;
+  }
+
+  public getResponse<T = MockResponse>(): T {
+    return this.response as any;
+  }
+
+  public getNext<T = any>(): T {
+    return this.next as any;
+  }
+}
+
+export class ExecutionContextTestHelper {
+  public static createHttp(request?: MockRequest | MockResponse, response?: MockResponse, next?: () => void): MockHttpExecutionContext {
+    if (request instanceof MockResponse) {
+      response = request;
+      request = new MockRequest('GET', 'http://127.0.0.1');
+    } else {
+      request = request ?? new MockRequest('GET', 'http://127.0.0.1');
+      response = response ?? new MockResponse(request);
+    }
+
+    next = next ?? (() => {});
+
+    return new MockHttpExecutionContext(request, response, next);
+  }
+
+  public static createCallHandler(data: any): CallHandler {
     return {
-      handle: () => of(handleReturn),
+      handle: typeof data === 'function' ? data : () => of(data),
     };
   }
 }

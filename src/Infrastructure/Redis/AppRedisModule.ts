@@ -10,12 +10,11 @@ export const REDIS_DNS_LOOKUP_TOKEN = 'HC_REDIS_DNS_LOOKUP';
 
 export const localhostDnsLookup: DNSLookupFunction = (_address, callback) => callback(null, 'localhost');
 
-const LOGGER = getLogger('core.infra.redis', ['core', 'infra', 'redis']);
-
 export const clusterModuleRoot = ClusterModule.forRootAsync(
   {
     inject: [ConfigService, SecretsService, { token: REDIS_DNS_LOOKUP_TOKEN, optional: true }],
     useFactory: async (c: ConfigService, secrets: SecretsService, dnsLookup?: DNSLookupFunction): Promise<ClusterModuleOptions> => {
+      const LOGGER = getLogger('core.infra.redis', ['core', 'infra', 'redis']);
       const redisConfig = c.get('core.redis');
       dnsLookup = dnsLookup ?? (AppMeta.get().isTest() || AppMeta.get().isDev() ? localhostDnsLookup : undefined);
       const secretGetResult = secrets.getAsBasicAuth('core.redis');
