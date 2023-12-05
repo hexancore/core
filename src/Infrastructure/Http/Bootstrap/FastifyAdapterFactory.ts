@@ -58,7 +58,7 @@ export interface FAdapterFactoryOptions {
 export class FastifyAdapterFactory {
   public static async create(options: FAdapterFactoryOptions): Promise<FastifyAdapter> {
     options.adapter.pluginTimeout = options.adapter.pluginTimeout ?? 20000;
-    const a = new FastifyAdapter(options.adapter);
+    const a = new FastifyAdapter(options.adapter as any);
 
     const errorHandler = this.createErrorHandler(options.errorCatcher);
     a.setErrorHandler(errorHandler);
