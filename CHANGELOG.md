@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.4] - 2023-12-06
+
 ### Fixed
 
 - github actions
@@ -29,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - many changes
 
-[unreleased] https://github.com/hexancore/common/compare/0.12.0...HEAD
+[unreleased] https://github.com/hexancore/core/compare/0.12.4...HEAD
+[0.12.4] https://github.com/hexancore/core/compare/0.12.0...0.12.4
 [0.12.0] https://github.com/test_owner/test_repository/releases/tag/0.12.0
 [0.10.2] https://github.com/test_owner/test_repository/releases/tag/0.10.2
