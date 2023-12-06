@@ -12,24 +12,18 @@ on:
           - minor
           - major
 
-env:
-  GH_TOKEN: ${{ secrets.GH_TOKEN }}
 jobs:
   release:
     permissions:
       contents: write
     runs-on: ubuntu-latest
     steps:
-      - name: GH_TOKEN
-        if: env.GH_TOKEN == ''
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: echo "GH_TOKEN=${GITHUB_TOKEN}" >> $GITHUB_ENV
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          token: ${{ env.GH_TOKEN }}
+          token: ${{ HEXANCORE_BOT_TOKEN }}
+        env:
+          HEXANCORE_BOT_TOKEN: ${{ secrets.HEXANCORE_BOT_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -68,8 +62,8 @@ jobs:
       # Commit
       - name: Commit CHANGELOG.md and package.json changes and create tag
         run: |
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "GitHub Actions"
+          git config --global user.email "153127894+hexancore-bot@users.noreply.github.com"
+          git config --global user.name "Hexancore Bot"
           git add "package.json"
           git add "CHANGELOG.md"
           git commit -m "chore: release ${{ env.NEW_VERSION }}"
