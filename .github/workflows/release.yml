@@ -61,9 +61,12 @@ jobs:
 
       # Commit
       - name: Commit CHANGELOG.md and package.json changes and create tag
+        env:
+          HEXANCORE_BOT_TOKEN: ${{ secrets.HEXANCORE_BOT_TOKEN }}
         run: |
           git config --global user.email "153127894+hexancore-bot@users.noreply.github.com"
           git config --global user.name "Hexancore Bot"
+          git remote set-url origin https://x-access-token:${{ env.HEXANCORE_BOT_TOKEN }}@github.com/${{ github.repository }}
           git add "package.json"
           git add "CHANGELOG.md"
           git commit -m "chore: release ${{ env.NEW_VERSION }}"
