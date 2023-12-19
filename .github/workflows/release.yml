@@ -55,7 +55,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Update CHANGELOG.md
-        uses: 'zen8sol/update-changelog-action@0.1.2'
+        uses: 'zen8sol/update-changelog-action@0.1.3'
         with:
           newVersion: '${{ env.NEW_VERSION }}'
 

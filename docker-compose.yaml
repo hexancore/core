@@ -1,21 +1,12 @@
 version: '3.6'
 services:
   redis:
-    image: docker.io/bitnami/redis-cluster:7.0
+    image: mararok/test-redis-cluster:7.2
     container_name: ${PROJECT}-redis
     restart: always
+    environment:
+      - REDIS_CLUSTER_ANNOUNCE_PORT=${REDIS_HOST_PORT}
     ports:
-      - ${REDIS_HOST_PORT:-20010}:6379
+      - ${REDIS_HOST_PORT}:6379
     volumes:
       - ./tmp/redis:/bitnami/redis/data
-      - ./docker/redis:/bitnami/redis/config:ro
-    environment:
-      - 'REDIS_CLUSTER_REPLICAS=0'
-      - 'REDIS_NODES=127.0.0.1:6379 127.0.0.1:6379 127.0.0.1:6379'
-      - 'REDIS_CLUSTER_CREATOR=no'
-      - 'REDIS_CLUSTER_DYNAMIC_IPS=no'
-      - 'REDIS_CLUSTER_ANNOUNCE_IP=127.0.0.1'
-      - 'REDIS_CLUSTER_ANNOUNCE_PORT=${REDIS_HOST_PORT:-20010}'
-      - 'REDIS_PASSWORD=${REDIS_PASSWORD:-testredis}'
-      - 'REDISCLI_AUTH=${REDIS_PASSWORD:-testredis}'
-      - 'REDIS_ACLFILE=/bitnami/redis/config/users.acl'
