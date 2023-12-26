@@ -2,10 +2,10 @@ PROJECT = hexancore
 
 up:
 	docker compose -p $(PROJECT) --env-file ./docker/.env up -d --wait --wait-timeout 5
-
+	docker logs hexancore-redis
 down:
 	docker compose -p $(PROJECT) down -t 2
-
+	
 act:
 	mkdir -p ./tmp/redis
 	chmod 0777 -R ./tmp
