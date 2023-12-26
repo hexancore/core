@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.5] - 2023-12-26
+
 ### Added
 
 - HcModule - global app module with all common app stuff included
@@ -44,7 +46,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - many changes
 
-[unreleased] https://github.com/hexancore/core/compare/0.12.4...HEAD
+[unreleased] https://github.com/hexancore/core/compare/0.12.5...HEAD   
+[0.12.5] https://github.com/hexancore/core/compare/12...0.12.5   
 [0.12.4] https://github.com/hexancore/core/compare/0.12.0...0.12.4
 [0.12.0] https://github.com/test_owner/test_repository/releases/tag/0.12.0
 [0.10.2] https://github.com/test_owner/test_repository/releases/tag/0.10.2
