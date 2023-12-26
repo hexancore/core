@@ -17,7 +17,6 @@ coverage
 *.log
 .yalc/**
 .jestrc.json
-.swcrc
 
 yalc.lock
 /test/tmp/**
