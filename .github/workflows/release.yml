@@ -35,7 +35,9 @@ jobs:
         run: yarn install --immutable
 
       - name: docker-compose up
-        run: make up
+        run: |
+          make init_redis_tmp
+          make up
 
       # Bump version
       - name: Bump package version
