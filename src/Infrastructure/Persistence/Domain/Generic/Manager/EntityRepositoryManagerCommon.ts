@@ -3,6 +3,8 @@ import { AbstractEntityRepositoryCommon } from '../AbstractEntityRepositoryCommo
 import { IEntityPersisterFactory } from '../Persister/IEntityPersisterFactory';
 import { AbstractEntityCommon, ENTITY_COMMON_META } from '@/Domain';
 import { HcAppModuleMeta } from '@/Util/ModuleHelper';
+import { AnyEntityRepository } from '../AbstractEntityRepository';
+import { EntityRepositoryConstructor } from '../EntityRepositoryDecorator';
 
 export abstract class EntityRepositoryManagerCommon<
   R extends AbstractEntityRepositoryCommon<any, any, any>,
@@ -14,7 +16,11 @@ export abstract class EntityRepositoryManagerCommon<
 
   protected baseArgs: any[];
 
-  public constructor(public readonly module: HcAppModuleMeta, protected persisterFactory: IEntityPersisterFactory, protected errors: DomainErrors<any>) {
+  public constructor(
+    public readonly module: HcAppModuleMeta,
+    protected persisterFactory: IEntityPersisterFactory,
+    protected errors: DomainErrors<any>,
+  ) {
     this.repositories = new Map();
     this.baseArgs = [this.persisterFactory];
   }
@@ -29,7 +35,7 @@ export abstract class EntityRepositoryManagerCommon<
     return r as any;
   }
 
-  public register<C extends new (...args: any[]) => C>(entityClass: EC, ...args: TupleTail<ConstructorParameters<C>, RBCN>): R {
+  public register<C extends new (...args: any[]) => C = any>(entityClass: EC, ...args: TupleTail<ConstructorParameters<C>, RBCN> | any[]): R {
     if (this.repositories.has(entityClass['name'])) {
       throw new LogicError('Repository was registered before: ' + ENTITY_COMMON_META(entityClass).fullname);
     }
