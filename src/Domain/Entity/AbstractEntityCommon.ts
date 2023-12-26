@@ -1,7 +1,5 @@
 import { AbstractValueObject } from '@hexancore/common';
 
-export const ENTITY_META_PROPERTY = '__HC_ENTITY_META';
-
 /**
  * Entity Id type alias
  */

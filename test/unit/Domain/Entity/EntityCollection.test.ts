@@ -1,48 +1,13 @@
 /**
  * @group unit/core
  */
-import { ValueObject, UIntValue } from '@hexancore/common';
-import {
-  AbstractAggregateRoot,
-  EntityCollection,
-  EntityCollectionInterface,
-  ENTITY_COLLECTIONS_META_PROPERTY,
-  ROOT_ID_PROPERTY_META_PROPERTY,
-} from '../../../../src';
-import { AbstractEntity } from '../../../../src/Domain/Entity/AbstractEntity';
-
-@ValueObject('Test')
-class BookId extends UIntValue {}
-
-class Book extends AbstractEntity<BookId, Author> {
-  public readonly authorId?: AuthorId;
-
-  public constructor(public name: string) {
-    super();
-    return this.proxify();
-  }
-}
-
-@ValueObject('Test')
-class AuthorId extends UIntValue {}
-
-class Author extends AbstractAggregateRoot<AuthorId> {
-  @EntityCollection(Book)
-  public readonly books: EntityCollectionInterface<Book>;
-
-  public constructor(public name: string) {
-    super();
-    return this.proxify();
-  }
-}
+import { Author, AuthorId } from '@test/Module/Test/Domain/Author';
+import { Book } from '@test/Module/Test/Domain/Book';
+import { AGGREGATE_ROOT_META, EntityCollectionMeta } from '../../../../src';
 
 describe('EntityCollection', () => {
   test('meta properties', () => {
-    expect(Author[ENTITY_COLLECTIONS_META_PROPERTY]).toEqual({
-      books: { entityClass: Book },
-    });
-
-    expect(Author[ROOT_ID_PROPERTY_META_PROPERTY]).toEqual('authorId');
+    expect(AGGREGATE_ROOT_META(Author).collections).toEqual(new Map([[Book.name, new EntityCollectionMeta(Book, 'books')]]));
   });
 
   test('add when author id undefined', () => {

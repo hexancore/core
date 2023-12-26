@@ -14,4 +14,4 @@ const GeneralBusProvider = {
   providers: [GeneralBusProvider],
   exports: [GeneralBusProvider],
 })
-export class HexancoreApplicationModule {}
+export class HcApplicationModule {}

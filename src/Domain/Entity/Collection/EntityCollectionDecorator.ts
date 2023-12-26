@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { pascalCaseToCamelCase } from '@hexancore/common';
 import { EntityCollectionImpl } from './EntityCollectionImpl';
+import { AnyEntity, EntityConstructor } from '../AbstractEntity';
+import { ENTITY_META, EntityCollectionMeta } from '../EntityDecorator';
 
 /**
  * Used in persistance implementations
@@ -8,30 +9,20 @@ import { EntityCollectionImpl } from './EntityCollectionImpl';
 export const ENTITY_COLLECTIONS_META_PROPERTY = '__HC_ENTITY_COLLECTIONS';
 
 /**
- * Used in persistance implementations
- */
-export const ROOT_ID_PROPERTY_META_PROPERTY = '__HC_ROOT_ID_PROPERTY';
-
-/**
  * Decorator
  * @param rootIdPropertyName
  * @returns
  */
 export const EntityCollection =
-  (entityClass: Function): any =>
+  (entityClass: EntityConstructor): any =>
   (target: Object, propertyKey: string, descriptor) => {
-    const rootIdPropertyName = pascalCaseToCamelCase(target.constructor.name) + 'Id';
     const symbol = Symbol(entityClass.name + 'Collection');
 
     if (!target.constructor[ENTITY_COLLECTIONS_META_PROPERTY]) {
-      target.constructor[ENTITY_COLLECTIONS_META_PROPERTY] = {};
+      target.constructor[ENTITY_COLLECTIONS_META_PROPERTY] = new Map<string, EntityCollectionMeta<AnyEntity>>();
     }
-
-    target.constructor[ROOT_ID_PROPERTY_META_PROPERTY] = rootIdPropertyName;
-
-    target.constructor[ENTITY_COLLECTIONS_META_PROPERTY][propertyKey] = {
-      entityClass: entityClass,
-    };
+    target.constructor[ENTITY_COLLECTIONS_META_PROPERTY].set(entityClass.name, new EntityCollectionMeta(entityClass, propertyKey));
+    ENTITY_META(entityClass).aggregateRootClassProvider = () => target.constructor as any;
 
     target.constructor.prototype[symbol] = descriptor
       ? typeof descriptor.initializer !== 'undefined'
@@ -44,7 +35,7 @@ export const EntityCollection =
 
       get() {
         if (!this[symbol]) {
-          this[symbol] = new EntityCollectionImpl(this, rootIdPropertyName as string);
+          this[symbol] = new EntityCollectionImpl(this);
         }
         return this[symbol];
       },

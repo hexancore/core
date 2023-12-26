@@ -1,5 +1,5 @@
 export * from './EntityCollectionImpl';
-export * from './EntityCollectionInterface';
+export * from './IEntityCollection';
 export * from './EntityCollectionDecorator';
 export * from './EntityCollectionQueries';
 export * from './EntityCollectionWaitingChangesCollector';

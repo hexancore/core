@@ -1,4 +1,2 @@
-export * from './EntityRepositoryDecorator';
-export * from './AbstractAggregateRootRepository';
-export * from './AbstractEntityRepository';
-export * from './AbstractEntityRepositoryPersister';
+export * from './IAggregateRootRepository';
+export * from './AggregateRootRepositoryManager';

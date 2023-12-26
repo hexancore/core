@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- HcModule - global app module with all common app stuff included
+- HcApplicationModule - global Application layer module with CQRS stuff
+- HcInfraMemoryDomainModule - to define App module domain infrastructure layer 
+- HcInfraMemoryDomainModule - register basic inmemory domain entities persister
+
+### Changed
+
+- refactor DDD entity to epic generic DDD Entity stuff :)
+- HcAppModuleMeta - to extract module metadata like name from file path
+- moved to swc build
+
 ## [0.12.4] - 2023-12-06
 
 ### Fixed
