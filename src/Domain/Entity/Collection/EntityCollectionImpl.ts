@@ -1,41 +1,46 @@
-import { AR, ARP, ERR, OK, Result } from '@hexancore/common';
-import { AbstractAggregateRoot } from '../AbstractAggregateRoot';
-import { AbstractEntity } from '../AbstractEntity';
+import { AR, ARP, ERR, GetQueryOptions, LogicError, OK, Result } from '@hexancore/common';
+import {  AggregateRootIdTypeOf, AggregateRootOf, AnyEntity } from '../AbstractEntity';
 import { EntityIdTypeOf } from '../AbstractEntityCommon';
-import { EntityCollectionInterface } from './EntityCollectionInterface';
+import { IEntityCollection } from './IEntityCollection';
 import { EntityCollectionQueries } from './EntityCollectionQueries';
+import { AggregateRootMeta, ENTITY_META_PROPERTY } from '../EntityDecorator';
 
-export interface EntityCollectionQueriesImpl<T extends AbstractEntity<any, any>, EID = EntityIdTypeOf<T>> extends EntityCollectionQueries<T, EID> {
-  set collection(c: EntityCollectionImpl<T, EID, EntityCollectionQueriesImpl<T, EID>>);
+export interface EntityCollectionQueriesImpl<T extends AnyEntity> extends EntityCollectionQueries<T> {
+  set collection(c: EntityCollectionImpl<T>);
 }
 
-export class EntityCollectionImpl<
-  T extends AbstractEntity<any, any>,
-  EID = EntityIdTypeOf<T>,
-  ECQ extends EntityCollectionQueriesImpl<T, EID> = EntityCollectionQueriesImpl<T, EID>,
-> implements EntityCollectionInterface<T, EID, ECQ>
+export class EntityCollectionImpl<T extends AnyEntity, Q extends EntityCollectionQueriesImpl<T> = EntityCollectionQueriesImpl<T>>
+  implements IEntityCollection<T, Q>
 {
   private added: T[] = [];
   private updated: T[] = [];
   private removed: T[] = [];
-  public q: ECQ;
+  public q: Q;
 
-  public constructor(public readonly root: AbstractAggregateRoot<any>, public readonly rootIdPropertyName: string) {}
+  public rootIdProperty: string;
+
+  public constructor(public readonly root: AggregateRootOf<T>) {
+    this.rootIdProperty = this.ROOT_ENTITY_META.entityRootIdProperty;
+  }
+
+  public get ROOT_ENTITY_META(): AggregateRootMeta<AggregateRootOf<T>> {
+    return this.root.constructor[ENTITY_META_PROPERTY];
+  }
 
   public add(entity: T): void {
-    if (entity[this.rootIdPropertyName] !== undefined) {
-      throw new Error("Logic error: can't add entity from other aggregate root");
+    if (entity[this.rootIdProperty] !== undefined) {
+      throw new LogicError("Can't add entity from other aggregate root");
     }
     this.added.push(entity);
   }
 
   public update(entity: T): void {
     if (entity.id === undefined) {
-      throw new Error("Logic error: can't update entity without id");
+      throw new LogicError("Can't update entity without id");
     }
 
-    if (!this.root.id.equals(entity[this.rootIdPropertyName])) {
-      throw new Error("Logic error: can't update entity from other aggregate root");
+    if (!this.root.id.equals(entity[this.rootIdProperty])) {
+      throw new LogicError("Can't update entity from other aggregate root");
     }
 
     this.updated.push(entity);
@@ -43,11 +48,11 @@ export class EntityCollectionImpl<
 
   public remove(entity: T): void {
     if (entity.id === undefined) {
-      throw new Error("Logic error: can't remove entity without id");
+      throw new LogicError("can't remove entity without id");
     }
 
-    if (!this.root.id.equals(entity[this.rootIdPropertyName])) {
-      throw new Error("Logic error: can't remove entity from other aggregate root");
+    if (!this.root.id.equals(entity[this.rootIdProperty])) {
+      throw new LogicError("can't remove entity from other aggregate root");
     }
     this.removed.push(entity);
   }
@@ -55,7 +60,7 @@ export class EntityCollectionImpl<
   public get waitingAdd(): ReadonlyArray<T> {
     if (this.root.id) {
       this.added.forEach((e) => {
-        e[this.rootIdPropertyName] = this.root.id;
+        e[this.rootIdProperty] = this.root.id;
       });
     }
     return this.added;
@@ -69,19 +74,25 @@ export class EntityCollectionImpl<
     return this.removed;
   }
 
+  public get rootId(): AggregateRootIdTypeOf<T> {
+    return this.root.id;
+  }
+
   public clearWaiting(): void {
     this.added = [];
     this.updated = [];
     this.removed = [];
   }
 
-  public all(): AsyncGenerator<Result<T>, void, void> {
-    return this.q.all();
+  public all(options?: GetQueryOptions<T>): AsyncGenerator<Result<T>, void, void> {
+    this.checkHasQueries();
+    return this.q.all(options);
   }
 
-  public async getAllAsArray(): ARP<T[]> {
+  public async getAllAsArray(options?: GetQueryOptions<T>): ARP<T[]> {
+    this.checkHasQueries();
     const b = [];
-    for await (const row of this.q.all()) {
+    for await (const row of this.q.all(options)) {
       if (row.isError()) {
         return ERR(row.e);
       }
@@ -91,19 +102,30 @@ export class EntityCollectionImpl<
     return OK(b);
   }
 
-  public getById(id: EID): AR<T> {
+  public getById(id: EntityIdTypeOf<T>): AR<T> {
+    this.checkHasQueries();
     return this.q.getById(id);
   }
 
   public [Symbol.asyncIterator](): AsyncIterator<Result<T>, void, void> {
-    return this.q.all();
+    return this.all();
+  }
+
+  protected checkHasQueries(): void {
+    if (this.q === undefined) {
+      throw new LogicError('Collection queries not set');
+    }
+  }
+
+  public isTracked(): boolean {
+    return this.root.__tracked;
   }
 
   /**
    * Used only in infra layer.
    */
-  public set __queries(q: ECQ) {
+  public set __queries(q: Q) {
     this.q = q;
-    q.collection = this;
+    q.collection = this as any;
   }
 }

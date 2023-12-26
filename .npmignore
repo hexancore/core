@@ -8,6 +8,7 @@ yarn-error.log
 .yalc/
 yalc.lock
 .yarn/
+.github/
 yarn.lock
 .yarnrc.yml
 .prettierrc.js
@@ -24,3 +25,4 @@ docker-compose.yaml
 docker/
 node_modules/
 Makefile
+.swcrc

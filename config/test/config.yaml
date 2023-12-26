@@ -6,4 +6,4 @@ core:
       - { host: 'localhost', port: 20010 }
     options:
       enableReadyCheck: false
-      keyPrefix: 'hexancore:'
+      keyPrefix: 'app:'

@@ -1,34 +1,28 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { AbstractValueObject } from '@hexancore/common';
-import { AbstractAggregateRoot } from './AbstractAggregateRoot';
-import { AbstractEntityCommon, EntityIdTypeOf, ENTITY_META_PROPERTY } from './AbstractEntityCommon';
+import { AbstractAggregateRoot, AggregateRootConstructor } from './AbstractAggregateRoot';
+import { AbstractEntityCommon, EntityIdTypeOf } from './AbstractEntityCommon';
+import { ENTITY_META_PROPERTY } from './EntityDecorator';
 
-/**
- * AggregateRoot type extractor
- */
-export type AggregateRootOf<T extends AbstractEntity<any, any>> = T extends AbstractEntity<any, infer U> ? U : T;
+export type AnyEntity = AbstractEntity<any, any>;
 
 /**
  * AggregateRoot id type extractor
  */
-export type AggregateRootIdTypeOf<T extends AbstractEntity<any, any>> = T extends AbstractEntity<any, infer U> ? EntityIdTypeOf<U> : T;
+export type AggregateRootIdTypeOf<T extends AnyEntity> = T extends AbstractEntity<any, infer U> ? EntityIdTypeOf<U> : T;
+
+/**
+ * AggregateRoot type extractor
+ */
+export type AggregateRootOf<T> = T extends AbstractEntity<any, infer U> ? U : never;
+
+export type EntityConstructor<T extends AnyEntity = AnyEntity> = new (...args: any[]) => T;
 
 /**
  * Base for create Entity attached to selected AggregateRoot type in domain.
  */
-export abstract class AbstractEntity<
-  IDT extends AbstractValueObject<IDT>,
-  ART extends AbstractAggregateRoot<any>,
-> extends AbstractEntityCommon<IDT> {}
-
-/**
- * Decorator
- * @param moduleName Name of module
- */
-export function Entity(moduleName: string): (constructor: Function) => void {
-  return function (constructor: Function) {
-    constructor[ENTITY_META_PROPERTY] = {
-      module: moduleName,
-    };
-  };
+export abstract class AbstractEntity<IDT extends AbstractValueObject<IDT>, ART extends AbstractAggregateRoot<any>> extends AbstractEntityCommon<IDT> {
+  public getAggregateRootClass(): AggregateRootConstructor<ART> {
+    return this.constructor[ENTITY_META_PROPERTY].aggregateRoot;
+  }
 }

@@ -1,14 +1,12 @@
-import { AbstractEntityCommon, AbstractEntityPersister, CommonEntityRepositoryMeta, EntityIdTypeOf } from '@/Domain';
-import { AR, AbstractValueObject, AsyncResult, DomainErrors, OKA, wrapToArray } from '@hexancore/common';
+import { AbstractEntityCommon,  EntityMetaCommon,  EntityIdTypeOf } from '@/Domain';
+import { AR, AbstractValueObject, AsyncResult, CurrentTime, OK, OKA, wrapToArray } from '@hexancore/common';
+import { AbstractEntityPersister, AbstractEntityRepositoryCommon } from '../Generic';
 
-export class MemoryEntityRepositoryPersister<
-  T extends AbstractEntityCommon<any>,
-  EID extends EntityIdTypeOf<T> = EntityIdTypeOf<T>,
-> extends AbstractEntityPersister<T> {
+export class MemoryEntityPersister<T extends AbstractEntityCommon<any>, M extends EntityMetaCommon<T>> extends AbstractEntityPersister<T, M> {
   protected persisted: T[];
 
-  public constructor(META: CommonEntityRepositoryMeta, domainErrors: DomainErrors<any>) {
-    super(META, domainErrors);
+  public constructor(repository: AbstractEntityRepositoryCommon<any, any, any>, ct?: CurrentTime) {
+    super(repository, ct);
     this.persisted = [];
   }
 
@@ -66,7 +64,17 @@ export class MemoryEntityRepositoryPersister<
     return OKA(deleteCount);
   }
 
-  public getById(id: EID): AsyncResult<T> {
+  public getOneBy(criteria: Record<string, any>): AR<T> {
+    return this.getBy(criteria).onOk((found) => {
+      if (found.length === 0) {
+        return this.NOT_FOUND(criteria);
+      }
+
+      return OK(found[0]);
+    });
+  }
+
+  public getById(id: EntityIdTypeOf<T>): AR<T> {
     const result = this.persisted.filter((e) => e.id.equals(id));
     if (result.length === 0) {
       return this.NOT_FOUND({ id });

@@ -15,7 +15,10 @@ coverage
 *.tsbuildinfo
 /**/test/coverage
 *.log
-.yalc
+.yalc/**
+.jestrc.json
+.swcrc
+
 yalc.lock
 /test/tmp/**
 /tmp/**

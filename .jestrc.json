@@ -3,11 +3,12 @@
   "runner": "groups",
   "moduleFileExtensions": ["js", "json", "ts"],
   "transform": {
-    "^.+\\.(t|j)s$": "ts-jest"
+    "^.+\\.(t|j)s?$": ["@swc/jest"]
   },
   "moduleNameMapper": {
     "^@$": "<rootDir>/src",
-    "^@/(.*)$": "<rootDir>/src/$1"
+    "^@/(.*)$": "<rootDir>/src/$1",
+    "^@test/(.*)$": "<rootDir>/test/helper/$1"
   },
   "testMatch": ["<rootDir>/test/**/*.test.ts"],
   "setupFiles": [],
