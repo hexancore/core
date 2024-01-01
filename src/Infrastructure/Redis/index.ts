@@ -1,1 +1,1 @@
-export * from './AppRedisModule';
+export * from './HcAppRedisModule';
