@@ -3,8 +3,6 @@ import { AbstractEntityRepositoryCommon } from '../AbstractEntityRepositoryCommo
 import { IEntityPersisterFactory } from '../Persister/IEntityPersisterFactory';
 import { AbstractEntityCommon, ENTITY_COMMON_META } from '@/Domain';
 import { HcAppModuleMeta } from '@/Util/ModuleHelper';
-import { AnyEntityRepository } from '../AbstractEntityRepository';
-import { EntityRepositoryConstructor } from '../EntityRepositoryDecorator';
 
 export abstract class EntityRepositoryManagerCommon<
   R extends AbstractEntityRepositoryCommon<any, any, any>,
