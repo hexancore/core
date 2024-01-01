@@ -1,12 +1,12 @@
 import { Global, Module } from '@nestjs/common';
 import { CurrentTime } from '@hexancore/common';
-import { AppConfigModule } from './Infrastructure/Config/AppConfigModule';
+import { HcAppConfigModule } from './Infrastructure/Config/HcAppConfigModule';
 import { HcApplicationModule } from './Application';
 import { EntityPersisterFactoryManager } from './Infrastructure';
 
 @Global()
 @Module({
-  imports: [AppConfigModule, HcApplicationModule],
+  imports: [HcAppConfigModule, HcApplicationModule],
   providers: [
     {
       provide: CurrentTime,

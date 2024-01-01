@@ -1,2 +1,2 @@
-export * from './AppConfigModule';
+export * from './HcAppConfigModule';
 export * from './SecretsService';

@@ -36,7 +36,7 @@ export const clusterModuleRoot = ClusterModule.forRootAsync(
           clusterRetryStrategy(times, reason) {
             const nextDelay = Math.min(retryOptions.firstRetryDelayMs + times * retryOptions.retryDelayMultiplerMs, retryOptions.maxRetryDelayMs);
             if (times % retryOptions.warnEveryXTimes === 0) {
-              LOGGER.warn(`Reconnected redis times: ${times} reason: ${reason} next delay: ${nextDelay} ms`, {times, nextDelay, reason});
+              LOGGER.warn(`Reconnected redis times: ${times} reason: ${reason} next delay: ${nextDelay} ms`, { times, nextDelay, reason });
             }
 
             return nextDelay;
@@ -56,7 +56,7 @@ export const clusterModuleRoot = ClusterModule.forRootAsync(
 
 export const InjectAppRedis = (): PropertyDecorator & ParameterDecorator => Inject(APP_REDIS_TOKEN);
 
-export const AppRedisProvider = {
+export const HcAppRedisProvider = {
   provide: APP_REDIS_TOKEN,
   inject: [ClusterManager],
   useFactory: (cm: ClusterManager): Cluster => cm.getClient(),
@@ -64,7 +64,7 @@ export const AppRedisProvider = {
 @Global()
 @Module({
   imports: [clusterModuleRoot],
-  providers: [AppRedisProvider],
-  exports: [AppRedisProvider],
+  providers: [HcAppRedisProvider],
+  exports: [HcAppRedisProvider],
 })
-export class AppRedisModule {}
+export class HcAppRedisModule {}
