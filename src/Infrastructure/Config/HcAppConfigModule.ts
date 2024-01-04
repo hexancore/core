@@ -3,6 +3,7 @@ import { Global, Module, Provider } from '@nestjs/common';
 import { APP_PATHS } from '../AppPaths';
 import configFactory from './YamlConfigLoader';
 import { SecretsService } from './SecretsService';
+import { AppConfig } from './AppConfig';
 
 const RootConfigModule = ConfigModule.forRoot({
   load: [() => configFactory(APP_PATHS.configFilePath)],
@@ -18,7 +19,7 @@ const SecretsServiceProvider: Provider = {
 @Global()
 @Module({
   imports: [RootConfigModule],
-  providers: [ConfigService, SecretsServiceProvider],
-  exports: [RootConfigModule, ConfigService, SecretsServiceProvider],
+  providers: [ConfigService, SecretsServiceProvider, AppConfig],
+  exports: [RootConfigModule, ConfigService, SecretsServiceProvider, AppConfig],
 })
 export class HcAppConfigModule {}
