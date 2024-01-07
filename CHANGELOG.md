@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - AppConfig - ConfigService + SecretsService in one 
+- SimpleAccountContext - for simplify integration testing.
+- autoload module repositories metadata
+
+### Fixed
+
+- AggregateRoot without collections bug
 
 ## [0.12.5] - 2023-12-26
 
