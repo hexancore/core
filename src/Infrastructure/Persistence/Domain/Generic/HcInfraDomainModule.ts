@@ -3,11 +3,34 @@ import { HcAppModuleMeta } from '@/Util/ModuleHelper';
 import { ConfigurableModuleBuilder, DynamicModule, Module, ModuleMetadata } from '@nestjs/common';
 import { InfraAggregateRootRepositoryManager } from './Manager';
 import { EntityPersisterFactoryManager } from './Persister';
-import { LogicError } from '@hexancore/common';
+import { DomainErrors, LogicError } from '@hexancore/common';
+import { glob } from 'glob';
+import path from 'path';
 
 export interface HcInfraDomainModuleOptions {}
 
 export type HcInfraDomainModuleExtra = Pick<ModuleMetadata, 'imports' | 'exports' | 'providers'>;
+
+async function importDomainErrors(moduleMeta: HcAppModuleMeta): Promise<DomainErrors<any>> {
+  const domainErrorsConst = moduleMeta.name + 'DomainErrors';
+  const domainErrorsImportPath = moduleMeta.getDomainPath(domainErrorsConst);
+  const domainErrors = (await import(domainErrorsImportPath))[domainErrorsConst];
+  if (!domainErrors) {
+    throw new LogicError(
+      `Not found DomainErrors for module: '+moduleMeta.name+' , ${domainErrorsImportPath} need export const ${domainErrorsConst} = DomainErrors(...)`,
+    );
+  }
+
+  return domainErrors;
+}
+
+async function importRepositoriesImpl(moduleInfraDir: string) {
+  moduleInfraDir = moduleInfraDir.split(path.sep).join(path.posix.sep);
+  const pattern = 'Persistance/**/*Repository.{ts,js}';
+  const files = await glob(pattern, { absolute: true, magicalBraces: true, cwd: moduleInfraDir });
+  const imports = files.map((file) => import(path.resolve(file)));
+  await Promise.all(imports);
+}
 
 const { ConfigurableModuleClass } = new ConfigurableModuleBuilder<HcInfraDomainModuleOptions>()
   .setExtras<HcInfraDomainModuleExtra>(
@@ -25,20 +48,17 @@ const { ConfigurableModuleClass } = new ConfigurableModuleBuilder<HcInfraDomainM
 
 @Module({})
 export class HcInfraDomainModule extends ConfigurableModuleClass {
-  public static forFeature(options: { moduleInfraFilePath: string } & HcInfraDomainModuleExtra): DynamicModule {
-    const moduleMeta = HcAppModuleMeta.fromPath(options.moduleInfraFilePath);
+  public static forFeature(options: { moduleInfraDir: string } & HcInfraDomainModuleExtra): DynamicModule {
+    const moduleMeta = HcAppModuleMeta.fromPath(options.moduleInfraDir);
     const m = super.register(options);
     m.providers.push(AggregateRootRepositoryManager);
     m.providers.push({
       provide: InfraAggregateRootRepositoryManager,
       inject: [EntityPersisterFactoryManager],
       useFactory: async (factoryManager: EntityPersisterFactoryManager) => {
-        const domainErrorsConst = moduleMeta.name + 'DomainErrors';
-        const domainErrorsImportPath = moduleMeta.getDomainPath(domainErrorsConst);
-        const domainErrors = (await import(domainErrorsImportPath))[domainErrorsConst];
-        if (!domainErrors) {
-          throw new LogicError(`Not found DomainErrors for module: '+moduleMeta.name+' , ${domainErrorsImportPath} need export const ${domainErrorsConst} = DomainErrors(...)`);
-        }
+        const domainErrors = await importDomainErrors(moduleMeta);
+        await importRepositoriesImpl(options.moduleInfraDir);
+
         return new InfraAggregateRootRepositoryManager(moduleMeta, factoryManager, domainErrors);
       },
     });
