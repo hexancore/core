@@ -1,16 +1,23 @@
-import { AccountId } from '@hexancore/common';
-import { Injectable } from '@nestjs/common';
-import { ClsService } from 'nestjs-cls';
+import { AccountId} from '@hexancore/common';
 
-@Injectable()
-export class AccountContext {
-  public constructor(protected cls: ClsService) {}
+/**
+ * An abstract class representing an account context.
+ * It provides abstract methods for getting and setting an account identifier (AccountId).
+ * Classes inheriting from this class must implement these methods to tailor the logic
+ * to the specific requirements of the application.
+ */
+export abstract class AccountContext {
+  /**
+   * Retrieves the account identifier.
+   * @returns {AccountId} The current account identifier.
+   */
+  public abstract get(): AccountId;
 
-  public get(): AccountId {
-    return this.cls.get('accountId');
-  }
-
-  public set(accountId: AccountId): void {
-    this.cls.set('accountId', accountId);
-  }
+  /**
+   * Sets the account identifier.
+   * @param {AccountId} accountId - The account identifier to set.
+   */
+  public abstract set(accountId: AccountId): void;
 }
+
+

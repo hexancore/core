@@ -910,6 +910,7 @@ __metadata:
     fastify-swagger: "npm:^5.2.0"
     file-type: "npm:^16.4.0"
     fs-extra: "npm:^11.1.1"
+    glob: "npm:^10.3.10"
     ioredis: "npm:^5.3.2"
     jest: "npm:29.6.*"
     jest-docblock: "npm:29.4.*"

@@ -81,7 +81,7 @@ export class AggregateRootMeta<T extends AnyAggregateRoot> extends EntityMetaCom
 
   public get collections(): Map<string, EntityCollectionMeta<AnyEntity>> {
     if (!this._collections) {
-      this._collections = this.entityClass[ENTITY_COLLECTIONS_META_PROPERTY];
+      this._collections = this.entityClass[ENTITY_COLLECTIONS_META_PROPERTY] ?? new Map();
     }
 
     return this._collections;

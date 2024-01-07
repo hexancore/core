@@ -97,6 +97,7 @@
     "fastify-swagger": "^5.2.0",
     "file-type": "^16.4.0",
     "fs-extra": "^11.1.1",
+    "glob": "^10.3.10",
     "ioredis": "^5.3.2",
     "js-yaml": "^4.1.0",
     "lambda-log": "^3.1.0",

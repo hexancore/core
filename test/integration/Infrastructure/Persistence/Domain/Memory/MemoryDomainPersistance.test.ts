@@ -32,7 +32,7 @@ describe('MemoryAggregateRootRepository', () => {
         HcModule,
         HcInfraMemoryDomainModule,
         HcInfraDomainModule.forFeature({
-          moduleInfraFilePath: TEST_MODULE_DIR,
+          moduleInfraDir: TEST_MODULE_DIR,
         }),
       ],
     }).compile();
