@@ -67,7 +67,7 @@ export class MemoryEntityPersister<T extends AbstractEntityCommon<any>, M extend
   public getOneBy(criteria: Record<string, any>): AR<T> {
     return this.getBy(criteria).onOk((found) => {
       if (found.length === 0) {
-        return this.NOT_FOUND(criteria);
+        return this.NOT_FOUND<never>(criteria);
       }
 
       return OK(found[0]);

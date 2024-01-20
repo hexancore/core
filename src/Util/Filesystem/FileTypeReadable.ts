@@ -38,7 +38,7 @@ export class FileTypeReadable {
 export class ImageFileReadable extends FileTypeReadable {
   public static create(stream: Readable): AsyncResult<ImageFileReadable> {
     return FileTypeReadable.createFileTypeStream(stream)
-      .mapErr((e: AppError) => {
+      .onErr((e: AppError) => {
         return e.type === FileTypeReadableError.UNSUPPORTED_TYPE ? { type: FileTypeReadableError.NOT_IMAGE, code: 400 } : e;
       })
       .onOk((v: any) => {

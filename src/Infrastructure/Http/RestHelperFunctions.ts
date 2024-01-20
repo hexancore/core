@@ -1,4 +1,4 @@
-import { AppError, AppErrorCode, AsyncResult, ErrorHelper, INTERNAL_ERROR_TYPE, R, Result } from '@hexancore/common';
+import { AppError, AppErrorCode, AsyncResult, ErrorHelper, R, Result, InternalError, StdErrors } from '@hexancore/common';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import * as http2 from 'http2';
 import { HttpStatus } from '@nestjs/common';
@@ -60,7 +60,7 @@ export function createErrorResponseBody(error: AppError): Record<string, any> {
     } else {
       // when is some unknown internal error and not debug mode output minimum info
       body = {
-        type: INTERNAL_ERROR_TYPE,
+        type: StdErrors.internal,
         message: 'Internal server error',
         code: AppErrorCode.INTERNAL_ERROR,
       };
