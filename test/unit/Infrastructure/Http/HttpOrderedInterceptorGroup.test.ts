@@ -36,7 +36,7 @@ describe('HttpOrderedInterceptorGroup ', () => {
       i1.expects('beforeRoute', expect.anything()).andReturn(OK(true));
       i1.expects('afterRoute', interceptor.context, expect.anything()).andReturnWith((_args, data) => {
         expect(data).toBe(routeData);
-        return data.map(() => 'after_i1');
+        return data.onOk(() => 'after_i1');
       });
 
       const current = await interceptor.intercept<string>(routeData);
