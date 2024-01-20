@@ -111,7 +111,7 @@ export abstract class AbstractEntityPersister<T extends AnyEntity | AnyAggregate
    * @returns
    */
   public getAllAsArray(options?: GetQueryOptions<T>): AR<T[]> {
-    return this.getAll(options).map((entities: Iterable<T>) => Array.from(entities));
+    return this.getAll(options).onOk((entities: Iterable<T>) => Array.from(entities));
   }
 
   public DUPLICATE<T>(data?: any): AR<T> {

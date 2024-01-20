@@ -18,7 +18,7 @@ export class MemoryEntityCollectionQueries<T extends AbstractEntity<any, any>, R
       });
 
       if (entities.isError()) {
-        yield ERRA<T>(entities.e).promise;
+        yield ERRA<T>(entities.e).p;
       }
 
       for (const entity of entities.v) {
