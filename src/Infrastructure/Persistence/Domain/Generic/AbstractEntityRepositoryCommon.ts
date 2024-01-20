@@ -28,7 +28,7 @@ export abstract class AbstractEntityRepositoryCommon<
   }
 
   public getAllAsArray(options?: GetQueryOptions<T>): AR<T[]> {
-    return this.getAll(options).map((entities: Iterable<T>) => Array.from(entities));
+    return this.getAll(options).onOk((entities: Iterable<T>) => Array.from(entities));
   }
 
   public get ENTITY_META(): M {

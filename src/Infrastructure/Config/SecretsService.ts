@@ -1,4 +1,4 @@
-import { ERR, OK, R } from '@hexancore/common';
+import { DefineErrorsUnion, ERR, JsonErrors, JsonHelper, OK, R } from '@hexancore/common';
 import { existsSync, readFileSync } from 'fs';
 
 export interface BasicAuthSecret {
@@ -6,46 +6,45 @@ export interface BasicAuthSecret {
   password: string;
 }
 
-export enum SecretsServiceErrors {
-  basic_auth_invalid = 'core.infra.config.secret.basic_auth_invalid',
-  not_found = 'core.infra.config.secret.not_found',
-  json_parse = 'core.infra.config.secret.json_parse',
-  file_read = 'core.infra.config.secret.file_read',
-}
+export const SecretsErrors = {
+  basic_auth_invalid: 'core.infra.config.secret.basic_auth_invalid',
+  not_found: 'core.infra.config.secret.not_found',
+  file_read: 'core.infra.config.secret.file_read',
+} as const;
+
+export type SecretsErrors<K extends keyof typeof SecretsErrors> = DefineErrorsUnion<typeof SecretsErrors, K, 'internal'>;
 
 export class SecretsService {
   public constructor(private secretsDir: string) {}
 
-  public getAsBasicAuth(key: string): R<BasicAuthSecret> {
+  public getAsBasicAuth(key: string): R<BasicAuthSecret, JsonErrors<'parse'> | SecretsErrors<'basic_auth_invalid' | 'file_read' | 'not_found'>> {
     return this.getFromJson<BasicAuthSecret>(key).onOk((v) => {
       if (typeof v.password !== 'string' || v.password.length === 0 || typeof v.username !== 'string' || v.username.length === 0) {
-        return ERR(SecretsServiceErrors.basic_auth_invalid, 500);
+        return ERR(SecretsErrors.basic_auth_invalid, 500);
       }
 
       return OK(v);
     });
   }
 
-  public get(key: string): R<string> {
+  public get(key: string): R<string, SecretsErrors<'file_read' | 'not_found'>> {
     const filePath = this.getFilePath(key);
     if (!existsSync(filePath)) {
-      return ERR(SecretsServiceErrors.not_found, 500, { key, filePath });
+      return ERR(SecretsErrors.not_found, 500, { key, filePath });
     }
+
     try {
       return OK(readFileSync(filePath).toString());
     } catch (e) {
-      return ERR(SecretsServiceErrors.file_read, 500);
+      return ERR(SecretsErrors.file_read, 500);
     }
   }
 
-  public getFromJson<T extends Record<string, any>>(key: string): R<T> {
-    return this.get(key).map((v: string) => {
-      try {
-        return JSON.parse(v);
-      } catch (e) {
-        return ERR(SecretsServiceErrors.json_parse, 500);
-      }
-    });
+  public getFromJson<T extends Record<string, any> = Record<string, any>>(
+    key: string,
+  ): R<T, JsonErrors<'parse'> | SecretsErrors<'file_read' | 'not_found'>> {
+    const c = this.get(key).onOk((v: string) => JsonHelper.parse(v));
+    return c as any;
   }
 
   private getFilePath(key: string): string {
