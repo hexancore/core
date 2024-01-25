@@ -55,7 +55,7 @@ describe('DefaultGeneralBus', () => {
     test('when ok', async () => {
       const expectedResult = OKA(true);
 
-      commandBus.expects('execute', command).andReturn(expectedResult as any);
+      commandBus.expects('execute', command).andReturn(expectedResult.p);
 
       const currentResult = await gb.handleCommand(command);
 
@@ -65,7 +65,7 @@ describe('DefaultGeneralBus', () => {
     test('when error', async () => {
       const expectedResult = ERRA({ type: 'test' });
 
-      commandBus.expects('execute', command).andReturn(expectedResult as any);
+      commandBus.expects('execute', command).andReturn(expectedResult.p);
 
       const currentResult = await gb.handleCommand(command);
 

@@ -1,4 +1,4 @@
-import { AppError, AppErrorCode, AsyncResult, ErrorHelper, R, Result, InternalError, StdErrors } from '@hexancore/common';
+import { AppError, AppErrorCode, AsyncResult, ErrorHelper, R, Result, StdErrors } from '@hexancore/common';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import * as http2 from 'http2';
 import { HttpStatus } from '@nestjs/common';
