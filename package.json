@@ -86,7 +86,7 @@
     "@fastify/middie": "8.3.0",
     "@fastify/multipart": "7.7.3",
     "@fastify/static": "^6.10.2",
-    "@hexancore/common": "0.13.*",
+    "@hexancore/common": "^0.13.1",
     "bull": "^4.8.4",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",

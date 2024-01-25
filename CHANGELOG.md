@@ -6,7 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- update dep @hexancore/common to 0.13.1
+
 ## [0.13.0] - 2024-01-25
+
+### Changed
+
+- update dep @hexancore/common to 0.13.0
 
 ## [0.12.6] - 2024-01-07
 
@@ -60,10 +68,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - many changes
 
-[unreleased] https://github.com/hexancore/core/compare/0.13.0...HEAD   
-[0.13.0] https://github.com/hexancore/core/compare/12...0.13.0   
-[0.12.6] https://github.com/hexancore/core/compare/12...0.12.6   
-[0.12.5] https://github.com/hexancore/core/compare/12...0.12.5   
-[0.12.4] https://github.com/hexancore/core/compare/0.12.0...0.12.4
-[0.12.0] https://github.com/test_owner/test_repository/releases/tag/0.12.0
-[0.10.2] https://github.com/test_owner/test_repository/releases/tag/0.10.2
+[unreleased] https://github.com/hexancore/core/compare/0.13.0...HEAD    
+[0.13.0] https://github.com/hexancore/core/compare/0.12.6...0.13.0   
+[0.12.6] https://github.com/hexancore/core/compare/0.12.5...0.12.6   
+[0.12.5] https://github.com/hexancore/core/compare/0.12.4...0.12.5   
+[0.12.4] https://github.com/hexancore/core/compare/0.12.0...0.12.5   
+[0.12.0] https://github.com/hexancore/core/compare/0.10.2...0.12.0   
+[0.10.2] https://github.com/hexancore/core/compare/0.10.2   
