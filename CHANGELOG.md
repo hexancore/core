@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.0] - 2024-01-25
+
 ## [0.12.6] - 2024-01-07
 
 ### Added
@@ -58,7 +60,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - many changes
 
-[unreleased] https://github.com/hexancore/core/compare/0.12.6...HEAD   
+[unreleased] https://github.com/hexancore/core/compare/0.13.0...HEAD   
+[0.13.0] https://github.com/hexancore/core/compare/12...0.13.0   
 [0.12.6] https://github.com/hexancore/core/compare/12...0.12.6   
 [0.12.5] https://github.com/hexancore/core/compare/12...0.12.5   
 [0.12.4] https://github.com/hexancore/core/compare/0.12.0...0.12.4
