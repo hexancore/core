@@ -25,19 +25,10 @@ jobs:
         env:
           HEXANCORE_BOT_TOKEN: ${{ secrets.HEXANCORE_BOT_TOKEN }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          registry-url: 'https://registry.npmjs.org'
-          node-version: 20.x
-
-      - name: Install dependencies
-        run: yarn install --immutable
-
-      - name: docker-compose up
-        run: |
-          make init_redis_tmp
-          make up
+      - name: Yarn install
+        uses: hexancore/yarn-ci-install@0.1.0
+      - name: test
+        uses: ./.github/actions/test
 
       # Bump version
       - name: Bump package version
@@ -63,18 +54,11 @@ jobs:
 
       # Commit
       - name: Commit CHANGELOG.md and package.json changes and create tag
-        #env:
-        #  HEXANCORE_BOT_TOKEN: ${{ secrets.HEXANCORE_BOT_TOKEN }}
         run: |
           git config --global user.email "153127894+hexancore-bot@users.noreply.github.com"
           git config --global user.name "Hexancore Bot"
-          #git remote set-url origin https://x-access-token:${{ env.HEXANCORE_BOT_TOKEN }}@github.com/${{ github.repository }}
           git add "package.json"
           git add "CHANGELOG.md"
           git commit -m "chore: release ${{ env.NEW_VERSION }}"
           git tag -m 'new version' ${{ env.NEW_VERSION }}
           git push --follow-tags
-
-      # Docker compose down
-      - name: docker-compose down
-        run: make down

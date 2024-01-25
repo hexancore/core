@@ -1,6 +1,6 @@
 PROJECT = hexancore
 
-init_redis_tmp:
+init_tmp:
 	mkdir -p ./tmp/redis
 	chmod 0777 -R ./tmp
 	chmod 0777 -R ./docker
@@ -10,5 +10,5 @@ up:
 down:
 	docker compose -p $(PROJECT) down -t 2
 
-act: init_redis_tmp
+act: init__tmp
 	act workflow_dispatch --input releaseType=minor

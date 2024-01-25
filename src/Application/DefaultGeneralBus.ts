@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CommandBus, EventBus, ICommand, IEvent, IQuery, QueryBus } from '@nestjs/cqrs';
-import { AsyncResult, OKA, P } from '@hexancore/common';
+import { ARW, AsyncResult, OKA, P } from '@hexancore/common';
 import { GeneralBus } from './GeneralBus';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class DefaultGeneralBus extends GeneralBus {
   }
 
   public handleCommand<T>(command: ICommand): AsyncResult<T> {
-    return P(this.commandBus.execute(command));
+    return ARW(this.commandBus.execute(command));
   }
 
   public handleEvent(event: IEvent): AsyncResult<boolean> {
