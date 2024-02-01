@@ -847,9 +847,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hexancore/common@npm:^0.13.1":
-  version: 0.13.1
-  resolution: "@hexancore/common@npm:0.13.1"
+"@hexancore/common@npm:^0.13.2":
+  version: 0.13.2
+  resolution: "@hexancore/common@npm:0.13.2"
   dependencies:
     "@js-joda/core": "npm:^5.6.1"
     axios: "npm:^1.5.0"
@@ -860,7 +860,7 @@ __metadata:
     string.prototype.matchall: "npm:^4.0.10"
     tslib: "npm:^2.5.0"
     xss: "npm:^1.0.10"
-  checksum: 41ad1c0923499331c4733c6d713004e31d6f71b2b239dbccfcdd01aeada110e6a5d3d30389b423870141a3809781ed9a93fd2d208e956787dda7b372af100667
+  checksum: be040befb52297fde1fcab8f696c97e15dc02e7bb0bb486e5cd91c7a8b6d2ac045a4a1372fd13aa0066e972339e63ba62f3f570b370ce8d2ee94a629a5d8644a
   languageName: node
   linkType: hard
 
@@ -873,7 +873,7 @@ __metadata:
     "@fastify/middie": "npm:8.3.0"
     "@fastify/multipart": "npm:7.7.3"
     "@fastify/static": "npm:^6.10.2"
-    "@hexancore/common": "npm:^0.13.1"
+    "@hexancore/common": "npm:^0.13.2"
     "@hexancore/mocker": "npm:^1.1.2"
     "@liaoliaots/nestjs-redis": "npm:^9.0.5"
     "@nestjs/bull": "npm:^10.0.1"
@@ -935,6 +935,7 @@ __metadata:
     typescript: "npm:5.3.3"
     typescript-chained-error: "npm:^1.6.0"
   peerDependencies:
+    "@hexancore/common": ^0.13.2
     "@liaoliaots/nestjs-redis": ^9.0.5
     "@nestjs/bull": ^10.0.1
     "@nestjs/cli": ^10.1.11
@@ -2754,7 +2755,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.5.0, axios@npm:^1.5.1":
+"axios@npm:^1.5.0":
+  version: 1.6.7
+  resolution: "axios@npm:1.6.7"
+  dependencies:
+    follow-redirects: "npm:^1.15.4"
+    form-data: "npm:^4.0.0"
+    proxy-from-env: "npm:^1.1.0"
+  checksum: 131bf8e62eee48ca4bd84e6101f211961bf6a21a33b95e5dfb3983d5a2fe50d9fffde0b57668d7ce6f65063d3dc10f2212cbcb554f75cfca99da1c73b210358d
+  languageName: node
+  linkType: hard
+
+"axios@npm:^1.5.1":
   version: 1.6.2
   resolution: "axios@npm:1.6.2"
   dependencies:
@@ -4538,6 +4550,16 @@ __metadata:
     debug:
       optional: true
   checksum: 915a2cf22e667bdf47b1a43cc6b7dce14d95039e9bbf9a24d0e739abfbdfa00077dd43c86d4a7a19efefcc7a99af144920a175eedc3888d268af5df67c272ee5
+  languageName: node
+  linkType: hard
+
+"follow-redirects@npm:^1.15.4":
+  version: 1.15.5
+  resolution: "follow-redirects@npm:1.15.5"
+  peerDependenciesMeta:
+    debug:
+      optional: true
+  checksum: 418d71688ceaf109dfd6f85f747a0c75de30afe43a294caa211def77f02ef19865b547dfb73fde82b751e1cc507c06c754120b848fe5a7400b0a669766df7615
   languageName: node
   linkType: hard
 
