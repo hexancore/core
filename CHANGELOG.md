@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- update dep @hexancore/common to 0.13.1
+- update dep @hexancore/common to 0.13.2
 
 ## [0.13.0] - 2024-01-25
 
