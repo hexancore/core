@@ -16,11 +16,11 @@ describe('ModuleHelper', () => {
 
   describe('HcAppModuleMeta', () => {
     test('when path contains valid Module path part', () => {
-      const path = 'anypath/noise/Module/Test/Infrastructure/somefile.ts';
+      const path = 'anypath/noise/src/Test/Infrastructure/somefile.ts';
 
       const current = HcAppModuleMeta.fromPath(path);
 
-      expect(current).toEqual(new HcAppModuleMeta('Test', 'anypath/noise/Module/Test'));
+      expect(current).toEqual(new HcAppModuleMeta('Test', 'anypath/noise/src/Test'));
     });
   });
 

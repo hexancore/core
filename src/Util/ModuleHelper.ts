@@ -33,14 +33,14 @@ export class HcAppModuleMeta {
   }
   public static fromPath(path: string): HcAppModuleMeta {
     path = path.split(pathModule.sep).join(pathModule.posix.sep);
-    const extractModuleNameRegex = /Module\/([^/]+)/;
+    const extractModuleNameRegex = /src\/([^/]+)/;
     const extractModuleMatch = path.match(extractModuleNameRegex);
     if (!extractModuleMatch) {
       throw new LogicError('Not found module name in path: ' + path);
     }
 
     const name = extractModuleMatch[1];
-    const modulePathPrefix = 'Module/' + name;
+    const modulePathPrefix = name;
     const rootPath = path.substring(0, path.indexOf(modulePathPrefix) + modulePathPrefix.length);
 
     return new HcAppModuleMeta(name, rootPath);
