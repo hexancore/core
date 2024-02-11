@@ -9,10 +9,10 @@ import { MemoryAggregateRootRepository } from '@/Infrastructure/Persistence/Doma
 import { MemoryEntityRepository } from '@/Infrastructure/Persistence/Domain/Memory/MemoryEntityRepository';
 import { OK } from '@hexancore/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TEST_MODULE_DIR } from '@test/Module/Test';
-import { Author, AuthorId } from '@test/Module/Test/Domain/Author';
-import { Book, BookId } from '@test/Module/Test/Domain/Book';
-import { TestDomainErrors } from '@test/Module/Test/Domain/TestDomainErrors';
+import { TEST_MODULE_DIR } from '@test/src/Test';
+import { Author, AuthorId } from '@test/src/Test/Domain/Author';
+import { Book, BookId } from '@test/src/Test/Domain/Book';
+import { TestDomainErrors } from '@test/src/Test/Domain/TestDomainErrors';
 
 @EntityRepository(Book, 'memory')
 export class MemoryBookRepository extends MemoryEntityRepository<Book> {}
