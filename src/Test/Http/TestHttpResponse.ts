@@ -1,16 +1,21 @@
 import { Response } from 'light-my-request';
 import { HttpStatus } from '@nestjs/common';
+import type { InjectOptions } from 'fastify';
+import type { NestFastifyApplication } from '@nestjs/platform-fastify';
 
 export class TestHttpResponse implements PromiseLike<Response> {
   private expects: Array<(res: Response) => void> = [];
 
-  public constructor(private p: Promise<Response>) {}
+  public constructor(
+    private injectOptions: InjectOptions,
+    private app: NestFastifyApplication
+  ) { }
 
-  public then<TResult1 = Response|any, TResult2 = never>(
+  public then<TResult1 = Response | any, TResult2 = never>(
     onfulfilled?: (value: Response) => TResult1 | PromiseLike<TResult1>,
     onrejected?: (reason: any) => TResult2 | PromiseLike<TResult2>,
   ): PromiseLike<TResult1 | TResult2> {
-    return this.p
+    return this.app.inject(this.injectOptions)
       .then((res) => {
         for (const e of this.expects) {
           e(res);
@@ -22,7 +27,7 @@ export class TestHttpResponse implements PromiseLike<Response> {
 
   public expectStatusCode(expected: HttpStatus): TestHttpResponse {
     return this.expect((res) => {
-      this.expectEq(res.statusCode, expected, 'Response.statusCode');
+      this.expectEq(res.statusCode, expected, 'response.statusCode');
     });
   }
 
@@ -34,7 +39,7 @@ export class TestHttpResponse implements PromiseLike<Response> {
 
   public expectBody(expected: string): TestHttpResponse {
     return this.expect((res) => {
-      this.expectEq(res.body, expected, 'Response.body');
+      this.expectEq(res.body, expected, 'response.body');
     });
   }
 
@@ -47,7 +52,7 @@ export class TestHttpResponse implements PromiseLike<Response> {
         throw new Error('Parse json response body: ' + res.body);
       }
 
-      this.expectEq(parsed, expectedBody, 'Response.json');
+      this.expectEq(parsed, expectedBody, 'response.json_body');
     });
     this.expectStatusCode(expectedStatusCode);
     return this;
@@ -59,6 +64,10 @@ export class TestHttpResponse implements PromiseLike<Response> {
   }
 
   private expectEq(current: any, expected: any, message: string): void {
-    expect(current, message).toEqual(expected);
+    expect(current, this.getExpectMessagePrefix() + message).toEqual(expected);
+  }
+
+  private getExpectMessagePrefix(): string {
+    return `[${this.injectOptions.method} ${this.injectOptions.url}] `;
   }
 }

@@ -1,11 +1,13 @@
-import { AppError, AppErrorCode, AsyncResult, ErrorHelper, R, Result, StdErrors } from '@hexancore/common';
+import { AppError, AppErrorCode, AsyncResult, ErrorHelper, R, Result, StdErrors, getLogger, type Logger } from '@hexancore/common';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import * as http2 from 'http2';
 import { HttpStatus } from '@nestjs/common';
 import { CookieSerializeOptions, UnsignResult } from '@fastify/cookie';
+import {default as Reply} from 'fastify/lib/reply';
+import { kRouteContext } from 'fastify/lib/symbols';
 
 export interface FRequestCookie {
-  cookies: { [cookieName: string]: string | undefined };
+  cookies: { [cookieName: string]: string | undefined; };
 
   /**
    * Unsigns the specified cookie using the secret provided.
@@ -17,7 +19,7 @@ export interface FRequestCookie {
 export declare type FRequest = FastifyRequest & FRequestCookie;
 
 export interface FResponseCookie {
-  cookies: { [cookieName: string]: string | undefined };
+  cookies: { [cookieName: string]: string | undefined; };
 
   /**
    * Set response cookie
@@ -44,6 +46,37 @@ export interface FResponseCookie {
 export declare type FResponse = FastifyReply<http2.Http2Server> & FResponseCookie;
 
 export declare type HttpMethod = 'DELETE' | 'GET' | 'HEAD' | 'PATCH' | 'POST' | 'PUT' | 'OPTIONS';
+
+let RAW_RESPONSE_LOGGER = null;
+
+export function isNativeResponse(response: any): boolean {
+  return !('status' in response);
+}
+
+export function toFResponse(response: FResponse | FResponse['raw'], logger?: Logger): FResponse {
+  if (!isNativeResponse(response)) {
+    return response as FResponse;
+  }
+
+  const request = {
+    [kRouteContext]: {
+      preSerialization: null,
+      preValidation: [],
+      preHandler: [],
+      onSend: [],
+      onError: [],
+    },
+  };
+
+  if (!logger) {
+    if (!RAW_RESPONSE_LOGGER) {
+      RAW_RESPONSE_LOGGER = getLogger('raw_response_logger', ['http']);
+    }
+    logger = RAW_RESPONSE_LOGGER;
+  }
+  console.log(Reply);
+  return new Reply(response, request, RAW_RESPONSE_LOGGER);
+}
 
 export function createErrorResponseBody(error: AppError): Record<string, any> {
   let body: Record<string, any>;

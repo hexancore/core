@@ -45,7 +45,7 @@ describe('UncaughtErrorCatcher', () => {
     const error = new UnauthorizedException(new AppError({ type: 'test', code: 401 }));
 
     expectsHttpArgumentsHost();
-    expectsResponseSend(401, {type: "test", code: 401});
+    expectsResponseSend(401, { type: "test", code: 401 });
 
     catcher.catch(error, argumentsHost.i as ArgumentsHost);
   });

@@ -1,37 +1,45 @@
 import { HcHttpModule } from '@';
 import { HttpAppTestWrapper } from '@/Test/Http/HttpAppTestHelper';
 import { OK } from '@hexancore/common';
-import { Controller, Get, Module, Post, Body, HttpStatus } from '@nestjs/common';
+import { Body, Controller, Get, Global, HttpStatus, Module, Param, ParseIntPipe, Post } from '@nestjs/common';
 
 interface Fruit {
+  id: number;
   name: string;
 }
 
 @Controller({ path: 'fruits' })
 class FruitsController {
-  private fruits: Array<Fruit>;
+  private fruits: Map<number, Fruit>;
 
   public constructor() {
-    this.fruits = [];
+    this.fruits = new Map();
   }
 
   @Post('')
   public create(@Body() body: Record<string, any>) {
-    this.fruits.push({ name: body.name });
+    this.fruits.set(1, { id: 1, name: body.name });
     return OK(null);
   }
 
   @Get('')
   public getList() {
-    return OK(this.fruits);
+    return OK(Array.from(this.fruits.values()));
+  }
+
+  @Get(':id')
+  public get(@Param('id', ParseIntPipe) id: number) {
+    return OK(this.fruits.get(id));
   }
 }
 
+@Global()
 @Module({
   controllers: [FruitsController],
   imports: [HcHttpModule]
 })
-class FruitModule {}
+class FruitModule {
+}
 
 describe('HttpApp', () => {
   let app: HttpAppTestWrapper;
@@ -40,11 +48,14 @@ describe('HttpApp', () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    if (app) {
+      await app.close();
+    }
   });
 
   test('Http Communication', async () => {
-    await app.post('/fruits', { name: 'banana' }).expectStatusCode(HttpStatus.CREATED);
-    await app.get('/fruits').expectJson([{ name: 'banana' }]);
+    await app.post('/fruits', { name: 'banana', }).expectJson(null, HttpStatus.CREATED);
+    await app.get('/fruits/1').expectJson({id: 1, name: 'banana' });
+    await app.get('/fruits').expectJson([{ id: 1, name: 'banana' }]);
   });
 });

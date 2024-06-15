@@ -1,23 +1,24 @@
 import * as http from 'http';
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { InjectPayload } from 'light-my-request';
-import { createHttpApp } from '@/Infrastructure/Http/Bootstrap/HttpAppFactory';
+import { HttpAppFactory } from '@/Infrastructure/Http/Bootstrap/HttpAppFactory';
 import { TestHttpResponse } from './TestHttpResponse';
 import { HttpMethod } from '@/Infrastructure';
 
 export interface InjectRequestOptions {
   payload?: InjectPayload;
-  query?: string | { [k: string]: string | string[] };
+  query?: string | { [k: string]: string | string[]; };
   authority?: string;
-  cookies?: { [k: string]: string };
+  cookies?: { [k: string]: string; };
   headers?: http.IncomingHttpHeaders | http.OutgoingHttpHeaders;
 }
 
 export class HttpAppTestWrapper {
-  public constructor(public wrapped: NestFastifyApplication) {}
+  public constructor(public wrapped: NestFastifyApplication) { }
 
   public static async create(mainModule: any): Promise<HttpAppTestWrapper> {
-    const app = await createHttpApp({
+    const appFactory = new HttpAppFactory();
+    const app = await appFactory.create({
       mainModule,
     });
     await app.init();
@@ -29,12 +30,21 @@ export class HttpAppTestWrapper {
   }
 
   public r(method: HttpMethod, path: string, options?: InjectRequestOptions): TestHttpResponse {
+    options = options ?? ({});
+    if (options.cookies) {
+      const f = this.wrapped.getHttpAdapter().getInstance();
+      for (const p in options.cookies) {
+        options.cookies[p] = f.signCookie(options.cookies[p]);
+      }
+
+    }
     return new TestHttpResponse(
-      this.wrapped.inject({
+      {
         method: method,
         url: path,
         ...options,
-      }),
+      },
+      this.wrapped
     );
   }
 

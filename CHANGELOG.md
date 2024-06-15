@@ -6,11 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- update deps
+- reworked http part
+
+### Removed
+
+- removed redis module(@hexancore/cloud now supports redis intergation)
+
 ## [0.14.0] - 2024-02-11
 
 ### Changed
 
-- Module in places directly in `src/`
+- module in places directly in `src/`
 
 ## [0.13.2] - 2024-02-01
 
@@ -18,13 +27,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- update dep @hexancore/common to 0.13.2
+- updated dep @hexancore/common to 0.13.2
 
 ## [0.13.0] - 2024-01-25
 
 ### Changed
 
-- update dep @hexancore/common to 0.13.0
+- updated dep @hexancore/common to 0.13.0
 
 ## [0.12.6] - 2024-01-07
 

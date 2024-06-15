@@ -1,9 +1,12 @@
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import multipartPlugin from '@fastify/multipart';
-import cookiePlugin from '@fastify/cookie';
+import cookiePlugin, { type FastifyCookieOptions } from '@fastify/cookie';
 import corsPlugin from '@fastify/cors';
 import { UncaughtErrorCatcher } from '../UncaughtErrorCatcher';
 import { FastifyHttp2Options, FastifyHttp2SecureOptions, FastifyHttpsOptions, FastifyServerOptions } from 'fastify';
+import { SecretsService } from '@/Infrastructure/Config';
+import { APP_PATHS } from '@/Infrastructure/AppPaths';
+import { AppErrorCode, ERR, type DefineErrorsUnion } from '@hexancore/common';
 
 export type FastifyAdapterErrorHandler = Parameters<FastifyAdapter['setErrorHandler']>[0];
 
@@ -12,6 +15,12 @@ export interface FPluginRegisterOptions<PC = any, O = Record<string, any>> {
   pluginClass: PC;
   options: O;
 }
+
+export const FastifyErrors = {
+  'cookie_invalid_secret': 'core.infra.http.fastify.cookie.invalid_secret'
+} as const;
+
+export type FastifyErrors<K extends keyof typeof FastifyErrors> = DefineErrorsUnion<typeof FastifyErrors, K, 'internal'>;
 
 export const STD_PLUGINS: Record<string, FPluginRegisterOptions> = {
   multipart: {
@@ -22,7 +31,7 @@ export const STD_PLUGINS: Record<string, FPluginRegisterOptions> = {
         fieldNameSize: 100,
         fieldSize: 16384,
         fields: 10,
-        fileSize: 1000000, // 1MB
+        fileSize: 2000000, // 2MB
         files: 1,
         headerPairs: 2000,
       },
@@ -31,10 +40,22 @@ export const STD_PLUGINS: Record<string, FPluginRegisterOptions> = {
   cookie: {
     name: 'cookie',
     pluginClass: cookiePlugin,
-    options: {
-      secret: 'test',
-      parseOptions: {},
-    },
+    options: (secrets: SecretsService): FastifyCookieOptions => {
+      const secret = secrets.get('core.http.cookie.sign').onOk((v) => {
+        const parsed = v.split("\n").filter((v) => v.length !== 0);
+        if (parsed.length === 0) {
+          return ERR({ type: FastifyErrors.cookie_invalid_secret, code: AppErrorCode.INTERNAL_ERROR, message: "empty secret list" });
+        }
+        return parsed;
+      });
+
+      secret.panicIfError();
+
+      return {
+        secret: secret.v,
+        parseOptions: {},
+      };
+    }
   },
   cors: {
     name: 'cors',
@@ -63,7 +84,12 @@ export class FastifyAdapterFactory {
     const errorHandler = this.createErrorHandler(options.errorCatcher);
     a.setErrorHandler(errorHandler);
 
+    const secrets = new SecretsService(APP_PATHS.secretsDir);
+
     for (const p of options.plugins) {
+      if (typeof p.options === 'function') {
+        p.options = p.options(secrets);
+      }
       await a.getInstance().register(p.pluginClass, p.options);
     }
 

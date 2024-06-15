@@ -1,7 +1,7 @@
 import { AppError, getLogger, INTERNAL_ERROR, isAppError, Logger, LogicError, pascalCaseToSnakeCase } from '@hexancore/common';
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpArgumentsHost } from '@nestjs/common/interfaces';
-import { FResponse, sendErrorResponse } from './RestHelperFunctions';
+import { FResponse, sendErrorResponse, toFResponse } from './RestHelperFunctions';
 
 @Catch()
 export class UncaughtErrorCatcher implements ExceptionFilter {
@@ -23,7 +23,7 @@ export class UncaughtErrorCatcher implements ExceptionFilter {
   }
 
   protected processErrorInHttp(error: unknown, args: HttpArgumentsHost): void {
-    const response = args.getResponse();
+    const response = toFResponse(args.getResponse());
 
     if (this.isHttpException(error)) {
       this.processHttpException(error, response);
@@ -59,6 +59,7 @@ export class UncaughtErrorCatcher implements ExceptionFilter {
   }
 
   public processInternalError(error: Error, response: FResponse): void {
+    response = toFResponse(response);
     const internalError = INTERNAL_ERROR(error);
     this.logger.log(internalError);
     sendErrorResponse(internalError, response);
