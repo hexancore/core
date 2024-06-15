@@ -3,7 +3,7 @@ import multipartPlugin from '@fastify/multipart';
 import cookiePlugin, { type FastifyCookieOptions } from '@fastify/cookie';
 import corsPlugin from '@fastify/cors';
 import { UncaughtErrorCatcher } from '../UncaughtErrorCatcher';
-import fastify, { FastifyHttp2Options, FastifyHttp2SecureOptions, FastifyHttpsOptions, FastifyServerOptions } from 'fastify';
+import { FastifyHttp2Options, FastifyHttp2SecureOptions, FastifyHttpsOptions, FastifyServerOptions } from 'fastify';
 import { SecretsService } from '@/Infrastructure/Config';
 import { APP_PATHS } from '@/Infrastructure/AppPaths';
 import { AppErrorCode, ERR, type DefineErrorsUnion } from '@hexancore/common';

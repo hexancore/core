@@ -47,7 +47,7 @@ export class SecretsService {
   ): R<T, JsonErrors<'parse'> | SecretsErrors<'file_read' | 'not_found'>> {
     const c = this.get(key)
       .onOk((v: string) => JsonHelper.parse(v)
-        .onErr((e) => ERR({ type: SecretsErrors.json_invalid, code: AppErrorCode.INTERNAL_ERROR, data: { secretKey: key } })));
+        .onErr((e) => ERR({ type: SecretsErrors.json_invalid, code: AppErrorCode.INTERNAL_ERROR, data: { secretKey: key }, cause: e })));
     return c as any;
   }
 

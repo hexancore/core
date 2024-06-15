@@ -23,7 +23,7 @@ export class UncaughtErrorCatcher implements ExceptionFilter {
   }
 
   protected processErrorInHttp(error: unknown, args: HttpArgumentsHost): void {
-    let response = toFResponse(args.getResponse());
+    const response = toFResponse(args.getResponse());
 
     if (this.isHttpException(error)) {
       this.processHttpException(error, response);

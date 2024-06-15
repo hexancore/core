@@ -1,7 +1,7 @@
-import { HcHttpModule, FRequestCookie } from '@';
+import { HcHttpModule } from '@';
 import { HttpAppTestWrapper } from '@/Test/Http/HttpAppTestHelper';
 import { OK } from '@hexancore/common';
-import { Body, Controller, Get, Global, HttpStatus, Module, Param, ParseIntPipe, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Global, HttpStatus, Module, Param, ParseIntPipe, Post } from '@nestjs/common';
 
 interface Fruit {
   id: number;
