@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { CommandBus, EventBus, ICommand, IEvent, IQuery, QueryBus } from '@nestjs/cqrs';
-import { ARW, AsyncResult, OKA, P } from '@hexancore/common';
+import { ARW, AsyncResult, OKA } from '@hexancore/common';
 import { GeneralBus } from './GeneralBus';
 
 @Injectable()
 export class DefaultGeneralBus extends GeneralBus {
-  private commandBus: CommandBus;
-  private eventBus: EventBus;
-  private queryBus: QueryBus;
-
-  public constructor(commandBus: CommandBus, eventBus: EventBus, queryBus: QueryBus) {
+  public constructor(
+    private commandBus: CommandBus,
+    private eventBus: EventBus,
+    private queryBus: QueryBus
+  ) {
     super();
     this.commandBus = commandBus;
     this.eventBus = eventBus;
@@ -26,6 +26,6 @@ export class DefaultGeneralBus extends GeneralBus {
   }
 
   public handleQuery<T>(query: IQuery): AsyncResult<T> {
-    return P(this.queryBus.execute(query));
+    return ARW(this.queryBus.execute(query));
   }
 }

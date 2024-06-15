@@ -2,7 +2,7 @@ import { ConfigurableModuleBuilder, Global, Module, Provider } from '@nestjs/com
 import { AccountId, CurrentTime, LogicError } from '@hexancore/common';
 import { HcAppConfigModule } from './Infrastructure/Config/HcAppConfigModule';
 import { HcApplicationModule } from './Application';
-import { EntityPersisterFactoryManager, HcAppRedisModule } from './Infrastructure';
+import { EntityPersisterFactoryManager } from './Infrastructure';
 import { ClsModule } from 'nestjs-cls';
 import { nanoid } from 'nanoid';
 import { AccountContext } from './Infrastructure/Account/AccountContext';
@@ -16,14 +16,12 @@ export interface HcModuleExtras {
   accountContext?: {
     useCls: boolean,
     currentAccountId?: AccountId;
-  },
-  redis?: boolean;
-
+  }
 }
 
 export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } = new ConfigurableModuleBuilder<HcModuleOptions>()
   .setClassMethodName('forRoot')
-  .setExtras<HcModuleExtras>({ cls: false, redis: false, accountContext: undefined }, (def, extras) => {
+  .setExtras<HcModuleExtras>({ cls: false, accountContext: undefined }, (def, extras) => {
     def.imports = def.imports ? def.imports : [];
     def.providers = def.providers ? def.providers : [];
     def.exports = def.exports ? def.exports : [];
@@ -58,9 +56,6 @@ export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } = new Configurabl
       def.exports.push(accountContextProvider);
     }
 
-    if (extras.redis) {
-      def.imports.push(HcAppRedisModule);
-    }
     def.global = true;
     return def;
   })

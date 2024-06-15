@@ -13,33 +13,40 @@ export interface HttpAppFactoryOptions {
   uncaughtErrorCatcher?: UncaughtErrorCatcher;
   adapter?: FastifyAdapter | FAdapterFactoryOptions;
 
-  swagger?:
-    | {
-        metadataFn?: () => Promise<Record<string, any>>;
-      }
-    | boolean;
+  swagger?: {
+    metadataFn?: () => Promise<Record<string, any>>;
+  } | boolean;
 }
 
-export async function createHttpApp(options: HttpAppFactoryOptions): Promise<NestFastifyApplication> {
-  const logger = toNestLogger(options.logger ? options.logger : getLogger('app'));
-  const errorCatcher = options.uncaughtErrorCatcher ?? new UncaughtErrorCatcher();
+export class HttpAppFactory {
 
-  let adapter = options.adapter;
-  if (!(options.adapter instanceof FastifyAdapter)) {
-    const factoryOptions = (options.adapter as FAdapterFactoryOptions) ?? FastifyAdapterFactory.createDefaultOptions(errorCatcher);
-    adapter = await FastifyAdapterFactory.create(factoryOptions);
+  public async create(options: HttpAppFactoryOptions): Promise<NestFastifyApplication> {
+    const logger = toNestLogger(options.logger ? options.logger : getLogger('app'));
+    const errorCatcher = options.uncaughtErrorCatcher ?? new UncaughtErrorCatcher();
+    const adapter = await this.createAdapter(options, errorCatcher);
+
+    const appOptions: NestApplicationOptions = {
+      logger,
+      bufferLogs: false,
+    };
+    const app = await NestFactory.create<NestFastifyApplication>(options.mainModule, adapter, appOptions);
+    app.useGlobalFilters(errorCatcher);
+
+    if (options.swagger) {
+      await setupSwagger(app, typeof options.swagger === 'boolean' ? {} : options.swagger);
+    }
+
+    return app;
   }
 
-  const appOptions: NestApplicationOptions = {
-    logger,
-  };
-
-  const app = await NestFactory.create<NestFastifyApplication>(options.mainModule, adapter as FastifyAdapter, appOptions);
-  app.useGlobalFilters(errorCatcher);
-
-  if (options.swagger) {
-    await setupSwagger(app, typeof options.swagger === 'boolean' ? {} : options.swagger);
+  protected async createAdapter(options: HttpAppFactoryOptions, errorCatcher: UncaughtErrorCatcher): Promise<FastifyAdapter> {
+    let adapter: HttpAppFactoryOptions['adapter'] = options.adapter;
+    if (!(options.adapter instanceof FastifyAdapter)) {
+      const factoryOptions = (options.adapter as FAdapterFactoryOptions) ?? FastifyAdapterFactory.createDefaultOptions(errorCatcher);
+      adapter = await FastifyAdapterFactory.create(factoryOptions);
+    }
+    adapter = adapter as FastifyAdapter;
+    return adapter;
   }
 
-  return app;
 }

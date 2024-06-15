@@ -1,4 +1,4 @@
-import { createHttpApp, HttpAppFactoryOptions } from './HttpAppFactory';
+import { HttpAppFactory, HttpAppFactoryOptions } from './HttpAppFactory';
 
 export interface HttpListenOptions {
   port: number;
@@ -13,7 +13,9 @@ export function loadListenFromEnv(): HttpListenOptions {
 }
 
 export async function httpBootstrap(options: HttpAppFactoryOptions): Promise<void> {
-  const app = await createHttpApp(options);
+  const appFactory = new HttpAppFactory();
+
+  const app = await appFactory.create(options);
   const { port, address } = loadListenFromEnv();
   await app.listen(port, address);
 }

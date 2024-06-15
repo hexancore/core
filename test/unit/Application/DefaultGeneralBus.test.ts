@@ -72,4 +72,28 @@ describe('DefaultGeneralBus', () => {
       expect(currentResult).toEqual(ERR({ type: 'test' }));
     });
   });
+
+  describe('handleQuery', () => {
+    const query = new TestQuery('test@test.com');
+
+    test('when ok', async () => {
+      const expectedResult = OKA(true);
+
+      queryBus.expects('execute', query).andReturn(expectedResult.p);
+
+      const currentResult = await gb.handleQuery(query);
+
+      expect(currentResult).toEqual(OK(true));
+    });
+
+    test('when error', async () => {
+      const expectedResult = ERRA({ type: 'test' });
+
+      queryBus.expects('execute', query).andReturn(expectedResult.p);
+
+      const currentResult = await gb.handleQuery(query);
+
+      expect(currentResult).toEqual(ERR({ type: 'test' }));
+    });
+  });
 });

@@ -1,8 +1,6 @@
 import { HttpOrderedInterceptorGroup } from '@/Infrastructure/Http/HttpOrderedInterceptorGroup';
-import { Global, MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
-import { APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
-import { CookieParserMiddleware } from './CookieParserMiddleware';
-import { FastifyAdapter } from '@nestjs/platform-fastify';
+import { Global, Module} from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 export const APP_ORDERED_INTERCEPTOR_GROUP_TOKEN = 'HC_APP_ORDERED_INTERCEPTOR_GROUP';
 @Global()
@@ -21,22 +19,4 @@ export const APP_ORDERED_INTERCEPTOR_GROUP_TOKEN = 'HC_APP_ORDERED_INTERCEPTOR_G
   ],
   exports: [APP_ORDERED_INTERCEPTOR_GROUP_TOKEN],
 })
-export class HcHttpModule implements NestModule {
-
-  private adapter: FastifyAdapter;
-
-  public constructor(adapter: HttpAdapterHost) {
-    this.adapter = adapter.httpAdapter as unknown as FastifyAdapter;
-  }
-
-  public async configure(consumer: MiddlewareConsumer): Promise<any> {
-
-    this.adapter.getInstance().addHook('preHandler', (req,_res,next) => {
-      req['cookies'] = req.raw["cookies"];
-      req['session'] = req.raw["session"];
-      next();
-    });
-
-    consumer.apply(CookieParserMiddleware).forRoutes({ path: '(.*)', method: RequestMethod.ALL });
-  }
-}
+export class HcHttpModule {}

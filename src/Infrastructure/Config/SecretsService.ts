@@ -1,4 +1,4 @@
-import { DefineErrorsUnion, ERR, JsonErrors, JsonHelper, OK, R } from '@hexancore/common';
+import { AppErrorCode, DefineErrorsUnion, ERR, JsonErrors, JsonHelper, OK, R } from '@hexancore/common';
 import { existsSync, readFileSync } from 'fs';
 
 export interface BasicAuthSecret {
@@ -10,12 +10,14 @@ export const SecretsErrors = {
   basic_auth_invalid: 'core.infra.config.secret.basic_auth_invalid',
   not_found: 'core.infra.config.secret.not_found',
   file_read: 'core.infra.config.secret.file_read',
+  not_array: 'core.infra.config.secret.not_array',
+  json_invalid: 'core.infra.config.secret.json_invalid'
 } as const;
 
 export type SecretsErrors<K extends keyof typeof SecretsErrors> = DefineErrorsUnion<typeof SecretsErrors, K, 'internal'>;
 
 export class SecretsService {
-  public constructor(private secretsDir: string) {}
+  public constructor(private secretsDir: string) { }
 
   public getAsBasicAuth(key: string): R<BasicAuthSecret, JsonErrors<'parse'> | SecretsErrors<'basic_auth_invalid' | 'file_read' | 'not_found'>> {
     return this.getFromJson<BasicAuthSecret>(key).onOk((v) => {
@@ -40,10 +42,12 @@ export class SecretsService {
     }
   }
 
-  public getFromJson<T extends Record<string, any> = Record<string, any>>(
+  public getFromJson<T = Record<string, any>>(
     key: string,
   ): R<T, JsonErrors<'parse'> | SecretsErrors<'file_read' | 'not_found'>> {
-    const c = this.get(key).onOk((v: string) => JsonHelper.parse(v));
+    const c = this.get(key)
+      .onOk((v: string) => JsonHelper.parse(v)
+        .onErr((e) => ERR({ type: SecretsErrors.json_invalid, code: AppErrorCode.INTERNAL_ERROR, data: { secretKey: key } })));
     return c as any;
   }
 

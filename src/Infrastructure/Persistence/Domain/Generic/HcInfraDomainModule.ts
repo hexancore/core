@@ -26,7 +26,7 @@ async function importDomainErrors(moduleMeta: HcAppModuleMeta): Promise<DomainEr
 
 async function importRepositoriesImpl(moduleInfraDir: string) {
   moduleInfraDir = moduleInfraDir.split(path.sep).join(path.posix.sep);
-  const pattern = 'Persistance/**/*Repository.{ts,js}';
+  const pattern = 'Persistence/**/*Repository.{ts,js}';
   const files = await glob(pattern, { absolute: true, magicalBraces: true, cwd: moduleInfraDir });
   const imports = files.map((file) => import(path.resolve(file)));
   await Promise.all(imports);

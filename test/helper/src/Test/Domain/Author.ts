@@ -3,7 +3,7 @@ import { UIntValue, ValueObject } from '@hexancore/common';
 import { Book } from './Book';
 
 @ValueObject('Test')
-export class AuthorId extends UIntValue {}
+export class AuthorId extends UIntValue<AuthorId> { }
 
 @AggregateRoot()
 export class Author extends AbstractAggregateRoot<AuthorId> {
