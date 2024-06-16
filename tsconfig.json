@@ -7,7 +7,7 @@
     "noImplicitAny": false,
     "importHelpers": true,
     "declaration": true,
-    "declarationMap": true,
+    "declarationMap": false,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
