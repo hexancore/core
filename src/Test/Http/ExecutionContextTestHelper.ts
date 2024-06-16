@@ -5,7 +5,7 @@ import { MockRequest } from './MockRequest';
 import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
 
 export class MockHttpExecutionContext extends ExecutionContextHost {
-  public constructor(public request?: MockRequest, public response?: MockResponse, public next?: () => void) {
+  public constructor(public request: MockRequest, public response: MockResponse, public next?: () => void) {
     super([request, response, next]);
   }
 

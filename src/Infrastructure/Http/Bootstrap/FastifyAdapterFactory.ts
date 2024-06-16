@@ -7,6 +7,7 @@ import { FastifyHttp2Options, FastifyHttp2SecureOptions, FastifyHttpsOptions, Fa
 import { SecretsService } from '@/Infrastructure/Config';
 import { APP_PATHS } from '@/Infrastructure/AppPaths';
 import { AppErrorCode, ERR, type DefineErrorsUnion } from '@hexancore/common';
+import Validator from 'fastest-validator';
 
 export type FastifyAdapterErrorHandler = Parameters<FastifyAdapter['setErrorHandler']>[0];
 
@@ -21,6 +22,7 @@ export const FastifyErrors = {
 } as const;
 
 export type FastifyErrors<K extends keyof typeof FastifyErrors> = DefineErrorsUnion<typeof FastifyErrors, K, 'internal'>;
+const V = new Validator();
 
 export const STD_PLUGINS: Record<string, FPluginRegisterOptions> = {
   multipart: {
@@ -41,12 +43,20 @@ export const STD_PLUGINS: Record<string, FPluginRegisterOptions> = {
     name: 'cookie',
     pluginClass: cookiePlugin,
     options: (secrets: SecretsService): FastifyCookieOptions => {
-      const secret = secrets.get('core.http.cookie.sign').onOk((v) => {
-        const parsed = v.split("\n").filter((v) => v.length !== 0);
-        if (parsed.length === 0) {
-          return ERR({ type: FastifyErrors.cookie_invalid_secret, code: AppErrorCode.INTERNAL_ERROR, message: "empty secret list" });
+      const secret = secrets.get('core.http.cookie.sign').onOk((secretRawValue) => {
+        const signSecret = secretRawValue.split('\n');
+        const check = V.compile({
+          $$root: true,
+          type: 'array',
+          items: { type: 'string', min: 26 },
+          unique: true
+        });
+
+        const checkResult = check(signSecret);
+        if (checkResult !== true) {
+          ERR(FastifyErrors.cookie_invalid_secret, AppErrorCode.INTERNAL_ERROR, checkResult).panicIfError();
         }
-        return parsed;
+        return signSecret;
       });
 
       secret.panicIfError();

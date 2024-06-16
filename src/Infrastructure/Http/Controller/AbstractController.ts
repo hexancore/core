@@ -1,10 +1,10 @@
-import type { R } from "@hexancore/common/lib/mjs";
+import { OK, type R } from "@hexancore/common";
 import { HttpStatus } from "@nestjs/common";
 import { RedirectResult } from "../RedirectResult";
 
 export class AbstractController {
 
   protected redirect(url: string, statusCode: HttpStatus = HttpStatus.FOUND): R<RedirectResult> {
-    return RedirectResult.create(url, statusCode);
+    return OK(RedirectResult.create(url, statusCode));
   }
 }

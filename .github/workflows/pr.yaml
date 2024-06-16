@@ -15,3 +15,5 @@ jobs:
         run: yarn lint
       - name: test
         uses: ./.github/actions/test
+      - name: build
+        run: yarn build

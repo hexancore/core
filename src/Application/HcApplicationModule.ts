@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { DefaultGeneralBus } from '@/Application/DefaultGeneralBus';
-import { GeneralBus } from '@/Application/GeneralBus';
+import { DefaultGeneralBus } from './DefaultGeneralBus';
+import { GeneralBus } from './GeneralBus';
 
 const GeneralBusProvider = {
   provide: GeneralBus,
