@@ -2,7 +2,7 @@ import { AsyncResult, Logger, LogicError, R, Result, SAR, getLogger, pascalCaseT
 import { CallHandler, ExecutionContext, HttpStatus, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable, map, of } from 'rxjs';
 import { GroupableInterceptor } from '../../Util/Interceptor/GroupableInterceptor';
-import { createErrorResponseBody } from '..';
+import { createErrorResponseBody, type FResponse } from '..';
 import { HttpArgumentsHost } from '@nestjs/common/interfaces';
 
 @Injectable()
@@ -50,6 +50,10 @@ export class HttpOrderedInterceptorGroup implements NestInterceptor {
         }
 
         if (this.returnUnwarpedResult) {
+          if (!args.getResponse<FResponse>().hasHeader('content-type')) {
+            args.getResponse<FResponse>().type('application/json');
+          }
+
           data = await this.unwarpResult(data);
         }
 

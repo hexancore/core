@@ -1,10 +1,23 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Changed
+
+- reworked UncaughtErrorCatcher
+
+### Removed
+
+- removed debug mode from create response body from AppError
+
+### Fixed
+
+- added default Content-Type = json in last HttpOrderedInterceptorGroup.
 
 ## [0.15.0] 2024-06-16
 
@@ -41,7 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- AppConfig - ConfigService + SecretsService in one 
+- AppConfig - ConfigService + SecretsService in one
 - SimpleAccountContext - for simplify integration testing.
 - autoload module repositories metadata
 
@@ -55,7 +68,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - HcModule - global app module with all common app stuff included
 - HcApplicationModule - global Application layer module with CQRS stuff
-- HcInfraMemoryDomainModule - to define App module domain infrastructure layer 
+- HcInfraMemoryDomainModule - to define App module domain infrastructure layer
 - HcInfraMemoryDomainModule - register basic inmemory domain entities persister
 
 ### Changed
@@ -83,6 +96,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - enchanted http test mocking part
 -
+
 ## [0.10.2] - 2023-08-01
 
 ### Added
@@ -90,13 +104,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - many changes
 
 [unreleased] https://github.com/hexancore/core/compare/0.15.0...HEAD  
-[0.13.2] https://github.com/hexancore/core/compare/0.14.0...0.15.0   
-[0.13.2] https://github.com/hexancore/core/compare/0.13.2...0.14.0   
-[0.13.2] https://github.com/hexancore/core/compare/0.13.1...0.13.2   
-[0.13.1] https://github.com/hexancore/core/compare/0.13.0...0.13.1   
-[0.13.0] https://github.com/hexancore/core/compare/0.12.6...0.13.0   
-[0.12.6] https://github.com/hexancore/core/compare/0.12.5...0.12.6   
-[0.12.5] https://github.com/hexancore/core/compare/0.12.4...0.12.5   
-[0.12.4] https://github.com/hexancore/core/compare/0.12.0...0.12.5   
-[0.12.0] https://github.com/hexancore/core/compare/0.10.2...0.12.0   
-[0.10.2] https://github.com/hexancore/core/compare/0.10.2   
+[0.13.2] https://github.com/hexancore/core/compare/0.14.0...0.15.0  
+[0.13.2] https://github.com/hexancore/core/compare/0.13.2...0.14.0  
+[0.13.2] https://github.com/hexancore/core/compare/0.13.1...0.13.2  
+[0.13.1] https://github.com/hexancore/core/compare/0.13.0...0.13.1  
+[0.13.0] https://github.com/hexancore/core/compare/0.12.6...0.13.0  
+[0.12.6] https://github.com/hexancore/core/compare/0.12.5...0.12.6  
+[0.12.5] https://github.com/hexancore/core/compare/0.12.4...0.12.5  
+[0.12.4] https://github.com/hexancore/core/compare/0.12.0...0.12.5  
+[0.12.0] https://github.com/hexancore/core/compare/0.10.2...0.12.0  
+[0.10.2] https://github.com/hexancore/core/compare/0.10.2

@@ -2,9 +2,10 @@ import { HttpStatus } from '@nestjs/common';
 import * as http from 'http';
 import { MockRequest } from './MockRequest';
 import { CookieSerializeOptions } from '@fastify/cookie';
+import type { OutgoingHttpHeaders } from 'http2';
 
 export class MockResponse {
-  private readonly headers: any;
+  private _headers: OutgoingHttpHeaders;
   public statusCode: number;
   public cookies = {};
   public clearedCookies = {};
@@ -12,7 +13,7 @@ export class MockResponse {
   private _body: any;
 
   public constructor(public request?: MockRequest) {
-    this.headers = new http.OutgoingMessage().getHeaders();
+    this._headers = new http.OutgoingMessage().getHeaders();
     this.statusCode = 200;
     this._sent = false;
     this._body = null;
@@ -24,17 +25,22 @@ export class MockResponse {
     return new MockResponse(request);
   }
 
-  public status(statusCode: number): MockResponse {
+  public status(statusCode: number): this {
     this.statusCode = statusCode;
     return this;
   }
 
-  public header(name: string, value: string): MockResponse {
-    this.headers.append(name, value);
+  public type(contentType: string): this {
+    this.header("content-type", contentType);
     return this;
   }
 
-  public send(data: any): MockResponse {
+  public header(name: keyof OutgoingHttpHeaders, value: any): this {
+    this._headers[name] = value;
+    return this;
+  }
+
+  public send(data: any): this {
     this._sent = true;
     this._body = data;
     return this;
@@ -44,12 +50,12 @@ export class MockResponse {
     return this._sent;
   }
 
-  public getHeader(name: string): string {
-    return this.headers.get(name);
+  public getHeader(name: string): any {
+    return this._headers[name];
   }
 
   public hasHeader(name: string): boolean {
-    return this.headers.has(name);
+    return this._headers[name] !== undefined;
   }
 
   public get body(): any {

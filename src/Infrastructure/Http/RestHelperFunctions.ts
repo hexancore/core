@@ -1,9 +1,9 @@
-import { AppError, AppErrorCode, AsyncResult, ErrorHelper, R, Result, StdErrors, getLogger, type Logger } from '@hexancore/common';
+import { AppError, AppErrorCode, AsyncResult, R, Result, StdErrors, getLogger, type Logger } from '@hexancore/common';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import * as http2 from 'http2';
 import { HttpStatus } from '@nestjs/common';
 import { CookieSerializeOptions, UnsignResult } from '@fastify/cookie';
-import {default as Reply} from 'fastify/lib/reply';
+import { default as Reply } from 'fastify/lib/reply';
 import { kRouteContext } from 'fastify/lib/symbols';
 
 export interface FRequestCookie {
@@ -74,44 +74,30 @@ export function toFResponse(response: FResponse | FResponse['raw'], logger?: Log
     }
     logger = RAW_RESPONSE_LOGGER;
   }
-  console.log(Reply);
-  return new Reply(response, request, RAW_RESPONSE_LOGGER);
+  return new Reply(response, request, logger);
 }
 
 export function createErrorResponseBody(error: AppError): Record<string, any> {
-  let body: Record<string, any>;
-  if (error.error) {
-    if (process.env.APP_DEBUG || process.env.NODE_ENV === 'dev' || process.env.NODE_ENV === 'test') {
-      // when debug mode add more info to response
-      body = {
-        type: error.type,
-        message: error.message,
-        error: ErrorHelper.toPlain(error.error),
-        code: AppErrorCode.INTERNAL_ERROR,
-        data: error.data,
-      };
-    } else {
-      // when is some unknown internal error and not debug mode output minimum info
-      body = {
-        type: StdErrors.internal,
-        message: 'Internal server error',
-        code: AppErrorCode.INTERNAL_ERROR,
-      };
-    }
-  } else {
-    // when well defined error
-    body = {
-      type: error.type,
-      code: error.code,
+  if (error.error || error.code >= HttpStatus.INTERNAL_SERVER_ERROR) {
+    return {
+      type: StdErrors.internal,
+      message: 'Internal server error',
+      code: AppErrorCode.INTERNAL_ERROR,
     };
+  }
 
-    if (error.data) {
-      body.data = error.data;
-    }
+  // when well defined error
+  const body: Record<string, any> = {
+    type: error.type,
+    code: error.code,
+  };
 
-    if (error.i18n) {
-      body.i18n = error.i18n;
-    }
+  if (error.data) {
+    body.data = error.data;
+  }
+
+  if (error.i18n) {
+    body.i18n = error.i18n;
   }
 
   return body;

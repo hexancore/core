@@ -42,10 +42,11 @@ export class HttpAppFactory {
   protected async createAdapter(options: HttpAppFactoryOptions, errorCatcher: UncaughtErrorCatcher): Promise<FastifyAdapter> {
     let adapter: HttpAppFactoryOptions['adapter'] = options.adapter;
     if (!(options.adapter instanceof FastifyAdapter)) {
-      const factoryOptions = (options.adapter as FAdapterFactoryOptions) ?? FastifyAdapterFactory.createDefaultOptions(errorCatcher);
+      const factoryOptions = options.adapter ?? FastifyAdapterFactory.createDefaultOptions(errorCatcher);
       adapter = await FastifyAdapterFactory.create(factoryOptions);
     }
     adapter = adapter as FastifyAdapter;
+    errorCatcher.httpAdapter = adapter;
     return adapter;
   }
 
