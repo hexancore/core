@@ -2,60 +2,77 @@
  * @group unit/core
  */
 
-import { M, Mocker } from '@hexancore/mocker';
-import { AppError, AppErrorProps } from '@hexancore/common';
-import { LoggerService, UnauthorizedException, ArgumentsHost, NotFoundException, HttpStatus } from '@nestjs/common';
-import { HttpArgumentsHost } from '@nestjs/common/interfaces';
-import { FResponse } from '@';
 import { UncaughtErrorCatcher } from '@/Infrastructure/Http/UncaughtErrorCatcher';
+import { ExecutionContextTestHelper, type MockHttpExecutionContext } from '@/Test';
+import { AppError, AppErrorCode, ErrorHelper, StdErrors } from '@hexancore/common';
+import { M } from '@hexancore/mocker';
+import { HttpStatus, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { type AbstractHttpAdapter } from '@nestjs/core';
 
 describe('UncaughtErrorCatcher', () => {
-  let logger: M<LoggerService>;
   let catcher: UncaughtErrorCatcher;
-  let response: M<FResponse>;
-  let argumentsHost: M<ArgumentsHost>;
-  let httpArgumentsHost: M<HttpArgumentsHost>;
+  let adapter: M<AbstractHttpAdapter>;
+  let context: MockHttpExecutionContext;
 
   beforeEach(() => {
-    logger = Mocker.of<LoggerService>();
+    const { adapterHost, adapterMock } = ExecutionContextTestHelper.createHttpAdapterHost();
+    adapter = adapterMock;
     catcher = new UncaughtErrorCatcher();
-
-    argumentsHost = Mocker.of<ArgumentsHost>();
-    httpArgumentsHost = Mocker.of<HttpArgumentsHost>();
-    response = Mocker.of<FResponse>();
+    catcher.httpAdapter = adapterHost.httpAdapter;
+    context = ExecutionContextTestHelper.createHttp();
   });
 
   afterEach(() => {
-    logger.checkExpections();
-    response.checkExpections();
+    adapter.checkExpections();
   });
 
-  function expectsHttpArgumentsHost() {
-    argumentsHost.expects('getType').andReturn('http');
-    argumentsHost.expects('switchToHttp').andReturn(httpArgumentsHost.i);
-    httpArgumentsHost.expects('getResponse').andReturn(response.i);
-  }
-
-  function expectsResponseSend(status: HttpStatus, expectedAppError: AppErrorProps) {
-    response.expects('status', status);
-    response.expects('send', expectedAppError);
+  function expectsResponseSend(status: HttpStatus, expectedAppError: any) {
+    adapter.expects('reply', context.getResponse(), expectedAppError, status);
   }
 
   test('catch when http and HttpException with AppError response body', () => {
     const error = new UnauthorizedException(new AppError({ type: 'test', code: 401 }));
 
-    expectsHttpArgumentsHost();
     expectsResponseSend(401, { type: "test", code: 401 });
 
-    catcher.catch(error, argumentsHost.i as ArgumentsHost);
+    catcher.catch(error, context);
   });
 
   test('catch when http and NotFoundException', () => {
     const error = new NotFoundException({ status: 404, message: 'test' });
 
-    expectsHttpArgumentsHost();
     expectsResponseSend(404, { type: 'core.infra.http.not_found_exception', data: { message: 'test' }, code: 404 });
 
-    catcher.catch(error, argumentsHost.i as ArgumentsHost);
+    catcher.catch(error, context);
+  });
+
+  test('catch when http and NotFoundException', () => {
+    const appError = new AppError({ type: "core.infra.some_internal_error", code: 400 });
+    const error = new InternalServerErrorException(appError);
+
+    expectsResponseSend(500, {
+      type: StdErrors.internal,
+      code: AppErrorCode.INTERNAL_ERROR,
+      message: "Internal server error"
+    });
+
+    catcher.catch(error, context);
+
+    const logs = catcher["logger"]["records"];
+    const expectedLogs = [{
+      level: "error",
+      message: 'core.internal_error: core.infra.some_internal_error',
+      tags: ["core", "http"],
+      context: {
+        type: StdErrors.internal,
+        code: 500,
+        error: ErrorHelper.toPlain(error),
+        cause: appError.getLogContext(),
+        data: null
+      }
+    }];
+    expect(logs).toEqual(expectedLogs);
+
+
   });
 });

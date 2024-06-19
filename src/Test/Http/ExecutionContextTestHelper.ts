@@ -3,6 +3,8 @@ import { of } from 'rxjs';
 import { MockResponse } from './MockResponse';
 import { MockRequest } from './MockRequest';
 import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
+import { HttpAdapterHost, type AbstractHttpAdapter } from '@nestjs/core';
+import { mock, type M } from '@hexancore/mocker';
 
 export class MockHttpExecutionContext extends ExecutionContextHost {
   public constructor(public request: MockRequest, public response: MockResponse, public next?: () => void) {
@@ -23,6 +25,18 @@ export class MockHttpExecutionContext extends ExecutionContextHost {
 }
 
 export class ExecutionContextTestHelper {
+
+  public static createHttpAdapter(): M<AbstractHttpAdapter> {
+    return mock('HttpAdapter');
+  }
+
+  public static createHttpAdapterHost(): { adapterMock: M<AbstractHttpAdapter>; adapterHost: HttpAdapterHost; } {
+    const adapterHost = new HttpAdapterHost();
+    const adapterMock = this.createHttpAdapter();
+    adapterHost.httpAdapter = adapterMock.i;
+    return { adapterMock, adapterHost };
+  }
+
   public static createHttp(request?: MockRequest | MockResponse, response?: MockResponse, next?: () => void): MockHttpExecutionContext {
     if (request instanceof MockResponse) {
       response = request;
@@ -32,7 +46,7 @@ export class ExecutionContextTestHelper {
       response = response ?? new MockResponse(request);
     }
 
-    next = next ?? (() => {});
+    next = next ?? (() => { });
 
     return new MockHttpExecutionContext(request, response, next);
   }
