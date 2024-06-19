@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.15.2] - 2024-06-19
+
+### Fixed
+
+- fixed wrong .npmignore filters 
+
 ## [0.15.1] - 2024-06-19
 
 ### Changed
@@ -105,7 +111,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - many changes
 
-[unreleased] https://github.com/hexancore/core/compare/0.15.1...HEAD   
+[unreleased] https://github.com/hexancore/core/compare/0.15.2...HEAD   
+[0.15.2] https://github.com/hexancore/core/compare/0.15.1...0.15.2   
 [0.15.1] https://github.com/hexancore/core/compare/0.15.0...0.15.1      
 [0.15.0] https://github.com/hexancore/core/compare/0.14.0...0.15.0     
 [0.14.0] https://github.com/hexancore/core/compare/0.13.2...0.14.0  
