@@ -2,25 +2,18 @@
  * @group integration
  */
 
-import { AggregateRootRepository, AggregateRootRepositoryManager, EntityRepository, HcModule, HcInfraMemoryDomainModule } from '@';
-import { IAggregateRootRepository } from '@/Domain/Repository/IAggregateRootRepository';
-import { HcInfraDomainModule } from '@/Infrastructure/Persistence/Domain/Generic/HcInfraDomainModule';
-import { MemoryAggregateRootRepository } from '@/Infrastructure/Persistence/Domain/Memory/MemoryAggregateRootRepository';
-import { MemoryEntityRepository } from '@/Infrastructure/Persistence/Domain/Memory/MemoryEntityRepository';
+import { HcInfraMemoryDomainModule, HcModule, InjectAggregateRootRepository } from '@';
 import { OK } from '@hexancore/common';
+import { Injectable } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TEST_MODULE_DIR } from '@test/src/Test';
-import { Author, AuthorId } from '@test/src/Test/Domain/Author';
-import { Book, BookId } from '@test/src/Test/Domain/Book';
+import { Author, AuthorId, Book, BookId, type AuthorRepository } from '@test/src/Test/Domain';
 import { TestDomainErrors } from '@test/src/Test/Domain/TestDomainErrors';
+import { PrivateTestInfraModule } from '@test/src/Test/Infrastructure/PrivateTestInfraModule';
 
-@EntityRepository(Book, 'memory')
-export class MemoryBookRepository extends MemoryEntityRepository<Book> {}
-
-interface AuthorRepository extends IAggregateRootRepository<Author> {}
-
-@AggregateRootRepository(Author, 'memory')
-export class MemoryAuthorRepository extends MemoryAggregateRootRepository<Author> implements AuthorRepository {}
+@Injectable()
+class AuthorService {
+  public constructor(@InjectAggregateRootRepository(Author) public repository: AuthorRepository) { }
+}
 
 describe('MemoryAggregateRootRepository', () => {
   let module: TestingModule;
@@ -29,15 +22,15 @@ describe('MemoryAggregateRootRepository', () => {
   beforeEach(async () => {
     module = await Test.createTestingModule({
       imports: [
-        HcModule,
+        HcModule.forRoot(),
         HcInfraMemoryDomainModule,
-        HcInfraDomainModule.forFeature({
-          moduleInfraDir: TEST_MODULE_DIR,
-        }),
+        PrivateTestInfraModule,
+
       ],
+      providers: [AuthorService]
     }).compile();
 
-    authorRepository = module.get(AggregateRootRepositoryManager).get(Author);
+    authorRepository = module.get(AuthorService).repository;
   });
 
   afterEach(async () => {

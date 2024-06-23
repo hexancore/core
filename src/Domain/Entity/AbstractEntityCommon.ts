@@ -13,7 +13,7 @@ export abstract class AbstractEntityCommon<ID extends AbstractValueObject<ID>> {
   /**
    * Entity id
    */
-  public id?: ID;
+  public id!: ID;
 
   /**
    * managed on infrastructure level by persistance layer like typeorm
@@ -23,7 +23,7 @@ export abstract class AbstractEntityCommon<ID extends AbstractValueObject<ID>> {
   /**
    * Tracks entity property modification
    */
-  public __modifiedProperties: Set<string>;
+  public __modifiedProperties?: Set<string>;
 
   /**
    * Always use `return this.proxify()` in child class
@@ -39,7 +39,7 @@ export abstract class AbstractEntityCommon<ID extends AbstractValueObject<ID>> {
           if (!this.__modifiedProperties) {
             this.__modifiedProperties = new Set();
           }
-          target.__modifiedProperties.add(prop);
+          target.__modifiedProperties!.add(prop);
         }
         target[prop] = val;
         return true;
@@ -51,7 +51,7 @@ export abstract class AbstractEntityCommon<ID extends AbstractValueObject<ID>> {
    * @return true if entity has any property changes
    */
   public get __modified(): boolean {
-    return this.__modifiedProperties && this.__modifiedProperties.size > 0;
+    return this.__modifiedProperties !== undefined && this.__modifiedProperties.size > 0;
   }
 
   public __track(): void {

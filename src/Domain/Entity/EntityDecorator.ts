@@ -7,6 +7,9 @@ import { HcAppModuleMeta } from '@/Util/ModuleHelper';
 
 export const ENTITY_META_PROPERTY = '__HC_ENTITY_META';
 
+/**
+ * Represents common metadata of Entities and AggregateRoots.
+ */
 export abstract class EntityMetaCommon<T> {
   public name: string;
   public nameSnake: string;
@@ -16,20 +19,29 @@ export abstract class EntityMetaCommon<T> {
     this.nameSnake = pascalCaseToSnakeCase(entityClass.name);
   }
 
+  /**
+   * Returns `<moduleName>.<entityName>`
+   */
   public get fullname(): string {
     return this.module + '.' + this.name;
   }
 
+  /**
+   * Returns name of entity module
+   */
   public get module(): string {
     return this.moduleMeta.name;
   }
 
+  /**
+   * Returns module metadata where Entity belongs.
+   */
   public abstract get moduleMeta(): HcAppModuleMeta;
 }
 
 export class EntityMeta<T extends AnyEntity> extends EntityMetaCommon<T> {
-  private _aggregateRootClass: AggregateRootConstructor<AggregateRootOf<T>>;
-  public aggregateRootClassProvider: () => AggregateRootConstructor<AggregateRootOf<T>>;
+  private _aggregateRootClass!: AggregateRootConstructor<AggregateRootOf<T>>;
+  public aggregateRootClassProvider!: () => AggregateRootConstructor<AggregateRootOf<T>>;
 
   public constructor(entityClass: EntityConstructor<T>, public readonly moduleMeta: HcAppModuleMeta) {
     super(entityClass);
@@ -69,7 +81,7 @@ export class EntityCollectionMeta<T extends AnyEntity> {
   public constructor(public readonly entityClass: EntityConstructor<T>, public readonly property: string) {}
 }
 export class AggregateRootMeta<T extends AnyAggregateRoot> extends EntityMetaCommon<T> {
-  private _collections: Map<string, EntityCollectionMeta<AnyEntity>>;
+  private _collections!: Map<string, EntityCollectionMeta<AnyEntity>>;
 
   public constructor(
     entityClass: AggregateRootConstructor<T>,

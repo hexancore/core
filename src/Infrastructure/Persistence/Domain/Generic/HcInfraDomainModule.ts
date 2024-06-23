@@ -1,4 +1,4 @@
-import { AggregateRootRepositoryManager } from '@/Domain';
+import { AggregateRootRepositoryManager, getAggregateRootRepositoryToken } from '../../../../Domain';
 import { HcAppModuleMeta } from '@/Util/ModuleHelper';
 import { ConfigurableModuleBuilder, DynamicModule, Module, ModuleMetadata } from '@nestjs/common';
 import { InfraAggregateRootRepositoryManager } from './Manager';
@@ -6,8 +6,11 @@ import { EntityPersisterFactoryManager } from './Persister';
 import { DomainErrors, LogicError } from '@hexancore/common';
 import { glob } from 'glob';
 import path from 'path';
+import { AggregateRootRepositoryProxyHandler } from './AggregateRootRepositoryProxyHandler';
 
-export interface HcInfraDomainModuleOptions {}
+export interface HcInfraDomainModuleOptions {
+  moduleInfraDir: string;
+}
 
 export type HcInfraDomainModuleExtra = Pick<ModuleMetadata, 'imports' | 'exports' | 'providers'>;
 
@@ -32,7 +35,7 @@ async function importRepositoriesImpl(moduleInfraDir: string) {
   await Promise.all(imports);
 }
 
-const { ConfigurableModuleClass } = new ConfigurableModuleBuilder<HcInfraDomainModuleOptions>()
+const { ConfigurableModuleClass, OPTIONS_TYPE } = new ConfigurableModuleBuilder<HcInfraDomainModuleOptions>()
   .setExtras<HcInfraDomainModuleExtra>(
     {
       imports: [],
@@ -48,21 +51,37 @@ const { ConfigurableModuleClass } = new ConfigurableModuleBuilder<HcInfraDomainM
 
 @Module({})
 export class HcInfraDomainModule extends ConfigurableModuleClass {
-  public static forFeature(options: { moduleInfraDir: string } & HcInfraDomainModuleExtra): DynamicModule {
+
+  public static async forFeature(options: typeof OPTIONS_TYPE): Promise<DynamicModule> {
     const moduleMeta = HcAppModuleMeta.fromPath(options.moduleInfraDir);
     const m = super.register(options);
-    m.providers.push(AggregateRootRepositoryManager);
-    m.providers.push({
+
+    await importRepositoriesImpl(options.moduleInfraDir);
+
+    m.providers!.push(AggregateRootRepositoryManager);
+    m.providers!.push({
       provide: InfraAggregateRootRepositoryManager,
       inject: [EntityPersisterFactoryManager],
       useFactory: async (factoryManager: EntityPersisterFactoryManager) => {
         const domainErrors = await importDomainErrors(moduleMeta);
-        await importRepositoriesImpl(options.moduleInfraDir);
-
         return new InfraAggregateRootRepositoryManager(moduleMeta, factoryManager, domainErrors);
       },
     });
-    m.exports.push(AggregateRootRepositoryManager);
+    m.exports!.push(AggregateRootRepositoryManager);
+
+
+    const aggregateRootMetas = InfraAggregateRootRepositoryManager.getModuleAggregateRootMetas(moduleMeta.name);
+    for (const meta of aggregateRootMetas) {
+      const provider = {
+        provide: getAggregateRootRepositoryToken(meta.entityClass),
+        useFactory: (manager: AggregateRootRepositoryManager) => {
+          return AggregateRootRepositoryProxyHandler.create(manager, meta.entityClass);
+        },
+        inject: [AggregateRootRepositoryManager]
+      };
+      m.providers?.push(provider);
+      m.exports?.push(provider);
+    }
 
     return m;
   }

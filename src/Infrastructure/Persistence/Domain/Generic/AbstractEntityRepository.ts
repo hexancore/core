@@ -36,7 +36,7 @@ export abstract class AbstractEntityRepository<
   protected collectCollection(entity: OneOrIterable<AggregateRootOf<T>>): IEntityCollection<T, any>[] {
     const collectionProperty = this.ENTITY_META.rootCollectionProperty;
     if (isIterable(entity)) {
-      const collected = [];
+      const collected: IEntityCollection<T, any>[] = [];
       for (const e of entity as Iterable<AggregateRootOf<T>>) {
         collected.push(e[collectionProperty]);
       }

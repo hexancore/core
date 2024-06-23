@@ -47,7 +47,7 @@ export declare type FResponse = FastifyReply<http2.Http2Server> & FResponseCooki
 
 export declare type HttpMethod = 'DELETE' | 'GET' | 'HEAD' | 'PATCH' | 'POST' | 'PUT' | 'OPTIONS';
 
-let RAW_RESPONSE_LOGGER = null;
+let RAW_RESPONSE_LOGGER: Logger|undefined = undefined;
 
 export function isNativeResponse(response: any): boolean {
   return !('status' in response);
@@ -135,7 +135,7 @@ export async function sendAsyncResultResponse(result: AsyncResult<any>, response
 export function checkResultAndSendOnError<T>(result: Result<T>, response: FResponse): R<T> {
   if (result.isError()) {
     sendErrorResponse(result.e, response);
-    return null;
+    return null as any;
   }
 
   return result;

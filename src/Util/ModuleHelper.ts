@@ -11,16 +11,17 @@ export function isModuleExists(name: string): boolean {
 }
 
 export class HcAppModuleMeta {
-  public constructor(public readonly name: string, public readonly rootPath: string) {}
+  public constructor(public readonly name: string, public readonly rootPath: string) { }
 
   public static fromError(e: Error, metaForId: string): HcAppModuleMeta {
-    const stack = e.stack.split('\n');
-    let foundModuleMeta = null;
+
+    const stack = e.stack ? e.stack.split('\n') : [];
+    let foundModuleMeta: HcAppModuleMeta | null = null;
     for (const i in stack) {
       const v = stack[i];
       if (v.indexOf('Domain') !== -1 && v.indexOf('EntityDecorator') === -1) {
         const regex = /\(([^)]+)\)/;
-        const match = v.match(regex);
+        const match: RegExpMatchArray = regex.exec(v) as any;
         foundModuleMeta = HcAppModuleMeta.fromPath(match[1]);
         break;
       }
@@ -34,7 +35,7 @@ export class HcAppModuleMeta {
   public static fromPath(path: string): HcAppModuleMeta {
     path = path.split(pathModule.sep).join(pathModule.posix.sep);
     const extractModuleNameRegex = /src\/([^/]+)/;
-    const extractModuleMatch = path.match(extractModuleNameRegex);
+    const extractModuleMatch = extractModuleNameRegex.exec(path);
     if (!extractModuleMatch) {
       throw new LogicError('Not found module name in path: ' + path);
     }

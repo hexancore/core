@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.15.3] - 2024-06-23
+
+### Added 
+
+- @InjectAggregateRootRepository decorator with lazy repository instancing
+
 ## [0.15.2] - 2024-06-19
 
 ### Fixed
@@ -111,7 +117,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - many changes
 
-[unreleased] https://github.com/hexancore/core/compare/0.15.2...HEAD   
+[unreleased] https://github.com/hexancore/core/compare/0.15.3...HEAD   
+[0.15.3] https://github.com/hexancore/core/compare/0.15.2...0.15.3   
 [0.15.2] https://github.com/hexancore/core/compare/0.15.1...0.15.2   
 [0.15.1] https://github.com/hexancore/core/compare/0.15.0...0.15.1      
 [0.15.0] https://github.com/hexancore/core/compare/0.14.0...0.15.0     

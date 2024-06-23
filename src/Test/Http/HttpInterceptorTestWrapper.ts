@@ -5,7 +5,7 @@ import { MockRequest } from './MockRequest';
 import { Observable, firstValueFrom } from 'rxjs';
 
 export class HttpInterceptorTestWrapper<T extends NestInterceptor> {
-  public context: MockHttpExecutionContext;
+  public context!: MockHttpExecutionContext;
 
   public constructor(public w: T) {}
 
