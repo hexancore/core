@@ -17,5 +17,5 @@ export async function httpBootstrap(options: HttpAppFactoryOptions): Promise<voi
 
   const app = await appFactory.create(options);
   const { port, address } = loadListenFromEnv();
-  await app.listen(port, address);
+  await app.listen(port, address!);
 }

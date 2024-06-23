@@ -33,6 +33,10 @@ export class EntityRepositoryManager extends EntityRepositoryManagerCommon<
     }
 
     const ctr = EntityRepositoryManager.__repositoryConstructors.get(meta.fullname);
+    if (!ctr) {
+      throw new LogicError('Missing entity repository constructor of: ' + meta.fullname);
+    }
+
     ctr[DOMAIN_ERRORS_PROPERTY] = this.errors;
     return ctr;
   }

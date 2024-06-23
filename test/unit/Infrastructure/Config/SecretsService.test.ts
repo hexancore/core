@@ -10,7 +10,7 @@ import { OK } from '@hexancore/common';
 
 describe('SecretsService', () => {
   let service: SecretsService;
-  const secretsDir = path.join(process.env['TEST_TMP_DIR'], 'SecretsServiceTest');
+  const secretsDir = path.join(process.env['TEST_TMP_DIR']!, 'SecretsServiceTest');
 
   function writeSecret(value: string | Record<string, any>) {
     fs.writeFileSync(path.join(secretsDir, 'test'), typeof value === 'string' ? value : JSON.stringify(value));
@@ -45,7 +45,7 @@ describe('SecretsService', () => {
     test('when invalid json', () => {
       writeSecret("{'invalid'}");
       const r = service.getFromJson('test');
-      expect(r).toMatchAppError({ type: SecretsErrors.json_parse });
+      expect(r).toMatchAppError({ type: SecretsErrors.json_invalid });
     });
   });
 

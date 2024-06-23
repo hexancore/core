@@ -1,4 +1,4 @@
-import { AggregateRootConstructor, AggregateRootMeta, AnyAggregateRoot, ENTITY_META_PROPERTY, IAggregateRootRepository } from '@/Domain';
+import { AggregateRootConstructor, AggregateRootMeta, AnyAggregateRoot, ENTITY_META_PROPERTY, IAggregateRootRepository } from '../../../../../Domain';
 import { DomainErrors, LogicError } from '@hexancore/common';
 import { AbstractAggregateRootRepository, AnyAggregateRootRepository } from '../AbstractAggregateRootRepository';
 import { AggregateRootRepositoryConstructor } from '../EntityRepositoryDecorator';
@@ -14,10 +14,9 @@ export class InfraAggregateRootRepositoryManager extends EntityRepositoryManager
   AggregateRootConstructor,
   IAggregateRootRepository<AnyAggregateRoot>
 > {
-  /**
-   * @internal
-   */
-  protected static __repositoryConstructors: Map<string, AggregateRootRepositoryConstructor>;
+
+  protected static repositoryConstructors: Map<string, AggregateRootRepositoryConstructor>;
+  protected static modulesRepositoryConstructors: Map<string, Map<string, AggregateRootRepositoryConstructor>>;
 
   protected entityRepositoryManager: EntityRepositoryManager;
 
@@ -37,7 +36,11 @@ export class InfraAggregateRootRepositoryManager extends EntityRepositoryManager
       throw new LogicError('Getting repository for other module aggregate root: ' + meta.fullname);
     }
 
-    const ctr = InfraAggregateRootRepositoryManager.__repositoryConstructors.get(meta.fullname);
+    const ctr = InfraAggregateRootRepositoryManager.repositoryConstructors.get(meta.fullname);
+    if (!ctr) {
+      throw new LogicError('Missing aggregate root repository constructor of: ' + meta.fullname);
+    }
+
     ctr[DOMAIN_ERRORS_PROPERTY] = this.errors;
     return ctr;
   }
@@ -46,10 +49,29 @@ export class InfraAggregateRootRepositoryManager extends EntityRepositoryManager
    * @internal
    */
   public static __registerRepositoryConstructor(ctr: AggregateRootRepositoryConstructor): void {
-    if (!this.__repositoryConstructors) {
-      this.__repositoryConstructors = new Map();
+    if (!this.repositoryConstructors) {
+      this.repositoryConstructors = new Map();
+      this.modulesRepositoryConstructors = new Map();
     }
 
-    this.__repositoryConstructors.set(ctr[ENTITY_META_PROPERTY].fullname, ctr);
+    const meta: AggregateRootMeta<AnyAggregateRoot> = ctr[ENTITY_META_PROPERTY];
+    this.repositoryConstructors.set(meta.fullname, ctr);
+
+    let modulesRepositoryCtrs = this.modulesRepositoryConstructors.get(meta.module);
+    if (!modulesRepositoryCtrs) {
+      modulesRepositoryCtrs = new Map();
+      this.modulesRepositoryConstructors.set(meta.module, modulesRepositoryCtrs);
+    }
+
+    modulesRepositoryCtrs.set(meta.name, ctr);
+  }
+
+  public static getModuleAggregateRootMetas(module: string): AggregateRootMeta<AnyAggregateRoot>[] {
+    const constructors = this.modulesRepositoryConstructors.get(module);
+    if (!constructors) {
+      return [];
+    }
+
+    return Array.from(constructors.values()).map((c) => c[ENTITY_META_PROPERTY]);
   }
 }

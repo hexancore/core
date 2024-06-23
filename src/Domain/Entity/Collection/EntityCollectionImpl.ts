@@ -15,7 +15,7 @@ export class EntityCollectionImpl<T extends AnyEntity, Q extends EntityCollectio
   private added: T[] = [];
   private updated: T[] = [];
   private removed: T[] = [];
-  public q: Q;
+  public q!: Q;
 
   public rootIdProperty: string;
 
@@ -91,7 +91,7 @@ export class EntityCollectionImpl<T extends AnyEntity, Q extends EntityCollectio
 
   public async getAllAsArray(options?: GetQueryOptions<T>): ARP<T[]> {
     this.checkHasQueries();
-    const b = [];
+    const b: T[] = [];
     for await (const row of this.q.all(options)) {
       if (row.isError()) {
         return ERR(row.e);

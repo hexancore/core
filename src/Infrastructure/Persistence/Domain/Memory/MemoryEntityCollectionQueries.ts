@@ -5,7 +5,7 @@ import { MemoryEntityRepository } from './MemoryEntityRepository';
 export class MemoryEntityCollectionQueries<T extends AbstractEntity<any, any>, RepositoryType extends MemoryEntityRepository<T>>
   implements EntityCollectionQueriesImpl<T>
 {
-  public collection: EntityCollectionImpl<T>;
+  public collection!: EntityCollectionImpl<T>;
 
   public constructor(public r: RepositoryType) {}
 
@@ -19,13 +19,12 @@ export class MemoryEntityCollectionQueries<T extends AbstractEntity<any, any>, R
 
       if (entities.isError()) {
         yield ERRA<T>(entities.e).p;
+        return;
       }
 
       for (const entity of entities.v) {
         yield OKA(entity);
       }
-
-      return;
     }
 
     return g();

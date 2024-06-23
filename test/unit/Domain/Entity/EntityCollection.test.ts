@@ -2,7 +2,7 @@
  * @group unit/core
  */
 import { Author, AuthorId } from '@test/src/Test/Domain/Author';
-import { Book } from '@test/src/Test/Domain/Book';
+import { Book } from '@test/src/Test/Domain/Author/Book';
 import { AGGREGATE_ROOT_META, EntityCollectionMeta } from '../../../../src';
 
 describe('EntityCollection', () => {

@@ -2,7 +2,7 @@ import { AppMeta } from '@hexancore/common';
 import path from 'path';
 
 export class AppPaths {
-  private paths: Record<string, string>;
+  private paths!: Record<string, string>;
 
   public get home(): string {
     this.load();

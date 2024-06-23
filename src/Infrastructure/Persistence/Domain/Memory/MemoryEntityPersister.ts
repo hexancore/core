@@ -1,4 +1,4 @@
-import { AbstractEntityCommon,  EntityMetaCommon,  EntityIdTypeOf } from '@/Domain';
+import { AbstractEntityCommon, EntityMetaCommon, EntityIdTypeOf } from '@/Domain';
 import { AR, AbstractValueObject, AsyncResult, CurrentTime, OK, OKA, wrapToArray } from '@hexancore/common';
 import { AbstractEntityPersister, AbstractEntityRepositoryCommon } from '../Generic';
 
@@ -42,13 +42,13 @@ export class MemoryEntityPersister<T extends AbstractEntityCommon<any>, M extend
   public delete(entity: T | T[]): AR<number> {
     entity = wrapToArray(entity);
 
-    const left = [];
+    const left: T[] = [];
     let deleteCount = 0;
 
     entity.forEach((e) => {
       const index = this.persisted.findIndex((v) => v.id.equals(e.id));
       if (index !== -1) {
-        delete this.persisted[index];
+        this.persisted.splice(index);
         deleteCount++;
       }
     });
@@ -90,10 +90,8 @@ export class MemoryEntityPersister<T extends AbstractEntityCommon<any>, M extend
           if (!criteria[prop].equals(e[prop])) {
             return false;
           }
-        } else {
-          if (e[prop] !== criteria[prop]) {
-            return false;
-          }
+        } else if (e[prop] !== criteria[prop]) {
+          return false;
         }
       }
 
