@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.15.4] - 2024-06-24
+
+### Fixed
+
+- fixed AggregateRootRepositoryProxyHandler `get` trap when checking `then` in NestJs DI
+
 ## [0.15.3] - 2024-06-23
 
-### Added 
+### Added
 
 - @InjectAggregateRootRepository decorator with lazy repository instancing
 
@@ -17,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- fixed wrong .npmignore filters 
+- fixed wrong .npmignore filters
 
 ## [0.15.1] - 2024-06-19
 
@@ -117,11 +123,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - many changes
 
-[unreleased] https://github.com/hexancore/core/compare/0.15.3...HEAD   
-[0.15.3] https://github.com/hexancore/core/compare/0.15.2...0.15.3   
-[0.15.2] https://github.com/hexancore/core/compare/0.15.1...0.15.2   
-[0.15.1] https://github.com/hexancore/core/compare/0.15.0...0.15.1      
-[0.15.0] https://github.com/hexancore/core/compare/0.14.0...0.15.0     
+[unreleased] https://github.com/hexancore/core/compare/0.15.4...HEAD   
+[0.15.4] https://github.com/hexancore/core/compare/0.15.3...0.15.4   
+[0.15.3] https://github.com/hexancore/core/compare/0.15.2...0.15.3  
+[0.15.2] https://github.com/hexancore/core/compare/0.15.1...0.15.2  
+[0.15.1] https://github.com/hexancore/core/compare/0.15.0...0.15.1  
+[0.15.0] https://github.com/hexancore/core/compare/0.14.0...0.15.0  
 [0.14.0] https://github.com/hexancore/core/compare/0.13.2...0.14.0  
 [0.13.2] https://github.com/hexancore/core/compare/0.13.1...0.13.2  
 [0.13.1] https://github.com/hexancore/core/compare/0.13.0...0.13.1  
