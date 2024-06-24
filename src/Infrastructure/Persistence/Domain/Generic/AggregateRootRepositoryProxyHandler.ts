@@ -22,6 +22,11 @@ export class AggregateRootRepositoryProxyHandler<R extends IAggregateRootReposit
   }
 
   public get(_target: any, p: any, _receiver: any): any {
+    // skip thenable check in nestjs providers
+    if (p === 'then') {
+      return undefined;
+    }
+    
     if (!this.repository) {
       this.repository = this.manager.get<R>(this.entityClass);
       if (p === 'proxyUnwrap') {
