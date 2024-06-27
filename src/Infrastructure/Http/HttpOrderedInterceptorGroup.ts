@@ -1,13 +1,13 @@
 import { AsyncResult, Logger, LogicError, R, Result, SAR, getLogger, pascalCaseToSnakeCase } from '@hexancore/common';
 import { CallHandler, ExecutionContext, HttpStatus, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable, map, of } from 'rxjs';
-import { GroupableInterceptor } from '../../Util/Interceptor/GroupableInterceptor';
+import { GroupableInterceptor } from './GroupableInterceptor';
 import { createErrorResponseBody, type FResponse } from '..';
 import { HttpArgumentsHost } from '@nestjs/common/interfaces';
 
 @Injectable()
 export class HttpOrderedInterceptorGroup implements NestInterceptor {
-  protected interceptors: { priority: number; interceptor: GroupableInterceptor<HttpArgumentsHost> }[] = [];
+  protected interceptors: { priority: number; interceptor: GroupableInterceptor<HttpArgumentsHost>; }[] = [];
   protected argumentsHostExtractor: (context: ExecutionContext) => HttpArgumentsHost;
   protected logger: Logger;
 

@@ -1,5 +1,6 @@
 export * from './RestHelperFunctions';
 export * from './HttpOrderedInterceptorGroup';
+export * from './GroupableInterceptor';
 export * from './UncaughtErrorCatcher';
 export * from './RedirectResult';
 
