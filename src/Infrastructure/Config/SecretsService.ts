@@ -1,5 +1,5 @@
 import { AppErrorCode, DefineErrorsUnion, ERR, JsonErrors, JsonHelper, OK, R } from '@hexancore/common';
-import { existsSync, readFileSync } from 'fs';
+import { existsSync, readFileSync } from 'node:fs';
 
 export interface BasicAuthSecret {
   username: string;
@@ -42,9 +42,7 @@ export class SecretsService {
     }
   }
 
-  public getFromJson<T = Record<string, any>>(
-    key: string,
-  ): R<T, JsonErrors<'parse'> | SecretsErrors<'file_read' | 'not_found'>> {
+  public getFromJson<T>(key: string): R<T, JsonErrors<'parse'> | SecretsErrors<'file_read' | 'not_found'>> {
     const c = this.get(key)
       .onOk((v: string) => JsonHelper.parse(v)
         .onErr((e) => ERR({ type: SecretsErrors.json_invalid, code: AppErrorCode.INTERNAL_ERROR, data: { secretKey: key }, cause: e })));

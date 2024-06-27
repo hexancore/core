@@ -1,5 +1,5 @@
 import { AppMeta } from '@hexancore/common';
-import path from 'path';
+import path from 'node:path';
 
 export class AppPaths {
   private paths!: Record<string, string>;
@@ -27,7 +27,8 @@ export class AppPaths {
     }
 
     const appHome = process.env.APP_HOME ?? process.cwd();
-    const configDir = process.env.APP_CONFIG_DIR ?? path.posix.join(appHome, 'config', AppMeta.get().env);
+    const configMultiApps = !!(process.env.APP_CONFIG_MULTI_APPS && process.env.APP_CONFIG_MULTI_APPS == "1");
+    const configDir = process.env.APP_CONFIG_DIR ?? this.getDefaultConfigDir(appHome, configMultiApps);
     const secretsDir = process.env.APP_SECRETS_DIR ?? path.posix.join(configDir, 'secrets');
 
     this.paths = {
@@ -36,6 +37,14 @@ export class AppPaths {
       configFilePath: path.posix.join(configDir, 'config.yaml'),
       secretsDir: secretsDir,
     };
+  }
+
+  private getDefaultConfigDir(appHome: string, configMultiApps: boolean): string {
+    const appMeta = AppMeta.get();
+    if (configMultiApps) {
+      return path.posix.join(appHome, 'config', appMeta.id, appMeta.env);
+    }
+    return path.posix.join(appHome, 'config', appMeta.env);
   }
 }
 

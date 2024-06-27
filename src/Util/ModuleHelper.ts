@@ -1,5 +1,5 @@
 import { LogicError } from '@hexancore/common';
-import pathModule from 'path';
+import pathModule from 'node:path';
 
 export function isModuleExists(name: string): boolean {
   try {
