@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { SecretsService, type BasicAuthSecret, type SecretsErrors } from './SecretsService';
-import { type R, OK, ERR, AppErrorCode, type JsonErrors, type DefineErrorsUnion } from '@hexancore/common';
+import { SecretsService, type BasicAuthSecret } from './SecretsService';
+import { type R, OK, ERR, AppErrorCode, type DefineErrorsUnion } from '@hexancore/common';
 
 export const AppConfigErrors = {
   property_not_found: 'core.infra.config.property_not_found',
@@ -15,7 +15,7 @@ export class AppConfig {
 
   }
 
-  public get<T>(propertyPath: string): R<T> {
+  public get<T = any>(propertyPath: string): R<T> {
     const value = this.config.get<T>(propertyPath);
     if (value === undefined) {
       return ERR(AppConfigErrors.property_not_found, AppErrorCode.INTERNAL_ERROR, { propertyPath });
@@ -24,40 +24,32 @@ export class AppConfig {
     return OK(value as T);
   }
 
-  public getOrPanic<T>(propertyPath: string): R<T> {
+  public getOrDefault<T = any>(propertyPath: string, defaultValue: T): T {
+    return this.config.get<T>(propertyPath, defaultValue);
+  }
+
+  public getOrPanic<T = any>(propertyPath: string): T {
     const r = this.get<T>(propertyPath);
     r.panicIfError();
-    return r;
+    return r.v;
   }
 
-  public getSecret(key: string, panicIfError = true): R<string, SecretsErrors<'file_read' | 'not_found'>> {
+  public getSecret(key: string): string {
     const r = this.secrets.get(key);
-    if (panicIfError) {
-      r.panicIfError();
-      return undefined as any;
-    }
-
-    return r;
+    r.panicIfError();
+    return r.v;
   }
 
-  public getSecretFromJson<T>(key: string, panicIfError = true): R<T, JsonErrors<'parse'> | SecretsErrors<'file_read' | 'not_found'>> {
+  public getSecretFromJson<T>(key: string): T {
     const r = this.secrets.getFromJson<T>(key);
-    if (panicIfError) {
-      r.panicIfError();
-      return undefined as any;
-    }
-
-    return r;
+    r.panicIfError();
+    return r.v;
   }
 
-  public getSecretAsBasicAuth(key: string, panicIfError = true): R<BasicAuthSecret, JsonErrors<'parse'> | SecretsErrors<'basic_auth_invalid' | 'file_read' | 'not_found'>> {
+  public getSecretAsBasicAuth(key: string): BasicAuthSecret {
     const r = this.secrets.getAsBasicAuth(key);
-    if (panicIfError) {
-      r.panicIfError();
-      return undefined as any;
-    }
-
-    return r;
+    r.panicIfError();
+    return r.v;
   }
 
 }

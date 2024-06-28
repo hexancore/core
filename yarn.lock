@@ -610,7 +610,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fastify/multipart@npm:8.3.0":
+"@fastify/multipart@npm:^8.3.0":
   version: 8.3.0
   resolution: "@fastify/multipart@npm:8.3.0"
   dependencies:
@@ -624,7 +624,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fastify/swagger@npm:8.14.0":
+"@fastify/swagger@npm:^8.14.0":
   version: 8.14.0
   resolution: "@fastify/swagger@npm:8.14.0"
   dependencies:
@@ -662,8 +662,8 @@ __metadata:
     "@fastify/cookie": "npm:^9.3.1"
     "@fastify/cors": "npm:^9.0.1"
     "@fastify/middie": "npm:^8.3.0"
-    "@fastify/multipart": "npm:8.3.0"
-    "@fastify/swagger": "npm:8.14.0"
+    "@fastify/multipart": "npm:^8.3.0"
+    "@fastify/swagger": "npm:^8.14.0"
     "@hexancore/common": "npm:^0.15.0"
     "@hexancore/mocker": "npm:^1.1.2"
     "@nestjs/cli": "npm:^10.3.2"
@@ -680,11 +680,10 @@ __metadata:
     "@typescript-eslint/parser": "npm:^7.13.1"
     class-transformer: "npm:^0.5.1"
     deep-equal: "npm:^2.2.3"
-    dotenv: "npm:^16.0.3"
     eslint: "npm:^8.3.0"
     eslint-plugin-unused-imports: "npm:^3.0.0"
     fastest-validator: "npm:^1.18.0"
-    fastify: "npm:4.27.0"
+    fastify: "npm:^4.28.0"
     file-type: "npm:16.5.4"
     fs-extra: "npm:^11.1.1"
     glob: "npm:^10.3.10"
@@ -2977,7 +2976,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:16.4.5, dotenv@npm:^16.0.3":
+"dotenv@npm:16.4.5":
   version: 16.4.5
   resolution: "dotenv@npm:16.4.5"
   checksum: 10c0/48d92870076832af0418b13acd6e5a5a3e83bb00df690d9812e94b24aff62b88ade955ac99a05501305b8dc8f1b0ee7638b18493deb6fe93d680e5220936292f
@@ -3490,6 +3489,30 @@ __metadata:
     semver: "npm:^7.5.4"
     toad-cache: "npm:^3.3.0"
   checksum: 10c0/879e9d3f6b9521bea29255c79ca1ddf3dd4c017937a25e7348d7686625c7dd56f21af18e6db2ecdd41d07e5c73a779ab0bb1f5d6b081909bf3e8caadaf669160
+  languageName: node
+  linkType: hard
+
+"fastify@npm:^4.28.0":
+  version: 4.28.0
+  resolution: "fastify@npm:4.28.0"
+  dependencies:
+    "@fastify/ajv-compiler": "npm:^3.5.0"
+    "@fastify/error": "npm:^3.4.0"
+    "@fastify/fast-json-stringify-compiler": "npm:^4.3.0"
+    abstract-logging: "npm:^2.0.1"
+    avvio: "npm:^8.3.0"
+    fast-content-type-parse: "npm:^1.1.0"
+    fast-json-stringify: "npm:^5.8.0"
+    find-my-way: "npm:^8.0.0"
+    light-my-request: "npm:^5.11.0"
+    pino: "npm:^9.0.0"
+    process-warning: "npm:^3.0.0"
+    proxy-addr: "npm:^2.0.7"
+    rfdc: "npm:^1.3.0"
+    secure-json-parse: "npm:^2.7.0"
+    semver: "npm:^7.5.4"
+    toad-cache: "npm:^3.3.0"
+  checksum: 10c0/24307900a5ef5b8d6357d3cec40abf621859b8f6e3a046bfc5a45ec7fedec42c51bde0bb3c5913f7badd91d5d69a485e1f3e0e2310483103fabc472cb0e122cd
   languageName: node
   linkType: hard
 

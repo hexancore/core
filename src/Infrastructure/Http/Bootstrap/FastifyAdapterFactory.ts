@@ -1,7 +1,7 @@
 import { FastifyAdapter } from '@nestjs/platform-fastify';
-import multipartPlugin from '@fastify/multipart';
+import multipartPlugin, { type FastifyMultipartOptions } from '@fastify/multipart';
 import cookiePlugin, { type FastifyCookieOptions } from '@fastify/cookie';
-import corsPlugin from '@fastify/cors';
+import corsPlugin, { type FastifyCorsOptions } from '@fastify/cors';
 import { UncaughtErrorCatcher } from '../UncaughtErrorCatcher';
 import { FastifyHttp2Options, FastifyHttp2SecureOptions, FastifyHttpsOptions, FastifyServerOptions } from 'fastify';
 import { SecretsService } from '@/Infrastructure/Config';
@@ -82,30 +82,33 @@ export const STD_PLUGINS: Record<string, FPluginRegisterOptions> = {
 
 export interface FAdapterFactoryOptions {
   errorCatcher: UncaughtErrorCatcher;
-  adapter: FastifyHttp2Options<any> | FastifyHttp2SecureOptions<any> | FastifyHttpsOptions<any> | FastifyServerOptions<any>;
+  instanceOptions: FastifyHttp2Options<any> | FastifyHttp2SecureOptions<any> | FastifyHttpsOptions<any> | FastifyServerOptions<any>;
   plugins: FPluginRegisterOptions[];
+}
+
+export interface FAdapterStdPluginsOptions {
+  cookie?: boolean,
+  cors?: boolean | FastifyCorsOptions,
+  multipart?: boolean | FastifyMultipartOptions,
 }
 
 export class FastifyAdapterFactory {
   public static async create(options: FAdapterFactoryOptions): Promise<FastifyAdapter> {
-    options.adapter.pluginTimeout = options.adapter.pluginTimeout ?? 20000;
-    const a = new FastifyAdapter(options.adapter as any);
+    const adapter = new FastifyAdapter(options.instanceOptions as any);
 
     const errorHandler = this.createErrorHandler(options.errorCatcher);
-    a.setErrorHandler(errorHandler);
+    adapter.setErrorHandler(errorHandler);
 
     const secrets = new SecretsService(APP_PATHS.secretsDir);
-
     for (const p of options.plugins) {
       if (typeof p.options === 'function') {
         p.options = p.options(secrets);
       }
-      await a.getInstance().register(p.pluginClass, p.options);
+      await adapter.getInstance().register(p.pluginClass, p.options);
     }
 
-    a.getInstance().decorateRequest('session');
-
-    return a as any;
+    adapter.getInstance().decorateRequest('session');
+    return adapter;
   }
 
   private static createErrorHandler(errorCatcher: UncaughtErrorCatcher): FastifyAdapterErrorHandler {
@@ -114,13 +117,39 @@ export class FastifyAdapterFactory {
     };
   }
 
-  public static createDefaultOptions(errorCatcher: UncaughtErrorCatcher): FAdapterFactoryOptions {
-    return {
-      errorCatcher,
-      adapter: {
-        pluginTimeout: 20000,
-      },
-      plugins: [STD_PLUGINS.cookie, STD_PLUGINS.cors, STD_PLUGINS.multipart],
-    };
+  public static createDefaultOptions(
+    errorCatcher: UncaughtErrorCatcher,
+    stdPlugins?: FAdapterStdPluginsOptions,
+    instanceOptions?: FAdapterFactoryOptions['instanceOptions']
+  ): FAdapterFactoryOptions {
+
+    stdPlugins = stdPlugins ?? ({});
+    const plugins: FPluginRegisterOptions[] = [];
+
+    if (stdPlugins.cookie) {
+      plugins.push(STD_PLUGINS.cookie);
+    }
+
+    if (stdPlugins.cors) {
+      plugins.push({
+        name: STD_PLUGINS.cors.name,
+        pluginClass: STD_PLUGINS.cors.pluginClass,
+        options: typeof stdPlugins.cors === 'object' ? stdPlugins.cors : STD_PLUGINS.cors.options
+      });
+    }
+
+    if (stdPlugins.multipart) {
+      plugins.push({
+        name: STD_PLUGINS.multipart.name,
+        pluginClass: STD_PLUGINS.multipart.pluginClass,
+        options: typeof stdPlugins.multipart === 'object' ? stdPlugins.multipart : STD_PLUGINS.multipart.options
+      });
+    }
+
+    instanceOptions = instanceOptions ?? ({
+      pluginTimeout: 20000,
+    });
+
+    return { errorCatcher, instanceOptions, plugins };
   }
 }

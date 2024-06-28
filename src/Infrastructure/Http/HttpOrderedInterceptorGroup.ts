@@ -2,7 +2,7 @@ import { AsyncResult, Logger, LogicError, R, Result, SAR, getLogger, pascalCaseT
 import { CallHandler, ExecutionContext, HttpStatus, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable, map, of } from 'rxjs';
 import { GroupableInterceptor } from './GroupableInterceptor';
-import { createErrorResponseBody, type FResponse } from '..';
+import { createErrorResponseBody, type FResponse } from './';
 import { HttpArgumentsHost } from '@nestjs/common/interfaces';
 
 @Injectable()

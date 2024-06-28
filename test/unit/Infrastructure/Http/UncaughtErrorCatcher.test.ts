@@ -3,7 +3,7 @@
  */
 
 import { UncaughtErrorCatcher } from '@/Infrastructure/Http/UncaughtErrorCatcher';
-import { ExecutionContextTestHelper, type MockHttpExecutionContext } from '@/Test';
+import { ExecutionContextTestHelper, type MockHttpExecutionContext } from '@/Test/Http';
 import { AppError, AppErrorCode, ErrorHelper, StdErrors } from '@hexancore/common';
 import { M } from '@hexancore/mocker';
 import { HttpStatus, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';

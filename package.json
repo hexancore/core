@@ -17,10 +17,22 @@
         "default": "./lib/index.js"
       }
     },
+    "./http": {
+      "default": {
+        "types": "./lib/Infrastructure/Http/index.d.ts",
+        "default": "./lib/Infrastructure/Http/index.js"
+      }
+    },
     "./testing": {
       "default": {
         "types": "./lib/Test/index.d.ts",
         "default": "./lib/Test/index.js"
+      }
+    },
+    "./testing/http": {
+      "default": {
+        "types": "./lib/Test/Http/index.d.ts",
+        "default": "./lib/Test/Http/index.js"
       }
     }
   },
@@ -58,13 +70,12 @@
     "@fastify/cookie": "^9.3.1",
     "@fastify/cors": "^9.0.1",
     "@fastify/middie": "^8.3.0",
-    "@fastify/multipart": "8.3.0",
-    "@fastify/swagger": "8.14.0",
+    "@fastify/multipart": "^8.3.0",
+    "@fastify/swagger": "^8.14.0",
     "class-transformer": "^0.5.1",
     "deep-equal": "^2.2.3",
-    "dotenv": "^16.0.3",
     "fastest-validator": "^1.18.0",
-    "fastify": "4.27.0",
+    "fastify": "^4.28.0",
     "file-type": "16.5.4",
     "fs-extra": "^11.1.1",
     "glob": "^10.3.10",

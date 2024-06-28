@@ -4,15 +4,18 @@ import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify
 import { UncaughtErrorCatcher } from '../UncaughtErrorCatcher';
 import { setupSwagger } from './SwaggerSetupHelper';
 import { toNestLogger } from '@/Util';
-import { FAdapterFactoryOptions, FastifyAdapterFactory } from './FastifyAdapterFactory';
-import { getLogger, Logger } from '@hexancore/common';
+import { FastifyAdapterFactory, type FAdapterFactoryOptions, type FAdapterStdPluginsOptions, type FPluginRegisterOptions } from './FastifyAdapterFactory';
+import { AppMeta, getLogger, Logger } from '@hexancore/common';
 
 export interface HttpAppFactoryOptions {
-  mainModule: any;
   logger?: Logger;
   uncaughtErrorCatcher?: UncaughtErrorCatcher;
-  adapter?: FastifyAdapter | FAdapterFactoryOptions;
-
+  adapter?: {
+    instance?: FastifyAdapter,
+    instanceOptions?: FAdapterFactoryOptions['instanceOptions'],
+    stdPlugins?: FAdapterStdPluginsOptions,
+    customPlugins?: FPluginRegisterOptions[];
+  };
   swagger?: {
     metadataFn?: () => Promise<Record<string, any>>;
   } | boolean;
@@ -20,32 +23,46 @@ export interface HttpAppFactoryOptions {
 
 export class HttpAppFactory {
 
-  public async create(options: HttpAppFactoryOptions): Promise<NestFastifyApplication> {
-    const logger = toNestLogger(options.logger ? options.logger : getLogger('app'));
-    const errorCatcher = options.uncaughtErrorCatcher ?? new UncaughtErrorCatcher();
-    const adapter = await this.createAdapter(options, errorCatcher);
-
+  public async create(mainModule: any, options?: HttpAppFactoryOptions): Promise<NestFastifyApplication> {
+    const logger = toNestLogger(options?.logger ? options.logger : getLogger('app'));
+    const errorCatcher = options?.uncaughtErrorCatcher ?? new UncaughtErrorCatcher();
+    const adapter = await this.createAdapter(errorCatcher, options?.adapter);
     const appOptions: NestApplicationOptions = {
       logger,
       bufferLogs: false,
     };
-    const app = await NestFactory.create<NestFastifyApplication>(options.mainModule, adapter, appOptions);
+    const app = await NestFactory.create<NestFastifyApplication>(mainModule, adapter, appOptions);
     app.useGlobalFilters(errorCatcher);
 
-    if (options.swagger) {
-      await setupSwagger(app, typeof options.swagger === 'boolean' ? {} : options.swagger);
+    if (options?.swagger !== false) {
+      const enable = !!(options?.swagger || AppMeta.get().isDev());
+      if (enable) {
+        await setupSwagger(app, options?.swagger === undefined || options?.swagger === true ? {} : options.swagger);
+      }
+
     }
 
     return app;
   }
 
-  protected async createAdapter(options: HttpAppFactoryOptions, errorCatcher: UncaughtErrorCatcher): Promise<FastifyAdapter> {
-    let adapter: HttpAppFactoryOptions['adapter'] = options.adapter;
-    if (!(options.adapter instanceof FastifyAdapter)) {
-      const factoryOptions = options.adapter ?? FastifyAdapterFactory.createDefaultOptions(errorCatcher);
-      adapter = await FastifyAdapterFactory.create(factoryOptions);
+  protected async createAdapter(errorCatcher: UncaughtErrorCatcher, options?: HttpAppFactoryOptions['adapter']): Promise<FastifyAdapter> {
+    if (options?.instance instanceof FastifyAdapter) {
+      const adapter = options.instance as FastifyAdapter;
+      errorCatcher.httpAdapter = adapter;
+      return adapter;
     }
-    adapter = adapter as FastifyAdapter;
+
+    const factoryOptions = FastifyAdapterFactory.createDefaultOptions(
+      errorCatcher,
+      options?.stdPlugins,
+      options?.instanceOptions
+    );
+
+    if (options?.customPlugins) {
+      factoryOptions.plugins.push(...options.customPlugins);
+    }
+
+    const adapter = await FastifyAdapterFactory.create(factoryOptions);
     errorCatcher.httpAdapter = adapter;
     return adapter;
   }

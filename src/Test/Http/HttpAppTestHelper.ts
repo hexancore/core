@@ -1,9 +1,10 @@
 import * as http from 'http';
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { InjectPayload } from 'light-my-request';
-import { HttpAppFactory } from '@/Infrastructure/Http/Bootstrap/HttpAppFactory';
+import { HttpAppFactory, type HttpAppFactoryOptions } from '@/Infrastructure/Http/Bootstrap/HttpAppFactory';
 import { TestHttpResponse } from './TestHttpResponse';
-import { HttpMethod } from '@/Infrastructure';
+import { HttpMethod } from '@/Infrastructure/Http';
+import { LogicError } from '@hexancore/common';
 
 export interface InjectRequestOptions {
   payload?: InjectPayload;
@@ -16,11 +17,9 @@ export interface InjectRequestOptions {
 export class HttpAppTestWrapper {
   public constructor(public wrapped: NestFastifyApplication) { }
 
-  public static async create(mainModule: any): Promise<HttpAppTestWrapper> {
+  public static async create(mainModule: any, options?: HttpAppFactoryOptions): Promise<HttpAppTestWrapper> {
     const appFactory = new HttpAppFactory();
-    const app = await appFactory.create({
-      mainModule,
-    });
+    const app = await appFactory.create(mainModule, options);
     await app.init();
     return new HttpAppTestWrapper(app);
   }
@@ -32,8 +31,11 @@ export class HttpAppTestWrapper {
   public r(method: HttpMethod, path: string, options?: InjectRequestOptions): TestHttpResponse {
     options = options ?? ({});
     if (options.cookies) {
-      const f = this.wrapped.getHttpAdapter().getInstance();
+      const f: any = this.wrapped.getHttpAdapter().getInstance();
       for (const p in options.cookies) {
+        if (!f.signCookie) {
+          throw new LogicError("No cookie plugin registered in FastifyInstance");
+        }
         options.cookies[p] = f.signCookie(options.cookies[p]);
       }
 
