@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { SecretsService, type BasicAuthSecret, type SecretsErrors } from './SecretsService';
-import { type R, OK, ERR, AppErrorCode, type JsonErrors, type DefineErrorsUnion } from '@hexancore/common';
+import { SecretsService, type BasicAuthSecret } from './SecretsService';
+import { type R, OK, ERR, AppErrorCode, type DefineErrorsUnion } from '@hexancore/common';
 
 export const AppConfigErrors = {
   property_not_found: 'core.infra.config.property_not_found',

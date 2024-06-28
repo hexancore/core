@@ -59,7 +59,7 @@ export class HttpAppFactory {
     );
 
     if (options?.customPlugins) {
-      factoryOptions.plugins.push(...options?.customPlugins);
+      factoryOptions.plugins.push(...options.customPlugins);
     }
 
     const adapter = await FastifyAdapterFactory.create(factoryOptions);
