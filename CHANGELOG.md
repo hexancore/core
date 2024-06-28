@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.16.1] - 2024-06-28
+
+### Changed
+
+- reworked AppConfig methods
+- reworked Http
+
 ## [0.16.0] - 2024-06-27
 
 ### Added
@@ -134,7 +141,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - many changes
 
-[unreleased] https://github.com/hexancore/core/compare/0.16.0...HEAD   
+[unreleased] https://github.com/hexancore/core/compare/0.16.1...HEAD   
+[0.16.1] https://github.com/hexancore/core/compare/0.16.0...0.16.1   
 [0.16.0] https://github.com/hexancore/core/compare/0.15.4...0.16.0   
 [0.15.4] https://github.com/hexancore/core/compare/0.15.3...0.15.4  
 [0.15.3] https://github.com/hexancore/core/compare/0.15.2...0.15.3  
