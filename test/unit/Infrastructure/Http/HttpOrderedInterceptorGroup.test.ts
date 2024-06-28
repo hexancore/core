@@ -3,9 +3,9 @@
  */
 import { OK } from '@hexancore/common';
 import { HttpOrderedInterceptorGroup } from '@/Infrastructure/Http/HttpOrderedInterceptorGroup';
-import { HttpInterceptorTestWrapper } from '@/Test';
+import { HttpInterceptorTestWrapper } from '@/Test/Http';
 import { mock } from '@hexancore/mocker';
-import { GroupableInterceptor } from '@';
+import { GroupableInterceptor } from '@/Infrastructure/Http';
 
 describe('HttpOrderedInterceptorGroup ', () => {
   let interceptor: HttpInterceptorTestWrapper<HttpOrderedInterceptorGroup>;

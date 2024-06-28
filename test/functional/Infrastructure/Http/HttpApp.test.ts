@@ -1,4 +1,4 @@
-import { HcHttpModule } from '@';
+import { HcHttpModule } from '@/Infrastructure/Http';
 import { HttpAppTestWrapper } from '@/Test/Http/HttpAppTestHelper';
 import { OK } from '@hexancore/common';
 import { Body, Controller, Get, Global, HttpStatus, Module, Param, ParseIntPipe, Post } from '@nestjs/common';
