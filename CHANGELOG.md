@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.16.2] - 2024-06-29
+
+### Fixed
+
+- added @fastify/static back
+
 ## [0.16.1] - 2024-06-28
 
 ### Changed
@@ -141,7 +147,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - many changes
 
-[unreleased] https://github.com/hexancore/core/compare/0.16.1...HEAD   
+[unreleased] https://github.com/hexancore/core/compare/0.16.2...HEAD   
+[0.16.2] https://github.com/hexancore/core/compare/0.16.1...0.16.2   
 [0.16.1] https://github.com/hexancore/core/compare/0.16.0...0.16.1   
 [0.16.0] https://github.com/hexancore/core/compare/0.15.4...0.16.0   
 [0.15.4] https://github.com/hexancore/core/compare/0.15.3...0.15.4  
