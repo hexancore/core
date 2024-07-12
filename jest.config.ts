@@ -2,12 +2,23 @@ import { pathsToModuleNameMapper } from 'ts-jest';
 import { compilerOptions } from './tsconfig.json';
 import type { JestConfigWithTsJest } from 'ts-jest';
 
+const rootDir = (__dirname + "/test/helper/libs/test-lib").replaceAll("\\", "/");
+
 const jestConfig: JestConfigWithTsJest = {
   preset: "ts-jest",
   runner: "groups",
   roots: [__dirname],
   modulePaths: [__dirname],
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: "<rootDir>" }),
+  transform: {
+    '^.+\\.ts?$': ['<rootDir>/lib/Compiler/Jest', {
+      rootDir,
+      tsconfig: 'tsconfig.json',
+      astTransformers: {
+        before: [{ path: './lib/Compiler/transformer', options: { sourceRoot: rootDir + "/src" } }]
+      }
+    }]
+  },
   testMatch: ["<rootDir>/test/**/*.test.ts"],
   setupFiles: [],
   setupFilesAfterEnv: ["jest-expect-message", "<rootDir>/test/config.ts"],
