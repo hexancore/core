@@ -1,5 +1,12 @@
 import { LogicError } from '@hexancore/common';
+import type { Type } from '@nestjs/common';
+import { INJECTABLE_WATERMARK } from '@nestjs/common/constants';
+import path from 'node:path';
 import pathModule from 'node:path';
+
+export function isInjectable(metatype: Type<any>): boolean {
+  return !!Reflect.getMetadata(INJECTABLE_WATERMARK, metatype);
+}
 
 export function isModuleExists(name: string): boolean {
   try {
@@ -8,6 +15,21 @@ export function isModuleExists(name: string): boolean {
   } catch (error) {
     return false;
   }
+}
+
+export function determineDirWithErrorStack(depthLevel = 2): string {
+  try {
+    throw new Error("GET_LIB_ROOT_PATH");
+  } catch (e) {
+    return extractDirFromError(e as Error, depthLevel + 1);
+  }
+}
+
+export function extractDirFromError(e: Error, stackDepth: number): string {
+  const stack = e.stack!.split('\n', stackDepth + 1);
+  const regex = /\((.*?):\d+:\d+\)/;
+  const match = regex.exec(stack[stackDepth]);
+  return path.dirname(match![1].replaceAll('\\', '/'));
 }
 
 export class HcAppModuleMeta {

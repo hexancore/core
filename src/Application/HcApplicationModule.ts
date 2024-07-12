@@ -10,8 +10,9 @@ const GeneralBusProvider = {
 
 @Global()
 @Module({
-  imports: [CqrsModule],
+  imports: [CqrsModule.forRoot()],
   providers: [GeneralBusProvider],
   exports: [GeneralBusProvider],
 })
-export class HcApplicationModule {}
+export class HcApplicationModule {
+}

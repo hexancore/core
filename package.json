@@ -23,6 +23,18 @@
         "default": "./lib/Infrastructure/Http/index.js"
       }
     },
+    "./compiler/jest": {
+      "default": {
+        "types": "./lib/Compiler/Jest/index.d.ts",
+        "default": "./lib/Compiler/Jest/index.js"
+      }
+    },
+    "./compiler/transformer": {
+      "default": {
+        "types": "./lib/Compiler/transformer.d.ts",
+        "default": "./lib/Compiler/transformer.js"
+      }
+    },
     "./testing": {
       "default": {
         "types": "./lib/Test/index.d.ts",
@@ -48,9 +60,10 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint \"{src,test}/**/*.ts\"",
     "lint:fix": "eslint \"{src,test}/**/*.ts\" --fix",
-    "jest": "node --disable-warning=ExperimentalWarning --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.config.ts",
+    "jest": "node --disable-warning=ExperimentalWarning --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.config.ts --runInBand",
     "test": "yarn run jest --runInBand",
-    "test:clearCache": "yarn run jest --clearCache",
+    "test:cc": "yarn run jest --clearCache",
+    "test:compiler": "yarn run build yarn && run test:cc && yarn run test",
     "test:unit": "yarn run jest --runInBand  --group=unit",
     "test:watch": "yarn run jest --runInBand --watchAll",
     "test:cov": "yarn run jest --coverage",
@@ -77,6 +90,7 @@
     "deep-equal": "^2.2.3",
     "fastest-validator": "^1.18.0",
     "fastify": "^4.28.0",
+    "fdir": "^6.1.1",
     "file-type": "16.5.4",
     "fs-extra": "^11.1.1",
     "glob": "^10.3.10",

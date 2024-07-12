@@ -17,7 +17,7 @@ yarn.lock
 .editorconfig
 .eslintrc.js
 .eslintignore
-.jestrc.json
+jest.config.ts
 /config/
 CONTRIBUTION.md
 /tmp/
@@ -27,3 +27,4 @@ node_modules/
 Makefile
 .swcrc
 CHANGELOG.md
+SECURITY.md

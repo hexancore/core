@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import path from 'path';
+import path from 'node:path';
 import { existsSync, mkdirSync } from 'fs';
 import '@hexancore/common/testing/jest';
 

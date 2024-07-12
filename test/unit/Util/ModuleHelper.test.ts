@@ -1,5 +1,5 @@
 /**
- * @group unit/core
+ * @group unit
  */
 import { HcAppModuleMeta, isModuleExists } from '@/Util/ModuleHelper';
 
@@ -21,6 +21,7 @@ describe('ModuleHelper', () => {
       const current = HcAppModuleMeta.fromPath(path);
 
       expect(current).toEqual(new HcAppModuleMeta('Test', 'anypath/noise/src/Test'));
+
     });
   });
 
