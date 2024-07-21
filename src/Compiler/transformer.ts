@@ -1,17 +1,18 @@
-import { FeatureModuleDiscoverer } from '../Util/FeatureModuleDiscoverer';
-import ts from 'typescript';
-import { FeatureModuleTsTransformer } from './Transformer/FeatureModuleTsTransformer';
 import { readFileSync } from 'fs';
 import path from 'path';
+import ts from 'typescript';
 import { FsHelper } from '../Util/Filesystem/FsHelper';
+import { FeatureTsTransformer } from './Transformer/Feature/FeatureTsTransformer';
 
 let transformerProgramContext: {
   sourceRoot: string,
   transformPredicate: (sourceFile: ts.SourceFile) => boolean;
-  featureModuleTransformer: FeatureModuleTsTransformer;
+  featureTransformer: FeatureTsTransformer;
 };
 
-let pluginConfigContext: { sourceRoot?: string; };
+let pluginConfigContext: {
+  sourceRoot?: string;
+};
 
 function initTransformerContext(context: ts.TransformationContext) {
   if (!pluginConfigContext.sourceRoot) {
@@ -19,11 +20,10 @@ function initTransformerContext(context: ts.TransformationContext) {
   }
 
   const sourceRoot = pluginConfigContext.sourceRoot = FsHelper.normalizePathSep(pluginConfigContext.sourceRoot);
-  const compilerDir = FsHelper.normalizePathSep(__dirname);
   transformerProgramContext = {
     sourceRoot,
     transformPredicate: (source: ts.SourceFile) => FsHelper.normalizePathSep(source.fileName).startsWith(sourceRoot),
-    featureModuleTransformer: FeatureModuleTsTransformer.create(sourceRoot, compilerDir)
+    featureTransformer: FeatureTsTransformer.create(sourceRoot)
   };
 }
 
@@ -37,10 +37,7 @@ export const factory = (_program: ts.Program, pluginConfig: any) => {
 
     return (source: ts.SourceFile): ts.SourceFile => {
       if (transformerProgramContext.transformPredicate(source)) {
-        const featureModuleName = FeatureModuleDiscoverer.extractFeatureNameFromPath(transformerProgramContext.sourceRoot, source.fileName);
-        if (featureModuleName) {
-          return transformerProgramContext.featureModuleTransformer.transform(featureModuleName, source, context);
-        }
+        return transformerProgramContext.featureTransformer.transform(source, context);
       }
 
       return source;

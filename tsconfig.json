@@ -11,7 +11,7 @@
     "noImplicitAny": false,
     "importHelpers": true,
     "declaration": true,
-    "declarationMap": false,
+    "sourceMap": true,
     "removeComments": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -42,7 +42,8 @@
   ],
   "include": [
     "src/**/*.ts",
-    "test/**/*" ],
+    "test/helper/*"
+  ],
   "typedocOptions": {
     "mode": "file",
     "out": "./docs",

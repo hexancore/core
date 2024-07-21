@@ -6,7 +6,6 @@ import { IEntityPersisterFactory } from '../Persister';
 import { EntityRepositoryManager } from './EntityRepositoryManager';
 import { EntityRepositoryManagerCommon } from './EntityRepositoryManagerCommon';
 import { DOMAIN_ERRORS_PROPERTY } from '../AbstractEntityRepositoryCommon';
-import { HcAppModuleMeta } from '@/Util/ModuleHelper';
 
 export class InfraAggregateRootRepositoryManager extends EntityRepositoryManagerCommon<
   AnyAggregateRootRepository,
@@ -21,18 +20,18 @@ export class InfraAggregateRootRepositoryManager extends EntityRepositoryManager
   protected entityRepositoryManager: EntityRepositoryManager;
 
   public constructor(
-    module: HcAppModuleMeta,
+    featureName: string,
     persisterFactory: IEntityPersisterFactory,
     errors: DomainErrors<any>
   ) {
-    super(module, persisterFactory, errors);
-    this.entityRepositoryManager = new EntityRepositoryManager(module, persisterFactory, errors);
+    super(featureName, persisterFactory, errors);
+    this.entityRepositoryManager = new EntityRepositoryManager(featureName, persisterFactory, errors);
     this.baseArgs = [this.persisterFactory, this.entityRepositoryManager];
   }
 
   protected getRepositoryConstructor(entityClass: AggregateRootConstructor): new (...args: any[]) => any {
     const meta: AggregateRootMeta<AnyAggregateRoot> = entityClass[ENTITY_META_PROPERTY];
-    if (meta.module != this.module.name) {
+    if (meta.module != this.featureName) {
       throw new LogicError('Getting repository for other module aggregate root: ' + meta.fullname);
     }
 

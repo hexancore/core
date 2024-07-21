@@ -8,15 +8,13 @@ const jestConfig: JestConfigWithTsJest = {
   preset: "ts-jest",
   runner: "groups",
   roots: [__dirname],
-  modulePaths: [__dirname],
+  modulePaths: [compilerOptions.baseUrl],
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: "<rootDir>" }),
   transform: {
     '^.+\\.ts?$': ['<rootDir>/lib/Compiler/Jest', {
       rootDir,
-      tsconfig: 'tsconfig.json',
-      astTransformers: {
-        before: [{ path: './lib/Compiler/transformer', options: { sourceRoot: rootDir + "/src" } }]
-      }
+      tsconfig: compilerOptions,
+      diagnostics: false,
     }]
   },
   testMatch: ["<rootDir>/test/**/*.test.ts"],

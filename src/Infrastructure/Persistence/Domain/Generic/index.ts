@@ -9,4 +9,4 @@ export * from './AggregateRootRepositoryProxyHandler';
 export * from './Persister';
 export * from './Manager';
 
-export * from './HcInfraDomainModule';
+export * from './DomainInfraModuleHelper';

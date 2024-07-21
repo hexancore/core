@@ -2,12 +2,12 @@ import { ConfigurableModuleBuilder, Global, Module, Provider, type DynamicModule
 import { AccountId, CurrentTime, LogicError } from '@hexancore/common';
 import { HcAppConfigModule } from './Infrastructure/Config/HcAppConfigModule';
 import { HcApplicationModule } from './Application';
-import { EntityPersisterFactoryManager } from './Infrastructure';
 import { ClsModule } from 'nestjs-cls';
 import { nanoid } from 'nanoid';
 import { AccountContext } from './Infrastructure/Account/AccountContext';
 import { ClsAccountContext } from './Infrastructure/Account/ClsAccountContext';
 import { SimpleAccountContext } from './Infrastructure/Account/SimpleAccountContext';
+import { HcDomainInfraModule } from './Infrastructure/Persistence/Domain/Generic/HcDomainInfraModule';
 
 export interface HcModuleOptions { }
 
@@ -51,9 +51,9 @@ function createAccountContextProvider(options: HcModuleExtras): Provider {
 export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN, OPTIONS_TYPE } = new ConfigurableModuleBuilder<HcModuleOptions>()
   .setClassMethodName('forRoot')
   .setExtras<HcModuleExtras>({ cls: false, accountContext: undefined }, (def, extras) => {
-    def.imports = def.imports ? def.imports : [];
+    def.imports = def.imports ? def.imports : [HcDomainInfraModule];
     def.providers = def.providers ? def.providers : [];
-    def.exports = def.exports ? def.exports : [];
+    def.exports = def.exports ? def.exports : [HcDomainInfraModule];
 
     if (extras.cls) {
       def.imports.push(createClsModule());
@@ -72,12 +72,11 @@ export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN, OPTIONS_TYPE } = n
 
 @Global()
 @Module({
-  imports: [HcAppConfigModule, HcApplicationModule],
+  imports: [HcAppConfigModule, HcApplicationModule, HcDomainInfraModule],
   providers: [
     CurrentTimeProvider,
-    EntityPersisterFactoryManager,
   ],
-  exports: [CurrentTime, EntityPersisterFactoryManager],
+  exports: [CurrentTime, HcDomainInfraModule],
 })
 export class HcModule extends ConfigurableModuleClass {
   public static forRoot(options?: typeof OPTIONS_TYPE): DynamicModule {

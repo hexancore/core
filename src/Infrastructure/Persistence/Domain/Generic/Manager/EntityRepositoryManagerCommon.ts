@@ -2,7 +2,6 @@ import { DomainErrors, LogicError, TupleTail } from '@hexancore/common';
 import { AbstractEntityRepositoryCommon } from '../AbstractEntityRepositoryCommon';
 import { IEntityPersisterFactory } from '../Persister/IEntityPersisterFactory';
 import { AbstractEntityCommon, ENTITY_COMMON_META } from '@/Domain';
-import { HcAppModuleMeta } from '@/Util/ModuleHelper';
 
 export abstract class EntityRepositoryManagerCommon<
   R extends AbstractEntityRepositoryCommon<any, any, any>,
@@ -15,7 +14,7 @@ export abstract class EntityRepositoryManagerCommon<
   protected baseArgs: any[];
 
   public constructor(
-    public readonly module: HcAppModuleMeta,
+    public readonly featureName: string,
     protected persisterFactory: IEntityPersisterFactory,
     protected errors: DomainErrors<any>,
   ) {

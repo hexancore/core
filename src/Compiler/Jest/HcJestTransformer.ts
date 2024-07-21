@@ -1,37 +1,52 @@
-import { FeatureModuleDiscoverer } from '../../Util/FeatureModuleDiscoverer';
+import { FeatureModuleDiscoverer } from '../../Util/Feature/FeatureModuleDiscoverer';
 import type { AsyncTransformer, TransformedSource } from '@jest/transform';
 import { hash } from 'node:crypto';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import path from 'node:path';
 import { TsJestTransformer, type TsJestTransformerOptions, type TsJestTransformOptions } from 'ts-jest';
+import { TsTransfromerHelper } from '../Transformer/TsTransformerHelper';
+import ts from 'typescript';
+import { FeatureTsTransformer } from '../Transformer/Feature/FeatureTsTransformer';
+import { FsHelper } from '@/Util/Filesystem/FsHelper';
 
-export type HcJestTransformerOptions = TsJestTransformerOptions & { rootDir: string; };
+export type HcJestTransformerOptions = TsJestTransformerOptions & { rootDir: string; tmpDir: string; };
 export const HC_TYPESCRIPT_TRANSFORMER_MODULE_PATH = '@hexancore/core/compiler/transformer';
 
 export class HcJestTransformer implements AsyncTransformer<HcJestTransformerOptions> {
   private sourceRoot!: string;
+  private compilerOptions: any;
   private tsJestTransformer: TsJestTransformer;
 
-  private featureModuleDiscoveryHashMap: Map<string, string>;
+  private featureTsTransformer!: FeatureTsTransformer;
+  private featuresHashMap: Map<string, string>;
+
+  private tmpDir!: string;
 
   protected constructor(options: HcJestTransformerOptions) {
     this.processOptions(options);
     this.tsJestTransformer = new TsJestTransformer(options);
-    this.featureModuleDiscoveryHashMap = new Map();
+    this.featuresHashMap = new Map();
   }
 
   private processOptions(options: HcJestTransformerOptions) {
+    this.compilerOptions = options.tsconfig;
+
     options.rootDir = options.rootDir.replaceAll("\\", "/");
     this.sourceRoot = options.rootDir + "/src";
     options.tsconfig = options.tsconfig ?? `${options.rootDir}/tsconfig.test.json`;
-    options.astTransformers = options.astTransformers ?? ({});
-    options.astTransformers.before = options.astTransformers.before ?? [];
+  }
 
-    if (!options.astTransformers.before.find((t) => typeof t !== 'string' && (t.path === HC_TYPESCRIPT_TRANSFORMER_MODULE_PATH || t.path === './lib/Compiler/transformer'))) {
-      options.astTransformers.before.push({
-        path: HC_TYPESCRIPT_TRANSFORMER_MODULE_PATH,
-        options: {
-          sourceRoot: this.sourceRoot
-        }
-      });
+  private setupTransformedTmpDir(options: TsJestTransformOptions): void {
+    if (this.tmpDir) {
+      return;
+    }
+
+    const projectHash = hash('md5', this.sourceRoot);
+
+    this.tmpDir = options.config.cacheDirectory + '/hcjest-' + projectHash;
+    this.tmpDir = FsHelper.normalizePathSep(this.tmpDir);
+    if (!existsSync(this.tmpDir)) {
+      mkdirSync(this.tmpDir, { recursive: true });
     }
   }
 
@@ -45,8 +60,10 @@ export class HcJestTransformer implements AsyncTransformer<HcJestTransformerOpti
     const discoverer = new FeatureModuleDiscoverer(this.sourceRoot);
     const features = await discoverer.discoverAll();
     for (const [name, discovery] of features.entries()) {
-      this.featureModuleDiscoveryHashMap.set(name, discovery.cacheKey);
+      this.featuresHashMap.set(name, discovery.cacheKey);
     }
+
+    this.featureTsTransformer = FeatureTsTransformer.create(this.sourceRoot, undefined, features, false);
   }
 
   public get canInstrument(): boolean {
@@ -54,15 +71,58 @@ export class HcJestTransformer implements AsyncTransformer<HcJestTransformerOpti
   }
 
   public process(sourceText: string, sourcePath: string, options: TsJestTransformOptions): TransformedSource {
-    return this.tsJestTransformer.process(sourceText, sourcePath, options);
+    sourcePath = FsHelper.normalizePathSep(sourcePath);
+    const featureName = this.extractFeatureNameFromPath(sourcePath);
+    if (!featureName || !this.featureTsTransformer.supports(sourcePath, featureName)) {
+      return this.tsJestTransformer.process(sourceText, sourcePath, options);
+    }
+
+    return this.processFeatureSourceFile(featureName, sourceText, sourcePath, options);
   }
 
-  public processAsync(
+  public async processAsync(
     sourceText: string,
     sourcePath: string,
     options: TsJestTransformOptions,
   ): Promise<TransformedSource> {
-    return this.tsJestTransformer.processAsync(sourceText, sourcePath, options as any) as any;
+    sourcePath = FsHelper.normalizePathSep(sourcePath);
+    const featureName = this.extractFeatureNameFromPath(sourcePath);
+    if (!featureName || !this.featureTsTransformer.supports(sourcePath, featureName)) {
+      return this.tsJestTransformer.processAsync(sourceText, sourcePath, options);
+    }
+
+    return this.processFeatureSourceFile(featureName, sourceText, sourcePath, options);
+  }
+
+  private processFeatureSourceFile(featureName: string, sourceText: string, sourcePath: string, options: TsJestTransformOptions): TransformedSource {
+    this.setupTransformedTmpDir(options);
+
+    const inSourceFile = ts.createSourceFile(
+      sourcePath,
+      sourceText,
+      this.compilerOptions.target ?? ts.ScriptTarget.Latest
+    );
+
+    const transformed = ts.transform(inSourceFile, [(context: ts.TransformationContext) => (source) => this.featureTsTransformer.transform(source, context)], this.compilerOptions);
+    const outSourceFile = transformed.transformed[0];
+
+    const printed = TsTransfromerHelper.printFile(outSourceFile);
+    const tmpPath = this.tmpDir + '/' + featureName + '-' + hash('md5', sourcePath, 'hex').substring(0, 8) + '-' + path.basename(sourcePath);
+    writeFileSync(tmpPath, printed);
+
+    const outTranspile = ts.transpileModule(printed, {
+      compilerOptions: this.compilerOptions,
+      fileName: tmpPath
+    });
+
+    const sourceMap = JSON.parse(outTranspile.sourceMapText!);
+    sourceMap.file = tmpPath;
+    sourceMap.sources = [tmpPath];
+
+    return {
+      code: outTranspile.outputText,
+      map: sourceMap
+    };
   }
 
   public getCacheKey(sourceText: string, sourcePath: string, transformOptions: TsJestTransformOptions): string {
@@ -80,13 +140,17 @@ export class HcJestTransformer implements AsyncTransformer<HcJestTransformerOpti
     return this.getCacheKey(sourceText, sourcePath, transformOptions);
   }
 
-  private getExtraCacheKey(sourcePath: string,): string | null {
-    sourcePath = sourcePath.replaceAll("\\", "/");
-    const extracted = FeatureModuleDiscoverer.extractFeatureNameFromPath(this.sourceRoot, sourcePath);
+  private getExtraCacheKey(sourcePath: string): string | null {
+    sourcePath = FsHelper.normalizePathSep(sourcePath);
+    const extracted = this.extractFeatureNameFromPath(sourcePath);
     if (extracted) {
-      return this.featureModuleDiscoveryHashMap.get(extracted)!;
+      return this.featuresHashMap.get(extracted)!;
     }
 
     return null;
+  }
+
+  private extractFeatureNameFromPath(sourcePath: string): string | null {
+    return FeatureModuleDiscoverer.extractFeatureNameFromPath(this.sourceRoot, sourcePath);
   }
 }

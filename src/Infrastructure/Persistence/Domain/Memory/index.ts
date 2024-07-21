@@ -5,4 +5,4 @@ export * from './MemoryAggregateRootRepository';
 export * from './MemoryEntityRepository';
 export * from './MemoryEntityCollectionQueries';
 
-export * from './HcInfraMemoryDomainModule';
+export * from './HcMemoryDomainInfraModule';

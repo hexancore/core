@@ -2,6 +2,8 @@ import { AbstractEntityCommon, EntityMetaCommon, EntityIdTypeOf } from '@/Domain
 import { AR, AbstractValueObject, AsyncResult, CurrentTime, OK, OKA, wrapToArray } from '@hexancore/common';
 import { AbstractEntityPersister, AbstractEntityRepositoryCommon } from '../Generic';
 
+export const MEMORY_PERSISTER_TYPE = "memory";
+
 export class MemoryEntityPersister<T extends AbstractEntityCommon<any>, M extends EntityMetaCommon<T>> extends AbstractEntityPersister<T, M> {
   protected persisted: T[];
 

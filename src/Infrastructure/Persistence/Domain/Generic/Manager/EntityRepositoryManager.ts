@@ -5,6 +5,9 @@ import { EntityRepositoryConstructor } from '../EntityRepositoryDecorator';
 import { EntityRepositoryManagerCommon } from './EntityRepositoryManagerCommon';
 import { DOMAIN_ERRORS_PROPERTY } from '../AbstractEntityRepositoryCommon';
 
+/**
+ * @internal
+ */
 export class EntityRepositoryManager extends EntityRepositoryManagerCommon<
   AnyEntityRepository,
   ConstructorParameters<typeof AbstractEntityRepository>['length'],
@@ -28,8 +31,8 @@ export class EntityRepositoryManager extends EntityRepositoryManagerCommon<
 
   protected getRepositoryConstructor(entityClass: EntityConstructor): new (...args: any[]) => any {
     const meta: EntityMeta<AnyEntity> = entityClass[ENTITY_META_PROPERTY];
-    if (meta.module != this.module.name) {
-      throw new LogicError('Getting repository for other module entity: ' + meta.fullname);
+    if (meta.module != this.featureName) {
+      throw new LogicError(`Getting entity repository from other Feature: ${meta.fullname} in ${this.featureName}`);
     }
 
     const ctr = EntityRepositoryManager.__repositoryConstructors.get(meta.fullname);
