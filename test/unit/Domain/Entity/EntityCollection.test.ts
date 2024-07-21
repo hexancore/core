@@ -1,32 +1,24 @@
+
 /**
  * @group unit/core
  */
-import { Author, AuthorId } from '@test/src/Test/Domain/Author';
-import { Book } from '@test/src/Test/Domain/Author/Book';
+import { Book } from '@test/libs/test-lib/src/Book/Domain/Book/Book';
+import { BookCopy } from '@test/libs/test-lib/src/Book/Domain/Book/BookCopy';
+
 import { AGGREGATE_ROOT_META, EntityCollectionMeta } from '../../../../src';
 
 describe('EntityCollection', () => {
   test('meta properties', () => {
-    expect(AGGREGATE_ROOT_META(Author).collections).toEqual(new Map([[Book.name, new EntityCollectionMeta(Book, 'books')]]));
+    expect(AGGREGATE_ROOT_META(Book).collections).toEqual(new Map([[BookCopy.name, new EntityCollectionMeta(BookCopy, 'copies')]]));
   });
 
-  test('add when author id undefined', () => {
-    const author = new Author('test');
-
+  test('add', () => {
     const book = new Book('test');
-    author.books.add(book);
+    const bookCopy = new BookCopy();
 
-    expect(book.authorId).toBe(author.id);
-    expect(author.books.waitingAdd).toEqual([book]);
-  });
+    book.copies.add(bookCopy);
 
-  test('add when author has id', () => {
-    const author = new Author('test');
-    author.id = AuthorId.c(1).v;
-
-    const book = new Book('test');
-    author.books.add(book);
-
-    expect(author.books.waitingAdd).toEqual([book]);
+    expect(bookCopy.bookId).toBeUndefined();
+    expect(book.copies.waitingAdd).toEqual([bookCopy]);
   });
 });

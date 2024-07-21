@@ -2,35 +2,35 @@
  * @group integration
  */
 
-import { HcInfraMemoryDomainModule, HcModule, InjectAggregateRootRepository } from '@';
-import { OK } from '@hexancore/common';
+import { HcMemoryDomainInfraModule, HcModule, InjectAggregateRootRepository } from '@';
 import { Injectable } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Author, AuthorId, Book, BookId, type AuthorRepository } from '@test/src/Test/Domain';
-import { TestDomainErrors } from '@test/src/Test/Domain/TestDomainErrors';
-import { PrivateTestInfraModule } from '@test/src/Test/Infrastructure/PrivateTestInfraModule';
+import { BookCopyId, BookDomainErrors, BookId } from '@test/libs/test-lib/src';
+import { Book } from '@test/libs/test-lib/src/Book/Domain/Book/Book';
+import { BookCopy } from '@test/libs/test-lib/src/Book/Domain/Book/BookCopy';
+import type { BookRepository } from '@test/libs/test-lib/src/Book/Domain/Book/BookRepository';
+import { BookDomainInfraModule } from '@test/libs/test-lib/src/Book/Infrastructure/Domain/BookDomainInfraModule';
 
 @Injectable()
-class AuthorService {
-  public constructor(@InjectAggregateRootRepository(Author) public repository: AuthorRepository) { }
+class Book2Service {
+  public constructor(@InjectAggregateRootRepository(Book) public repository: BookRepository) { }
 }
 
 describe('MemoryAggregateRootRepository', () => {
   let module: TestingModule;
-  let authorRepository: AuthorRepository;
+  let bookRepository: BookRepository;
 
   beforeEach(async () => {
     module = await Test.createTestingModule({
       imports: [
         HcModule.forRoot(),
-        HcInfraMemoryDomainModule,
-        PrivateTestInfraModule,
-
+        HcMemoryDomainInfraModule,
+        BookDomainInfraModule
       ],
-      providers: [AuthorService]
+      providers: [Book2Service]
     }).compile();
 
-    authorRepository = module.get(AuthorService).repository;
+    bookRepository = module.get(Book2Service).repository;
   });
 
   afterEach(async () => {
@@ -40,38 +40,37 @@ describe('MemoryAggregateRootRepository', () => {
   });
 
   test('persist()', async () => {
-    const author = new Author('test_author');
-    author.id = AuthorId.cs(1);
-
-    const book = new Book('test_book');
+    const book = new Book('test_author');
     book.id = BookId.cs(1);
-    author.books.add(book);
 
-    const rp = await authorRepository.persist(author);
-    expect(rp).toEqual(OK(true));
+    const bookCopy = new BookCopy();
+    bookCopy.id = BookCopyId.cs(1);
+    book.copies.add(bookCopy);
 
-    const r = await authorRepository.getAllAsArray();
+    const rp = await bookRepository.persist(book);
+    expect(rp).toMatchSuccessResult(true);
+
+    const r = await bookRepository.getAllAsArray();
     expect(r.isSuccess()).toBeTruthy();
 
-    expect(r.v[0].id).toEqual(author.id);
+    expect(r.v[0].id).toEqual(book.id);
 
-    const abr = await r.v[0].books.getAllAsArray();
+    const abr = await r.v[0].copies.getAllAsArray();
     expect(abr.isSuccess()).toBeTruthy();
     const ab = abr.v;
     expect(ab.length).toBe(1);
-    expect(ab[0]).toEqual(book);
+    expect(ab[0]).toEqual(bookCopy);
 
-    const currentBookById = await r.v[0].books.getById(ab[0].id);
-
-    expect(currentBookById).toEqual(OK(book));
+    const currentBookById = await r.v[0].copies.getById(ab[0].id);
+    expect(currentBookById).toMatchSuccessResult(bookCopy);
   });
 
   test('getById() when not exists', async () => {
-    const id = AuthorId.cs(1);
-    const current = await authorRepository.getById(id);
+    const id = BookId.cs(1);
+    const current = await bookRepository.getById(id);
 
     expect(current).toMatchAppError({
-      type: TestDomainErrors.entity.author.t('not_found'),
+      type: BookDomainErrors.entity.book.t('not_found'),
       code: 404,
       data: {
         searchCriteria: {

@@ -10,9 +10,8 @@ export type EntityRepositoryConstructor<T extends AnyEntityRepository = AnyEntit
 
 /**
  * Decorator
- * @param moduleName Name of module
- * @param entityClass Entity class
- * @param rootEntityClass Root entity class
+ * @param aggregateRoot Entity class
+ * @param persisterType Type of persister
  */
 export function EntityRepository<T extends AnyEntity>(
   entity: EntityConstructor<T>,
@@ -29,8 +28,8 @@ export type AggregateRootRepositoryConstructor<T extends AnyAggregateRootReposit
 
 /**
  * Decorator
- * @param moduleName Name of module
- * @param entityClass Entity class
+ * @param aggregateRoot Aggregate Root class
+ * @param persisterType Type of persister
  */
 export function AggregateRootRepository<T extends AnyAggregateRoot>(
   aggregateRoot: AggregateRootConstructor<T>,

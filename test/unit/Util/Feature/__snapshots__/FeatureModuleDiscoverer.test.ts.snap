@@ -1,0 +1,67 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Function discoverAll 1`] = `
+Map {
+  "Book" => FeatureModuleMeta {
+    "application": {
+      "commands": [
+        {
+          "className": "BookCreateCommand",
+          "context": "Book",
+          "handlerClassName": "BookCreateCommandHandler",
+          "name": "Create",
+          "path": "Application/Book/Command/Create",
+        },
+      ],
+      "events": [],
+      "queries": [
+        {
+          "className": "BookGetByIdQuery",
+          "context": "Book",
+          "handlerClassName": "BookGetByIdQueryHandler",
+          "name": "GetById",
+          "path": "Application/Book/Query/GetById",
+        },
+      ],
+      "services": [
+        {
+          "className": "BookInfraPort",
+          "context": "Book",
+          "isInjectable": false,
+          "path": "Application/Book/Service/BookInfraPort",
+        },
+        {
+          "className": "BookService",
+          "context": "Book",
+          "isInjectable": true,
+          "path": "Application/Book/Service/BookService",
+        },
+      ],
+    },
+    "cacheKey": "1261b3da77abfb8027ef4327b11cd95dc26847c0",
+    "domain": {
+      "aggregateRoots": [
+        {
+          "entities": [
+            {
+              "infraRepositoryName": "InfraBookCopyRepository",
+              "name": "BookCopy",
+              "repositoryName": "BookCopyRepository",
+            },
+          ],
+          "infraRepositoryName": "InfraBookRepository",
+          "name": "Book",
+          "repositoryName": "BookRepository",
+        },
+      ],
+    },
+    "infrastructure": {
+      "module": {
+        "className": "BookInfraModule",
+        "path": "Infrastructure/BookInfraModule",
+      },
+    },
+    "name": "Book",
+  },
+}
+`;

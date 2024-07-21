@@ -1,3 +1,7 @@
+// feature index contains all public elements
+
+// Aplication - only Command/Query
 export * from './Application';
-export * from './BookModule';
+
+// Domain SharedKernel
 export * from './Domain';
