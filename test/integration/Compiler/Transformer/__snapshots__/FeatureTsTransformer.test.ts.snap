@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Function transform 1`] = `
+exports[`Function transform FeatureModule 1`] = `
 ""use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookModule = exports.SOME_ASSIGMENT_NOISE = void 0;
@@ -23,4 +23,17 @@ exports.BookModule = BookModule = tslib_1.__decorate([
     })
 ], BookModule);
 //# sourceMappingURL=BookModule.js.map"
+`;
+
+exports[`Function transform HObject: Command 1`] = `
+""use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BookCreateCommand = void 0;
+class BookCreateCommand {
+    constructor(title) {
+        this.title = title;
+    }
+}
+exports.BookCreateCommand = BookCreateCommand;
+//# sourceMappingURL=BookCreateCommand.js.map"
 `;

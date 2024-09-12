@@ -1,5 +1,5 @@
 import { AggregateRoot, AbstractAggregateRoot, EntityCollection, type IEntityCollection } from '@';
-import type { BookId } from './Shared/BookId';
+import type { BookId } from './Shared/ValueObject/BookId';
 import { BookCopy } from './BookCopy';
 
 @AggregateRoot()

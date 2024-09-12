@@ -10,7 +10,7 @@
     "noImplicitThis": false,
     "noImplicitAny": false,
     "importHelpers": true,
-    "declaration": true,
+    "declaration": false,
     "sourceMap": true,
     "removeComments": false,
     "emitDecoratorMetadata": true,
@@ -21,14 +21,22 @@
     "forceConsistentCasingInFileNames": true,
     "useDefineForClassFields": false,
     "allowJs": true,
-    "types": ["jest", "reflect-metadata", "node"],
+    "types": [
+      "jest",
+      "reflect-metadata",
+      "node"
+    ],
     "incremental": false,
     "resolveJsonModule": true,
     "outDir": "./lib",
     "baseUrl": "./",
     "paths": {
-      "@": ["src"],
-      "@/*": ["src/*"],
+      "@": [
+        "src"
+      ],
+      "@/*": [
+        "src/*"
+      ],
       "@test/*": [
         "test/helper/*"
       ],
@@ -42,7 +50,8 @@
   ],
   "include": [
     "src/**/*.ts",
-    "test/helper/*"
+    "test/helper/*",
+    "test/**/*.ts"
   ],
   "typedocOptions": {
     "mode": "file",

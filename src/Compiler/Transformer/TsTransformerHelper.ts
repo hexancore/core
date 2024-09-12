@@ -1,9 +1,55 @@
 import { Module } from "@nestjs/common";
-import ts from "typescript";
+import ts, { type NamedImports } from "typescript";
+import { TsImportHelper } from "./TsImportHelper";
 
 export type ImportFromMapper = (importFrom: string) => string;
 
 export type ImportedIdentifierMapper = (identifier: string) => ts.PropertyAccessChain | ts.Identifier;
+
+export class ImportDeclarationWrapper {
+  public constructor(private importDecl: ts.ImportDeclaration, private context: ts.TransformationContext) {
+
+  }
+
+  public static from(importDecl: ts.ImportDeclaration, context: ts.TransformationContext): ImportDeclarationWrapper {
+    return new this(importDecl, context);
+  }
+
+  public get(name: string): ts.PropertyAccessChain | ts.Identifier {
+    return TsTransfromerHelper.createNamedImportAccess(this.importDecl, name, this.context);
+  }
+
+  public hasNamedAccess(name: string): boolean {
+    if (!this.importDecl.importClause?.namedBindings) {
+      return false;
+    }
+
+    return (this.importDecl.importClause.namedBindings as NamedImports).elements.filter(i => i.name.text === name).length > 0;
+  }
+
+  public getEntityName(name: string): ts.EntityName {
+    const current = this.get(name);
+    if (ts.isIdentifier(current)) {
+      return current;
+    }
+
+    return ts.factory.createQualifiedName(current.expression as ts.Identifier, current.name as ts.Identifier);
+  }
+
+  public addNamedImports(elements: (ts.ImportSpecifier | string)[]): ts.ImportDeclaration {
+    const newNamedImports = ts.factory.createNamedImports([
+      ...(this.importDecl.importClause?.namedBindings as ts.NamedImports).elements,
+      ...elements.map(e => typeof e === 'string' ? ts.factory.createImportSpecifier(false, undefined, ts.factory.createIdentifier(e)) : e),
+    ]);
+    return ts.factory.updateImportDeclaration(
+      this.importDecl,
+      undefined,
+      ts.factory.updateImportClause(this.importDecl.importClause!,
+        this.importDecl.importClause!.isTypeOnly, undefined, newNamedImports),
+      this.importDecl.moduleSpecifier, this.importDecl.attributes
+    );
+  }
+}
 
 export class TsTransfromerHelper {
 
@@ -138,8 +184,13 @@ export class TsTransfromerHelper {
   public static createImportFromMapper(sourceRoot: string): ImportFromMapper {
     const isInternalCoreTesting = sourceRoot.includes("/test/helper/libs");
     return isInternalCoreTesting ? (importFrom: string) => {
-      return importFrom.replace('@hexancore/core', '@');//FsHelper.normalizePathSep(process.cwd() + "/lib/index.js"));
+      return importFrom.replace('@hexancore/core', '@');
     } : (importFrom: string) => importFrom;
+  }
+
+  public static createImportHelper(sourceRoot: string, needFixImportAccess: boolean): TsImportHelper {
+    const importFromMapper = this.createImportFromMapper(sourceRoot);
+    return new TsImportHelper(importFromMapper, needFixImportAccess);
   }
 
   public static printFile(source: ts.SourceFile): string {
@@ -152,5 +203,49 @@ export class TsTransfromerHelper {
     }
 
     return this.printer.printFile(source);
+  }
+
+  public static createGetEnumMemberFromUnknownValue(value: ts.Expression, enumType: ts.Expression | ts.EntityName): ts.ElementAccessExpression {
+    // keyof typeof EnumType
+    const keyofTypeofEnum = ts.factory.createTypeOperatorNode(ts.SyntaxKind.KeyOfKeyword, ts.factory.createTypeQueryNode(enumType as ts.EntityName));
+
+    // v as keyof typeof EnumType
+    const asExpression = ts.factory.createAsExpression(value, keyofTypeofEnum);
+
+    // EnumType[v as keyof typeof EnumType]
+    return ts.factory.createElementAccessExpression(
+      enumType as ts.Expression,
+      asExpression
+    );
+  }
+
+  public static createDiagnostic(node: ts.Node, message: string): ts.Diagnostic {
+    return {
+      file: node.getSourceFile(),
+      start: node.getStart(),
+      length: node.getWidth(),
+      messageText: message,
+      category: ts.DiagnosticCategory.Error,
+      code: 9001
+    };
+  }
+
+  public static reportDiagnostics(diagnostics: ts.Diagnostic[], returnOutput = false): string {
+    if (diagnostics.length === 0) {
+      return '';
+    }
+    const formatHost: ts.FormatDiagnosticsHost = {
+      getCanonicalFileName: fileName => fileName,
+      getCurrentDirectory: ts.sys.getCurrentDirectory,
+      getNewLine: () => ts.sys.newLine
+    };
+
+    const diagnosticMessages = ts.formatDiagnosticsWithColorAndContext(diagnostics, formatHost);
+    if (returnOutput) {
+      return diagnosticMessages;
+    }
+
+    console.error(diagnosticMessages);
+    return diagnosticMessages;
   }
 }

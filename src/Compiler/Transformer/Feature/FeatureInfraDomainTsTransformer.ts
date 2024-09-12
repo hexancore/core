@@ -1,17 +1,19 @@
 import ts from 'typescript';
-import type { FeatureModuleMeta } from "../../../Util/Feature/FeatureModuleMeta";
+import type { FeatureMeta } from "../../../Util/Feature/Meta/FeatureMeta";
 import { AbstractFeatureTsTransformer } from './AbstractFeatureTsTransformer';
 import { TsTransfromerHelper } from '../TsTransformerHelper';
 import type { AddImportTransformDef } from '../ModuleClassTsTransformer';
+import type { FeatureTransformContext } from './FeatureTransformContext';
 
 export class FeatureInfraDomainModuleTsTransformer extends AbstractFeatureTsTransformer {
 
-  public transform(feature: FeatureModuleMeta, source: ts.SourceFile, context: ts.TransformationContext): ts.SourceFile {
+  public transform(source: ts.SourceFile, context: FeatureTransformContext): ts.SourceFile {
+    const feature = context.feature;
     const domainErrorsClassName = feature.name + "DomainErrors";
 
     const imports: AddImportTransformDef[] = [
       { name: "DomainInfraModuleHelper", importModuleSpecifier: '@hexancore/core' },
-      { name: domainErrorsClassName, importModuleSpecifier: '../../Domain'}
+      { name: domainErrorsClassName, importModuleSpecifier: '../../Domain' }
     ];
 
     const repos: string[] = [];
@@ -59,11 +61,11 @@ export class FeatureInfraDomainModuleTsTransformer extends AbstractFeatureTsTran
         return ts.factory.createIdentifier("HcDomainInfraModuleMetaExtra");
       },
       source,
-      context
+      context: context.tsContext,
     });
   }
 
-  public supports(sourcefilePath: string, feature: FeatureModuleMeta): boolean {
+  public supports(sourcefilePath: string, feature: FeatureMeta): boolean {
     return sourcefilePath.endsWith("DomainInfraModule.ts");
   }
 }

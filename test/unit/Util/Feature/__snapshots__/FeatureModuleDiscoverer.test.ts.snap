@@ -1,67 +1,88 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Function discoverAll 1`] = `
-Map {
-  "Book" => FeatureModuleMeta {
-    "application": {
-      "commands": [
-        {
-          "className": "BookCreateCommand",
-          "context": "Book",
-          "handlerClassName": "BookCreateCommandHandler",
-          "name": "Create",
-          "path": "Application/Book/Command/Create",
-        },
-      ],
-      "events": [],
-      "queries": [
-        {
-          "className": "BookGetByIdQuery",
-          "context": "Book",
-          "handlerClassName": "BookGetByIdQueryHandler",
-          "name": "GetById",
-          "path": "Application/Book/Query/GetById",
-        },
-      ],
-      "services": [
-        {
-          "className": "BookInfraPort",
-          "context": "Book",
-          "isInjectable": false,
-          "path": "Application/Book/Service/BookInfraPort",
-        },
-        {
-          "className": "BookService",
-          "context": "Book",
-          "isInjectable": true,
-          "path": "Application/Book/Service/BookService",
-        },
-      ],
-    },
-    "cacheKey": "1261b3da77abfb8027ef4327b11cd95dc26847c0",
-    "domain": {
-      "aggregateRoots": [
-        {
-          "entities": [
-            {
-              "infraRepositoryName": "InfraBookCopyRepository",
-              "name": "BookCopy",
-              "repositoryName": "BookCopyRepository",
-            },
-          ],
-          "infraRepositoryName": "InfraBookRepository",
-          "name": "Book",
-          "repositoryName": "BookRepository",
-        },
-      ],
-    },
-    "infrastructure": {
-      "module": {
-        "className": "BookInfraModule",
-        "path": "Infrastructure/BookInfraModule",
-      },
-    },
-    "name": "Book",
-  },
-}
+"- name: Book
+  cacheKey: 76938fdd0fe1c572144becfed1ef7427b3f52342
+  application:
+    commands:
+      - name: Create
+        context: Book
+    queries:
+      - name: GetById
+        context: Book
+    dtos:
+      - name: BookDto
+        context: Book
+        path: Application/Book/Dto/BookDto
+      - name: TestTransformDto
+        context: Book
+        path: Application/Book/Dto/TestTransformDto
+    services:
+      - name: BookInfraPort
+        context: Book
+        path: Application/Book/Service/BookInfraPort
+        isInjectable: false
+      - name: BookService
+        context: Book
+        path: Application/Book/Service/BookService
+        isInjectable: true
+  domain:
+    aggregateRoots:
+      - name: Book
+        entities:
+          - name: BookCopy
+            aggregateRootName: Book
+        valueObjects:
+          - name: BookCopyId
+            context: Book
+            shared: true
+          - name: BookId
+            context: Book
+            shared: true
+    valueObjects:
+      - name: FeatureSharedValueObject
+        context: ''
+        shared: true
+  infrastructure:
+    module:
+      name: BookInfraModule
+      path: Infrastructure/BookInfraModule
+      filePath: Infrastructure/BookInfraModule.ts
+"
+`;
+
+exports[`Function hObjectMap 1`] = `
+"- Application/Book/Command/Create/BookCreateCommand.ts:
+    name: Create
+    context: Book
+    className: BookCreateCommand
+    handlerClass: BookCreateCommandHandler
+    path: Application/Book/Command/Create
+  Application/Book/Query/GetById/BookGetByIdQuery.ts:
+    name: GetById
+    context: Book
+    className: BookGetByIdQuery
+    handlerClass: BookGetByIdQueryHandler
+    path: Application/Book/Query/GetById
+  Application/Book/Dto/BookDto.ts:
+    name: BookDto
+    context: Book
+    path: Application/Book/Dto/BookDto
+  Application/Book/Dto/TestTransformDto.ts:
+    name: TestTransformDto
+    context: Book
+    path: Application/Book/Dto/TestTransformDto
+  Domain/Book/Shared/ValueObject/BookCopyId.ts:
+    name: BookCopyId
+    context: Book
+    shared: true
+  Domain/Book/Shared/ValueObject/BookId.ts:
+    name: BookId
+    context: Book
+    shared: true
+  Domain/Shared/ValueObject/FeatureSharedValueObject.ts:
+    name: FeatureSharedValueObject
+    context: ''
+    shared: true
+"
 `;

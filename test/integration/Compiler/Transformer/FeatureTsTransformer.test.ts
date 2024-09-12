@@ -18,7 +18,7 @@ describe(FeatureModuleTsTransformer.constructor.name, () => {
     transformer = FeatureTsTransformer.create(sourceRoot, compilerRoot);
   });
 
-  test("transform", () => {
+  test("transform FeatureModule", () => {
     const codeFilePath = process.cwd() + "/test/helper/libs/test-lib/src/Book/BookModule.ts";
     const sourceFile = helper.createSourceFileFromExisting(codeFilePath);
     const tsConfig = JSON.parse(readFileSync(process.cwd() + "/tsconfig.json").toString());
@@ -30,6 +30,14 @@ describe(FeatureModuleTsTransformer.constructor.name, () => {
         before: [(context) => (sourceFile: ts.SourceFile) => transformer.transform(sourceFile, context)]
       }
     });
+
+    expect(out.outputText).toMatchSnapshot();
+  });
+
+  test.skip("transform HObject: Command", () => {
+    const sourceFilePath = process.cwd() + "/test/helper/libs/test-lib/src/Book/Application/Book/Command/Create/BookCreateCommand.ts";
+
+    const out = helper.transpileModule(transformer.transform.bind(transformer), sourceFilePath);
 
     expect(out.outputText).toMatchSnapshot();
   });

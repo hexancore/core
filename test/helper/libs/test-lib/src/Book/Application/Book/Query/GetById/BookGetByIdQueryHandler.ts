@@ -1,7 +1,7 @@
 import { OKAP, type ARP } from "@hexancore/common";
 import { CommandHandler, type IQueryHandler } from "@nestjs/cqrs";
-import { BookDto } from "@test/libs/test-lib/src/Book/Domain/Book/BookDto";
 import { BookGetByIdQuery } from "./BookGetByIdQuery";
+import { BookDto } from "../../Dto/BookDto";
 
 @CommandHandler(BookGetByIdQuery)
 export class BookGetByIdQueryHandler implements IQueryHandler<BookGetByIdQuery> {
