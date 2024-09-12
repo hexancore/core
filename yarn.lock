@@ -710,6 +710,7 @@ __metadata:
     "@nestjs/swagger": "npm:^7.1.8"
     "@nestjs/testing": "npm:^10.3.9"
     "@types/jest": "npm:29.0.*"
+    "@types/js-yaml": "npm:^4.0.9"
     "@types/node": "npm:^20.14.2"
     "@typescript-eslint/eslint-plugin": "npm:^7.13.1"
     "@typescript-eslint/parser": "npm:^7.13.1"
@@ -1609,6 +1610,13 @@ __metadata:
     expect: "npm:^29.0.0"
     pretty-format: "npm:^29.0.0"
   checksum: 10c0/b380283f58abb1c8f710c4ea2d86518afa41dca24febae54b03cfe84bff97e8ccbed392033f7eb84e51b98386f26356d72c3d4e16c45b20d834af44f1381ba22
+  languageName: node
+  linkType: hard
+
+"@types/js-yaml@npm:^4.0.9":
+  version: 4.0.9
+  resolution: "@types/js-yaml@npm:4.0.9"
+  checksum: 10c0/24de857aa8d61526bbfbbaa383aa538283ad17363fcd5bb5148e2c7f604547db36646440e739d78241ed008702a8920665d1add5618687b6743858fae00da211
   languageName: node
   linkType: hard
 

@@ -1,7 +1,9 @@
 import ts from 'typescript';
-import type { FeatureApplicationMessageMeta, FeatureModuleMeta } from "../../../Util/Feature/FeatureModuleMeta";
+import type {FeatureMeta } from "../../../Util/Feature/Meta/FeatureMeta";
 import { AbstractFeatureTsTransformer } from "./AbstractFeatureTsTransformer";
 import type { ProviderModuleMetaTransformDef } from '../ModuleClassTsTransformer';
+import type { FeatureTransformContext } from './FeatureTransformContext';
+import type { FeatureApplicationMessageMeta } from '../../../Util/Feature/Meta';
 
 /**
  * Adding automatic injection of message handlers, services, infra module to `[Feature]Module` source.
@@ -9,16 +11,16 @@ import type { ProviderModuleMetaTransformDef } from '../ModuleClassTsTransformer
  */
 export class FeatureModuleTsTransformer extends AbstractFeatureTsTransformer {
 
-  public supports(sourcefilePath: string, feature: FeatureModuleMeta): boolean {
+  public supports(sourcefilePath: string, feature: FeatureMeta): boolean {
     return sourcefilePath.endsWith(feature.name + "Module.ts");
   }
 
-  public transform(feature: FeatureModuleMeta, source: ts.SourceFile, context: ts.TransformationContext): ts.SourceFile {
+  public transform(source: ts.SourceFile, context: FeatureTransformContext): ts.SourceFile {
+    const feature = context.feature;
 
     const messageHandlersProviders: ProviderModuleMetaTransformDef[] = [];
     messageHandlersProviders.push(...this.createMessageHandlerProviders(feature.application.commands));
     messageHandlersProviders.push(...this.createMessageHandlerProviders(feature.application.queries));
-    messageHandlersProviders.push(...this.createMessageHandlerProviders(feature.application.events));
 
     return this.moduleClassTransformer.transform({
       imports: [],
@@ -27,17 +29,17 @@ export class FeatureModuleTsTransformer extends AbstractFeatureTsTransformer {
         providers: [...messageHandlersProviders, ...this.createServiceProviders(feature)],
       },
       source,
-      context
+      context: context.tsContext,
     });
   }
 
   private createMessageHandlerProviders(messages: FeatureApplicationMessageMeta[]): ProviderModuleMetaTransformDef[] {
     const providers: ProviderModuleMetaTransformDef[] = [];
     for (const m of messages) {
-      const importPath = `./${m.path}/${m.handlerClassName}`;
+      const importPath = `./${m.path}/${m.handlerClass}`;
       providers.push({
         addToExports: false,
-        name: m.handlerClassName,
+        name: m.handlerClass,
         importFrom: importPath
       });
     }
@@ -45,7 +47,7 @@ export class FeatureModuleTsTransformer extends AbstractFeatureTsTransformer {
     return providers;
   }
 
-  private createServiceProviders(feature: FeatureModuleMeta): ProviderModuleMetaTransformDef[] {
+  private createServiceProviders(feature: FeatureMeta): ProviderModuleMetaTransformDef[] {
     const providers: ProviderModuleMetaTransformDef[] = [];
     for (const s of feature.application.services) {
       if (!s.isInjectable) {
@@ -54,7 +56,7 @@ export class FeatureModuleTsTransformer extends AbstractFeatureTsTransformer {
 
       providers.push({
         addToExports: false,
-        name: s.className,
+        name: s.name,
         importFrom: `./${s.path}`
       });
     }

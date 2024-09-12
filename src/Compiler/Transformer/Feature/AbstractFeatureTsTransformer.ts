@@ -1,17 +1,28 @@
 import ts from 'typescript';
-import type { FeatureModuleMeta } from "../../../Util/Feature/FeatureModuleMeta";
+import type { FeatureMap, FeatureMeta } from "../../../Util/Feature/Meta/FeatureMeta";
 import { ModuleClassTsTransformer } from '../ModuleClassTsTransformer';
-import { type ImportFromMapper } from '../TsTransformerHelper';
+import type { TsImportHelper } from '../TsImportHelper';
+import type { FeatureTransformContext } from './FeatureTransformContext';
+
+export interface FeatureTsTransformerHelpers {
+  importHelper: TsImportHelper;
+  moduleClassTransformer: ModuleClassTsTransformer;
+  features: FeatureMap;
+}
 
 export abstract class AbstractFeatureTsTransformer {
+  protected importHelper: TsImportHelper;
   protected moduleClassTransformer: ModuleClassTsTransformer;
+  protected features: FeatureMap;
 
-  public constructor(protected importFromMapper: ImportFromMapper, needFixImportAccess = true) {
-    this.moduleClassTransformer = new ModuleClassTsTransformer(importFromMapper, needFixImportAccess);
+  public constructor(helpers: FeatureTsTransformerHelpers) {
+    this.importHelper = helpers.importHelper;
+    this.moduleClassTransformer = helpers.moduleClassTransformer;
+    this.features = helpers.features;
   }
 
-  public abstract transform(feature: FeatureModuleMeta, source: ts.SourceFile, context: ts.TransformationContext): ts.SourceFile;
+  public abstract transform(source: ts.SourceFile, context: FeatureTransformContext): ts.SourceFile;
 
-  public abstract supports(sourceFilePath: string, feature: FeatureModuleMeta): boolean;
+  public abstract supports(sourceFilePath: string, feature: FeatureMeta): boolean;
 
 }

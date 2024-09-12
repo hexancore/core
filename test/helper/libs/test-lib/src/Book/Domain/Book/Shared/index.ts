@@ -1,2 +1,2 @@
-export * from "./BookId";
-export * from "./BookCopyId";
+export * from "./ValueObject/BookId";
+export * from "./ValueObject/BookCopyId";

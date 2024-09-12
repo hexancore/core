@@ -1,12 +1,16 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import * as ts from "typescript";
+
+export type ContextAwareCustomTransformer = (sourceFile: ts.SourceFile, context: ts.TransformationContext) => ts.SourceFile;
 export class TsTransformerTestHelper {
+
   public constructor(private compilerOptions: ts.CompilerOptions) {
 
   }
 
-  public static createFromTsConfig(tsConfigFilePath: string): TsTransformerTestHelper {
+  public static createFromTsConfig(tsConfigFilePath?: string): TsTransformerTestHelper {
+    tsConfigFilePath = tsConfigFilePath ?? process.cwd() + "/tsconfig.json";
     const tsConfig = this.loadTsConfig(tsConfigFilePath);
     return new this(tsConfig.options);
   }
@@ -55,5 +59,17 @@ export class TsTransformerTestHelper {
     );
 
     return result;
+  }
+
+  public transpileModule(transformer: ContextAwareCustomTransformer, sourceFilePath: string, sourceText?: string): ts.TranspileOutput {
+    const sourceFile = sourceText ? this.createSourceFile(sourceFilePath, sourceText) : this.createSourceFileFromExisting(sourceFilePath);
+
+    return ts.transpileModule(sourceFile.text, {
+      compilerOptions: this.compilerOptions,
+      fileName: sourceFilePath,
+      transformers: {
+        before: [(context) => (sourceFile: ts.SourceFile) => transformer(sourceFile, context)]
+      }
+    });
   }
 }

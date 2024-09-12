@@ -1,5 +1,6 @@
 import ts from "typescript";
-import { TsTransfromerHelper, type ImportedIdentifierMapper, type ImportFromMapper } from "./TsTransformerHelper";
+import { TsTransfromerHelper, type ImportedIdentifierMapper } from "./TsTransformerHelper";
+import type { TsImportHelper } from "./TsImportHelper";
 
 export type ImportDeclarationMap = Map<string, ts.ImportDeclaration>;
 
@@ -42,15 +43,7 @@ export interface ModuleClassTsTransformOptions {
 }
 
 export class ModuleClassTsTransformer {
-
-  protected importedIdentifierMapper: (importDec: ts.ImportDeclaration, name: string, context: ts.TransformationContext) => ts.PropertyAccessChain | ts.Identifier;
-
-  public constructor(protected importFromMapper: ImportFromMapper, protected needFixImportAccess: boolean) {
-    this.importedIdentifierMapper = this.needFixImportAccess ? (importDec, name, context) =>
-      TsTransfromerHelper.createNamedImportAccess(importDec, name, context)
-      : (_importDec, name, _context) => ts.factory.createIdentifier(name);
-
-  }
+  public constructor(protected importHelper: TsImportHelper) { }
 
   public transform(options: ModuleClassTsTransformOptions): ts.SourceFile {
     let imported = false;
@@ -71,7 +64,7 @@ export class ModuleClassTsTransformer {
           node = ts.visitEachChild(node, (childNode) => this.transformModuleDecorator(childNode, importDeclarations, options.context), options.context);
         }
         const importedIdentifierMapper = (className: string) =>
-          this.importedIdentifierMapper(importDeclarations.declarations.get(className)!, className, options.context);
+          this.importHelper.mapAccess(importDeclarations.declarations.get(className)!, className, options.context);
 
         let extraStatements: ts.Statement[] = [];
         if (options.extraStatementProvider) {
@@ -105,7 +98,7 @@ export class ModuleClassTsTransformer {
 
     if (options.imports) {
       for (const i of options.imports) {
-        const importModuleSpecifier = this.importFromMapper(i.importModuleSpecifier);
+        const importModuleSpecifier = this.importHelper.mapFrom(i.importModuleSpecifier);
         if (currentImports.has(importModuleSpecifier)) {
           continue;
         }
@@ -117,7 +110,7 @@ export class ModuleClassTsTransformer {
 
     if (options.meta) {
       for (const d of options.meta.imports) {
-        const importModuleSpecifier = this.importFromMapper(d.importModuleSpecifier);
+        const importModuleSpecifier = this.importHelper.mapFrom(d.importModuleSpecifier);
         if (currentImports.has(importModuleSpecifier)) {
           continue;
         }
@@ -127,7 +120,7 @@ export class ModuleClassTsTransformer {
       }
 
       for (const d of options.meta.providers) {
-        const importModuleSpecifier = this.importFromMapper(d.importFrom);
+        const importModuleSpecifier = this.importHelper.mapFrom(d.importFrom);
         if (currentImports.has(importModuleSpecifier)) {
           continue;
         }
@@ -158,7 +151,7 @@ export class ModuleClassTsTransformer {
       const imports = importDeclarations.newDefImports.map((i) => i.name);
 
       const classIdentifierMapper = (className: string) =>
-        this.importedIdentifierMapper(importDeclarations.declarations.get(className)!, className, context);
+        this.importHelper.mapAccess(importDeclarations.declarations.get(className)!, className, context);
 
       const providers: any[] = importDeclarations.newDefProviders.map(p => p.name).map(classIdentifierMapper);
       const exports: any[] = importDeclarations.newDefProviders.filter((p) => p.addToExports).map(p => p.name).map(classIdentifierMapper);
