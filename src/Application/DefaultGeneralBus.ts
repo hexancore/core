@@ -21,8 +21,7 @@ export class DefaultGeneralBus extends GeneralBus {
   }
 
   public handleEvent(event: AnyHEvent): AR<boolean> {
-    this.eventBus.publish(event);
-    return OKA(true);
+    return ARW(this.eventBus.publish(event)).mapToTrue();
   }
 
   public handleQuery<T extends AnyHQuery>(query: T): HQueryHandleResult<T> {

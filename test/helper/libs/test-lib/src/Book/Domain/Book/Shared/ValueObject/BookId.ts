@@ -1,4 +1,3 @@
-import { UIntValue, ValueObject } from "@hexancore/common";
+import { UIntValue } from "@hexancore/common";
 
-@ValueObject('Book')
 export class BookId extends UIntValue<BookId> { }
