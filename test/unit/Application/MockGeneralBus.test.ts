@@ -2,42 +2,52 @@
  * @group unit/core
  */
 
-import { ICommand, IEvent, IQuery } from '@nestjs/cqrs';
-import { Email, OK, OKA } from '@hexancore/common';
+import { Email, OK, OKA, JsonObjectType, HCommand,HQuery, HEvent } from '@hexancore/common';
 import { MockGeneralBus } from '@/Test/Application/MockGeneralBus';
 
-class TestCommand implements ICommand {
-  public readonly email: Email;
-  public constructor(emailRaw: string) {
-    this.email = Email.c(emailRaw).v;
+class TestCommand extends HCommand<TestCommand, boolean> {
+  public readonly email!: Email;
+  public toJSON(): JsonObjectType<TestCommand> {
+    return {
+      email: this.email.toJSON(),
+    };
   }
 }
 
-class TestEvent implements IEvent {
-  public readonly email: Email;
-  public constructor(emailRaw: string) {
-    this.email = Email.c(emailRaw).v;
+class TestEvent extends HEvent<TestEvent> {
+  public readonly email!: Email;
+
+  public toJSON(): JsonObjectType<TestEvent> {
+    return {
+      email: this.email.toJSON(),
+    };
   }
 }
 
-class TestQuery implements IQuery {
-  public readonly email: Email;
-  public constructor(emailRaw: string) {
-    this.email = Email.c(emailRaw).v;
+class TestQuery extends HQuery<TestQuery, boolean> {
+  public readonly email!: Email;
+
+  public toJSON(): JsonObjectType<TestQuery> {
+    return {
+      email: this.email.toJSON(),
+    };
   }
 }
 
 describe('MockGeneralBus', () => {
   let generalBus: MockGeneralBus;
+  const email = Email.cs('test@test.com');
+  const email1 = Email.cs('test_1@test.com');
+  const email2 = Email.cs('test_2@test.com');
   beforeEach(() => {
     generalBus = new MockGeneralBus();
   });
 
   test('handleCommand() when expected is correct', async () => {
     const expectedResult = OKA(true);
-    generalBus.expectHandleCommand(new TestCommand('test@test.com'), expectedResult);
+    generalBus.expectHandleCommand(TestCommand.cs({ email: email }), expectedResult);
 
-    const currentResult = await generalBus.handleCommand(new TestCommand('test@test.com'));
+    const currentResult = await generalBus.handleCommand(TestCommand.cs({ email: email }));
 
     expect(currentResult).toEqual(OK(true));
   });
@@ -45,19 +55,19 @@ describe('MockGeneralBus', () => {
   test('handleCommand() then return in expects order', async () => {
     const expectedResult1 = OKA(true);
     const expectedResult2 = OKA(true);
-    generalBus.expectHandleCommand(new TestCommand('test1@test.com'), expectedResult1);
-    generalBus.expectHandleCommand(new TestCommand('test2@test.com'), expectedResult2);
+    generalBus.expectHandleCommand(TestCommand.cs({ email: email1 }), expectedResult1);
+    generalBus.expectHandleCommand(TestCommand.cs({ email: email2 }), expectedResult2);
 
-    const currentResult1 = await generalBus.handleCommand(new TestCommand('test1@test.com'));
-    const currentResult2 = await generalBus.handleCommand(new TestCommand('test2@test.com'));
+    const currentResult1 = await generalBus.handleCommand(TestCommand.cs({ email: email1 }));
+    const currentResult2 = await generalBus.handleCommand(TestCommand.cs({ email: email2 }));
 
     expect(currentResult1).toEqual(OK(true));
     expect(currentResult2).toEqual(OK(true));
   });
 
   test('handleCommand() when expected is not correct', async () => {
-    generalBus.expectHandleCommand(new TestCommand('test@test.com'), OKA(true));
-    const expectedNotCorrectCommand = new TestCommand('test2@test.com');
+    generalBus.expectHandleCommand(TestCommand.cs({ email: email }), OKA(true));
+    const expectedNotCorrectCommand = TestCommand.cs({ email: email2 });
 
     expect(() => generalBus.handleCommand(expectedNotCorrectCommand)).toThrowError(
       new Error('Unexpected command to handle: TestCommand ' + JSON.stringify(expectedNotCorrectCommand, null, 1)),
@@ -65,7 +75,7 @@ describe('MockGeneralBus', () => {
   });
 
   test('handleCommand() when no expectations', async () => {
-    const expectedNotCorrectCommand = new TestCommand('test2@test.com');
+    const expectedNotCorrectCommand = TestCommand.cs({ email: email2 });
 
     expect(() => generalBus.handleCommand(expectedNotCorrectCommand)).toThrowError(
       new Error('Unexpected command to handle: TestCommand ' + JSON.stringify(expectedNotCorrectCommand, null, 1)),
@@ -73,20 +83,20 @@ describe('MockGeneralBus', () => {
   });
 
   test('handleEvent() when expected is correct', async () => {
-    generalBus.expectHandleEvent(new TestEvent('test@test.com'));
+    generalBus.expectHandleEvent(TestEvent.cs({ email: email }));
 
-    await expect(generalBus.handleEvent(new TestEvent('test@test.com'))).resolves;
+    await expect(generalBus.handleEvent(TestEvent.cs({ email: email }))).resolves;
   });
 
   test('handleEvent() when use function matcher and expected is correct', () => {
     generalBus.expectHandleEvent((event: IEvent) => event instanceof TestEvent && event.email.v === 'test@test.com');
 
-    expect(() => generalBus.handleEvent(new TestEvent('test@test.com'))).not.toThrow();
+    expect(() => generalBus.handleEvent(TestEvent.cs({ email: email }))).not.toThrow();
   });
 
   test('handleEvent() when expected is not correct', async () => {
-    generalBus.expectHandleEvent(new TestEvent('test@test.com'));
-    const expectedNotCorrectEvent = new TestEvent('test2@test.com');
+    generalBus.expectHandleEvent(TestEvent.cs({ email: email }));
+    const expectedNotCorrectEvent = TestEvent.cs({ email: email2 });
 
     expect(() => generalBus.handleEvent(expectedNotCorrectEvent)).toThrow(
       'Unexpected event to handle: TestEvent ' + JSON.stringify(expectedNotCorrectEvent, null, 1),
@@ -94,7 +104,7 @@ describe('MockGeneralBus', () => {
   });
 
   test('handleEvent() when no expectations', async () => {
-    const expectedNotCorrectEvent = new TestEvent('test2@test.com');
+    const expectedNotCorrectEvent = TestEvent.cs({ email: email2 });
 
     expect(() => generalBus.handleEvent(expectedNotCorrectEvent)).toThrow(
       'Unexpected event to handle: TestEvent ' + JSON.stringify(expectedNotCorrectEvent, null, 1),
@@ -103,9 +113,9 @@ describe('MockGeneralBus', () => {
 
   test('handleQuery() when expected is correct', async () => {
     const expectedResult = OKA(true);
-    generalBus.expectHandleQuery(new TestQuery('test@test.com'), expectedResult);
+    generalBus.expectHandleQuery(TestQuery.cs({ email: email }), expectedResult);
 
-    const currentResult = await generalBus.handleQuery(new TestQuery('test@test.com'));
+    const currentResult = await generalBus.handleQuery(TestQuery.cs({ email: email }));
 
     expect(currentResult).toEqual(OK(true));
   });
@@ -113,19 +123,19 @@ describe('MockGeneralBus', () => {
   test('handleQuery() then return in expects order', async () => {
     const expectedResult1 = OKA(true);
     const expectedResult2 = OKA(true);
-    generalBus.expectHandleQuery(new TestQuery('test1@test.com'), expectedResult1);
-    generalBus.expectHandleQuery(new TestQuery('test2@test.com'), expectedResult2);
+    generalBus.expectHandleQuery(TestQuery.cs({ email: email1 }), expectedResult1);
+    generalBus.expectHandleQuery(TestQuery.cs({ email: email2 }), expectedResult2);
 
-    const currentResult1 = await generalBus.handleQuery(new TestQuery('test1@test.com'));
-    const currentResult2 = await generalBus.handleQuery(new TestQuery('test2@test.com'));
+    const currentResult1 = await generalBus.handleQuery(TestQuery.cs({ email: email1 }));
+    const currentResult2 = await generalBus.handleQuery(TestQuery.cs({ email: email2 }));
 
     expect(currentResult1).toEqual(OK(true));
     expect(currentResult2).toEqual(OK(true));
   });
 
   test('handleQuery() when expected is not correct', async () => {
-    generalBus.expectHandleQuery(new TestQuery('test@test.com'), OKA(true));
-    const expectedNotCorrectQuery = new TestQuery('test2@test.com');
+    generalBus.expectHandleQuery(TestQuery.cs({ email: email }), OKA(true));
+    const expectedNotCorrectQuery = TestQuery.cs({ email: email2 });
 
     expect(() => generalBus.handleQuery(expectedNotCorrectQuery)).toThrowError(
       new Error('Unexpected query to handle: TestQuery ' + JSON.stringify(expectedNotCorrectQuery, null, 1)),
@@ -133,7 +143,7 @@ describe('MockGeneralBus', () => {
   });
 
   test('handleQuery() when no expectations', async () => {
-    const expectedNotCorrectQuery = new TestQuery('test2@test.com');
+    const expectedNotCorrectQuery = TestQuery.cs({ email: email2 });
 
     expect(() => generalBus.handleQuery(expectedNotCorrectQuery)).toThrowError(
       new Error('Unexpected query to handle: TestQuery ' + JSON.stringify(expectedNotCorrectQuery, null, 1)),

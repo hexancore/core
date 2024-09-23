@@ -671,9 +671,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hexancore/common@npm:^0.15.0":
-  version: 0.15.0
-  resolution: "@hexancore/common@npm:0.15.0"
+"@hexancore/common@npm:^0.16.0":
+  version: 0.16.0
+  resolution: "@hexancore/common@npm:0.16.0"
   dependencies:
     "@js-joda/core": "npm:^5.6.1"
     class-transformer: "npm:^0.5.1"
@@ -685,7 +685,7 @@ __metadata:
   peerDependenciesMeta:
     axios:
       optional: true
-  checksum: 10c0/7f45228421ea8c2dcb6d9682be56e4c03743b5714cd538a8a0e292602a8646261763ccaba3fb58044a079c43898b8e5986ab675d2867d34173d679b4ee59bfb3
+  checksum: 10c0/1f80c1838bd44331ba7094874166aefaf3781ae6434f42a5f8adc40c6b841834a4fe02e51bdc58e4267bd9fd573952a9f189efd3e922d20d8060ddfa6308cff7
   languageName: node
   linkType: hard
 
@@ -699,7 +699,7 @@ __metadata:
     "@fastify/multipart": "npm:^8.3.0"
     "@fastify/static": "npm:^7.0.4"
     "@fastify/swagger": "npm:^8.14.0"
-    "@hexancore/common": "npm:^0.15.0"
+    "@hexancore/common": "npm:^0.16.0"
     "@hexancore/mocker": "npm:^1.1.2"
     "@nestjs/cli": "npm:^10.3.2"
     "@nestjs/common": "npm:^10.3.9"
@@ -744,7 +744,7 @@ __metadata:
     tslib: "npm:^2.6.3"
     typescript: "npm:5.4.5"
   peerDependencies:
-    "@hexancore/common": ^0.15.0
+    "@hexancore/common": ^0.16.0
     "@nestjs/common": ^10.3.9
     "@nestjs/config": ^3.0.0
     "@nestjs/core": ^10.3.9
@@ -1114,9 +1114,9 @@ __metadata:
   linkType: hard
 
 "@js-joda/core@npm:^5.6.1":
-  version: 5.6.2
-  resolution: "@js-joda/core@npm:5.6.2"
-  checksum: 10c0/5c9079ad473ad090856684ceadee698ebedd25aeb03b63d07e112569d4d706688eaa05e553c9d97f6133c235b1bf7c51047fac51860cc0bf97995ccd70beaf09
+  version: 5.6.3
+  resolution: "@js-joda/core@npm:5.6.3"
+  checksum: 10c0/0d49154592f1f32db0a57cf33ccc254a9518cae69eae3f625fad4ec26ef8b386981c8bf3c41831708048d77be3bdf55e09fda44275f458ad8d19c16c8a986a06
   languageName: node
   linkType: hard
 

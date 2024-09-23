@@ -1,3 +1,5 @@
-export class BookCreateCommand {
-  public constructor(public readonly title: string) {}
+import { HCommand } from "@hexancore/common";
+
+export class BookCreateCommand extends HCommand<BookCreateCommand, void> {
+  public title!: string;
 }
