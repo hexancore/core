@@ -1,3 +1,6 @@
-export class BookGetByIdQuery {
-  public constructor(public readonly title: string) {}
+import { HQuery } from "@hexancore/common";
+import type { BookDto } from "../../Dto/BookDto";
+
+export class BookGetByIdQuery extends HQuery<BookGetByIdQuery, BookDto> {
+  public title!: string;
 }

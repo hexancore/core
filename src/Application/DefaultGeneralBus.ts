@@ -1,7 +1,7 @@
+import { AR, ARW, OKA, AnyHCommand, AnyHQuery, AnyHEvent } from '@hexancore/common';
 import { Injectable } from '@nestjs/common';
-import { CommandBus, EventBus, ICommand, IEvent, IQuery, QueryBus } from '@nestjs/cqrs';
-import { ARW, AsyncResult, OKA } from '@hexancore/common';
-import { GeneralBus } from './GeneralBus';
+import { CommandBus, EventBus, QueryBus } from '@nestjs/cqrs';
+import { GeneralBus, type HCommandHandleResult, type HQueryHandleResult } from './GeneralBus';
 
 @Injectable()
 export class DefaultGeneralBus extends GeneralBus {
@@ -16,16 +16,16 @@ export class DefaultGeneralBus extends GeneralBus {
     this.queryBus = queryBus;
   }
 
-  public handleCommand<T>(command: ICommand): AsyncResult<T> {
-    return ARW(this.commandBus.execute(command));
+  public handleCommand<T extends AnyHCommand>(command: T): HCommandHandleResult<T> {
+    return ARW(this.commandBus.execute(command)) as any;
   }
 
-  public handleEvent(event: IEvent): AsyncResult<boolean> {
+  public handleEvent(event: AnyHEvent): AR<boolean> {
     this.eventBus.publish(event);
     return OKA(true);
   }
 
-  public handleQuery<T>(query: IQuery): AsyncResult<T> {
-    return ARW(this.queryBus.execute(query));
+  public handleQuery<T extends AnyHQuery>(query: T): HQueryHandleResult<T> {
+    return ARW(this.queryBus.execute(query)) as any;
   }
 }
