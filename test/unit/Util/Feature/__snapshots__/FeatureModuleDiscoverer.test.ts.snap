@@ -68,10 +68,12 @@ exports[`Function hObjectMap 1`] = `
     name: BookDto
     context: Book
     path: Application/Book/Dto/BookDto
+    layer: application
   Application/Book/Dto/TestTransformDto.ts:
     name: TestTransformDto
     context: Book
     path: Application/Book/Dto/TestTransformDto
+    layer: application
   Domain/Book/Shared/ValueObject/BookCopyId.ts:
     name: BookCopyId
     context: Book

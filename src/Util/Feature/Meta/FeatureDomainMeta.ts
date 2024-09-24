@@ -1,5 +1,5 @@
-import { LogicError } from "@hexancore/common";
-import { FeatureHObjectMeta, HObjectType, type FeatureHObjectMap } from "./CommonFeatureMeta";
+import { LogicError, HFeatureBackendLayer } from "@hexancore/common";
+import { FeatureHObjectMeta, HObjectKind, type FeatureHObjectMap} from "./CommonFeatureMeta";
 
 export class FeatureAggregateRootMeta implements FeatureHObjectMeta {
   public repositoryName: string;
@@ -38,8 +38,12 @@ export class FeatureAggregateRootMeta implements FeatureHObjectMeta {
     return this.name;
   }
 
-  public get objectType(): HObjectType {
-    return HObjectType.AggregateRoot;
+  public get kind(): HObjectKind.AggregateRoot {
+    return HObjectKind.AggregateRoot;
+  }
+
+  public get layer(): HFeatureBackendLayer {
+    return 'domain';
   }
 
   public get hashData(): string {
@@ -88,8 +92,12 @@ export class FeatureEntityMeta implements FeatureHObjectMeta {
     return this.aggregateRootName;
   }
 
-  public get objectType(): HObjectType {
-    return HObjectType.Entity;
+  public get kind(): HObjectKind.Entity {
+    return HObjectKind.Entity;
+  }
+
+  public get layer(): HFeatureBackendLayer {
+    return 'domain';
   }
 
   public get hashData(): string {
@@ -133,12 +141,16 @@ export class FeatureValueObjectMeta implements FeatureHObjectMeta {
     return this.name;
   }
 
-  public get objectType(): HObjectType.ValueObject {
-    return HObjectType.ValueObject;
+  public get kind(): HObjectKind.ValueObject {
+    return HObjectKind.ValueObject;
   }
 
   public get hashData(): string {
     return this.path;
+  }
+
+  public get layer(): HFeatureBackendLayer {
+    return 'domain';
   }
 
   public toJSON(): any {
@@ -164,7 +176,7 @@ export class FeatureDomainMeta {
     const data = plain as Record<string, any[]>;
     const aggregateRoots = data.aggregateRoots.map(FeatureAggregateRootMeta.parse);
     const valueObjects = data.valueObjects.map(FeatureValueObjectMeta.parse);
-    return new FeatureDomainMeta (aggregateRoots, valueObjects);
+    return new FeatureDomainMeta(aggregateRoots, valueObjects);
   }
 
   public collectHObjects(map: FeatureHObjectMap): void {
