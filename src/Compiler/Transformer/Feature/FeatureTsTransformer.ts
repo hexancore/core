@@ -7,10 +7,11 @@ import type { AbstractFeatureTsTransformer } from "./AbstractFeatureTsTransforme
 import { FeatureInfraDomainModuleTsTransformer } from "./FeatureInfraDomainTsTransformer";
 import { FeatureModuleTsTransformer } from "./FeatureModuleTsTransformer";
 import path from "node:path";
-import { FeatureModuleDiscoverer } from "../../../Util/Feature/FeatureModuleDiscoverer";
+import { FeatureModuleDiscoverer, type FeatureSourcePath } from "../../../Util/Feature/FeatureModuleDiscoverer";
 import { TsImportHelper } from "../TsImportHelper";
 import { ModuleClassTsTransformer } from "../ModuleClassTsTransformer";
 import type { FeatureTransformContext } from "./FeatureTransformContext";
+//import { HObjectTsTransformer } from "./HObject/HObjectTsTransformer";
 
 
 /**
@@ -35,6 +36,7 @@ export class FeatureTsTransformer {
     this.transformers = [
       new FeatureInfraDomainModuleTsTransformer(helpers),
       new FeatureModuleTsTransformer(helpers),
+      //new HObjectTsTransformer(helpers),
     ];
   }
 
@@ -61,22 +63,15 @@ export class FeatureTsTransformer {
   }
 
   public transform(source: ts.SourceFile, context: ts.TransformationContext): ts.SourceFile {
-    const sourceFilePath = FsHelper.normalizePathSep(source.fileName);
-    const feature = this.getFeatureOfPath(sourceFilePath);
-    if (!feature) {
+    const featureSourceTransformContext = this.createFeatureSourceTransformContext(source, context);
+    if (!featureSourceTransformContext) {
       return source;
     }
 
-    const sourceFilePathWithoutRoot = sourceFilePath.substring(this.sourceRoot.length + 1);
-    const transformContext: FeatureTransformContext = {
-      feature,
-      sourceFilePathWithoutRoot,
-      tsContext: context,
-      diagnostics: [],
-    };
+
     for (const t of this.transformers) {
-      if (t.supports(sourceFilePathWithoutRoot, feature)) {
-        const transformed = t.transform(source, transformContext);
+      if (t.supports(featureSourceTransformContext.featureSourcePath, featureSourceTransformContext.feature)) {
+        const transformed = t.transform(source, featureSourceTransformContext);
         return transformed;
       }
     }
@@ -84,19 +79,26 @@ export class FeatureTsTransformer {
     return source;
   }
 
-  private getFeatureOfPath(sourceFilePath: string): FeatureMeta | null {
-    const featureName = FeatureModuleDiscoverer.extractFeatureNameFromPath(this.sourceRoot, sourceFilePath);
-    if (!featureName) {
+  private createFeatureSourceTransformContext(source: ts.SourceFile, context: ts.TransformationContext): FeatureTransformContext | null {
+    const sourceFilePath = FsHelper.normalizePathSep(source.fileName);
+    const featureSourcePath = FeatureModuleDiscoverer.extractFeatureNameFromPath(this.sourceRoot, sourceFilePath);
+    if (!featureSourcePath) {
       return null;
     }
 
-    return this.features.get(featureName) as FeatureMeta;
+    const feature = this.features.get(featureSourcePath.featureName)!;
+    return {
+      feature,
+      featureSourcePath,
+      tsContext: context,
+      diagnostics: [],
+    };
   }
 
-  public supports(sourceFilePath: string, featureName: string): boolean {
-    const feature = this.features.get(featureName)!;
+  public supports(sourcePath: FeatureSourcePath): boolean {
+    const feature = this.features.get(sourcePath.featureName)!;
     for (const t of this.transformers) {
-      if (t.supports(sourceFilePath, feature)) {
+      if (t.supports(sourcePath, feature)) {
         return true;
       }
     }

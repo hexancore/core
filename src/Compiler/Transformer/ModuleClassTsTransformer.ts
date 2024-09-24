@@ -170,7 +170,7 @@ export class ModuleClassTsTransformer {
 
   private createProviderDeclarationStatement(def: ProviderModuleMetaTransformDef): ts.VariableStatement {
     const varName = def.name + "Provider";
-    return TsTransfromerHelper.createConstStatement(varName, def.expression!);
+    return TsTransfromerHelper.createConstStatement(varName, undefined, def.expression!);
   }
 
   private getArrayPropertyAsSpread(identifier: ts.Identifier, property: string) {

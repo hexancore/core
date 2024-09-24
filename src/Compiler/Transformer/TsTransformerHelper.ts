@@ -1,55 +1,10 @@
 import { Module } from "@nestjs/common";
-import ts, { type NamedImports } from "typescript";
+import ts from "typescript";
 import { TsImportHelper } from "./TsImportHelper";
 
 export type ImportFromMapper = (importFrom: string) => string;
 
 export type ImportedIdentifierMapper = (identifier: string) => ts.PropertyAccessChain | ts.Identifier;
-
-export class ImportDeclarationWrapper {
-  public constructor(private importDecl: ts.ImportDeclaration, private context: ts.TransformationContext) {
-
-  }
-
-  public static from(importDecl: ts.ImportDeclaration, context: ts.TransformationContext): ImportDeclarationWrapper {
-    return new this(importDecl, context);
-  }
-
-  public get(name: string): ts.PropertyAccessChain | ts.Identifier {
-    return TsTransfromerHelper.createNamedImportAccess(this.importDecl, name, this.context);
-  }
-
-  public hasNamedAccess(name: string): boolean {
-    if (!this.importDecl.importClause?.namedBindings) {
-      return false;
-    }
-
-    return (this.importDecl.importClause.namedBindings as NamedImports).elements.filter(i => i.name.text === name).length > 0;
-  }
-
-  public getEntityName(name: string): ts.EntityName {
-    const current = this.get(name);
-    if (ts.isIdentifier(current)) {
-      return current;
-    }
-
-    return ts.factory.createQualifiedName(current.expression as ts.Identifier, current.name as ts.Identifier);
-  }
-
-  public addNamedImports(elements: (ts.ImportSpecifier | string)[]): ts.ImportDeclaration {
-    const newNamedImports = ts.factory.createNamedImports([
-      ...(this.importDecl.importClause?.namedBindings as ts.NamedImports).elements,
-      ...elements.map(e => typeof e === 'string' ? ts.factory.createImportSpecifier(false, undefined, ts.factory.createIdentifier(e)) : e),
-    ]);
-    return ts.factory.updateImportDeclaration(
-      this.importDecl,
-      undefined,
-      ts.factory.updateImportClause(this.importDecl.importClause!,
-        this.importDecl.importClause!.isTypeOnly, undefined, newNamedImports),
-      this.importDecl.moduleSpecifier, this.importDecl.attributes
-    );
-  }
-}
 
 export class TsTransfromerHelper {
 
@@ -174,11 +129,28 @@ export class TsTransfromerHelper {
     );
   }
 
-  public static createConstStatement(name: string, initializer: ts.Expression, type?: ts.TypeNode): ts.VariableStatement {
-    return ts.factory.createVariableStatement([], ts.factory.createVariableDeclarationList(
-      [ts.factory.createVariableDeclaration(name, undefined, type, initializer)],
-      ts.NodeFlags.Const,
-    ));
+  /**
+   * `let name = initializer`
+   * `let name`
+   * `let name: type`
+   * `let name: type = initializer`
+   */
+  public static createLetStatement(name: string, type?: ts.TypeNode, initializer?: ts.Expression): ts.VariableStatement {
+    return ts.factory.createVariableStatement(undefined,
+      ts.factory.createVariableDeclarationList(
+        [ts.factory.createVariableDeclaration(name, undefined, type, initializer)],
+        ts.NodeFlags.Let,
+      )
+    );
+  }
+
+  public static createConstStatement(name: string, type?: ts.TypeNode, initializer?: ts.Expression): ts.VariableStatement {
+    return ts.factory.createVariableStatement(undefined,
+      ts.factory.createVariableDeclarationList(
+        [ts.factory.createVariableDeclaration(name, undefined, type, initializer)],
+        ts.NodeFlags.Const,
+      )
+    );
   }
 
   public static createImportFromMapper(sourceRoot: string): ImportFromMapper {
