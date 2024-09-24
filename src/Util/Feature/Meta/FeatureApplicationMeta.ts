@@ -1,5 +1,5 @@
-import { type JsonSerialize, LogicError } from "@hexancore/common";
-import { FeatureClassMeta, FeatureDtoMeta, FeatureHObjectMap, FeatureHObjectMeta, HObjectType } from "./CommonFeatureMeta";
+import { type JsonSerialize, LogicError, HFeatureBackendLayer } from "@hexancore/common";
+import { FeatureClassMeta, FeatureDtoMeta, FeatureHObjectMap, FeatureHObjectMeta, HObjectKind } from "./CommonFeatureMeta";
 
 export interface FeatureApplicationMessageMeta extends FeatureHObjectMeta {
   handlerClass: string;
@@ -28,13 +28,19 @@ export class FeatureApplicationCommandMeta implements FeatureApplicationMessageM
     return this.path + '/' + this.className + '.ts';
   }
 
-  public get objectType(): HObjectType.Command {
-    return HObjectType.Command;
+  public get kind(): HObjectKind.Command {
+    return HObjectKind.Command;
+  }
+
+  public get layer(): HFeatureBackendLayer {
+    return 'application';
   }
 
   public get hashData(): string {
     return this.path;
   }
+
+
 
   public toJSON(): any {
     return {
@@ -67,8 +73,12 @@ export class FeatureApplicationQueryMeta implements FeatureApplicationMessageMet
     return this.path + '/' + this.className + '.ts';
   }
 
-  public get objectType(): HObjectType.Query {
-    return HObjectType.Query;
+  public get kind(): HObjectKind.Query {
+    return HObjectKind.Query;
+  }
+
+  public get layer(): HFeatureBackendLayer {
+    return 'application';
   }
 
   public get hashData(): string {

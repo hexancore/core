@@ -24,16 +24,3 @@ exports.BookModule = BookModule = tslib_1.__decorate([
 ], BookModule);
 //# sourceMappingURL=BookModule.js.map"
 `;
-
-exports[`Function transform HObject: Command 1`] = `
-""use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.BookCreateCommand = void 0;
-class BookCreateCommand {
-    constructor(title) {
-        this.title = title;
-    }
-}
-exports.BookCreateCommand = BookCreateCommand;
-//# sourceMappingURL=BookCreateCommand.js.map"
-`;

@@ -1,4 +1,4 @@
-import type { JsonSerialize } from "@hexancore/common";
+import type { JsonSerialize, HFeatureBackendLayer } from "@hexancore/common";
 
 export interface FeatureClassMeta {
   name: string;
@@ -10,7 +10,7 @@ export interface FeatureClassMeta {
   filePath: string;
 }
 
-export enum HObjectType {
+export enum HObjectKind {
   Command = 'Command',
   Query = 'Query',
   Event = 'Event',
@@ -24,18 +24,21 @@ export interface FeatureHObjectMeta extends FeatureClassMeta, JsonSerialize {
   context: string;
   className: string;
   get hashData(): string;
-  get objectType(): HObjectType;
+  get kind(): HObjectKind;
+  get layer(): HFeatureBackendLayer;
 }
 
 export type FeatureHObjectMap = Map<string, FeatureHObjectMeta>;
 
 export class FeatureDtoMeta implements FeatureHObjectMeta {
+  public layer: HFeatureBackendLayer;
+
   public constructor(
     public name: string,
     public context: string,
     public path: string,
   ) {
-
+    this.layer = path.split('/')[0].toLowerCase() as HFeatureBackendLayer;
   }
 
   public static parse(plain: unknown): FeatureDtoMeta {
@@ -51,8 +54,8 @@ export class FeatureDtoMeta implements FeatureHObjectMeta {
     return this.path + '.ts';
   }
 
-  public get objectType(): HObjectType {
-    return HObjectType.Dto;
+  public get kind(): HObjectKind.Dto {
+    return HObjectKind.Dto;
   }
 
   public get hashData(): string {

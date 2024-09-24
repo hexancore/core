@@ -33,15 +33,6 @@ describe(FeatureModuleTsTransformer.constructor.name, () => {
 
     expect(out.outputText).toMatchSnapshot();
   });
-
-  test.skip("transform HObject: Command", () => {
-    const sourceFilePath = process.cwd() + "/test/helper/libs/test-lib/src/Book/Application/Book/Command/Create/BookCreateCommand.ts";
-
-    const out = helper.transpileModule(transformer.transform.bind(transformer), sourceFilePath);
-
-    expect(out.outputText).toMatchSnapshot();
-  });
-
 });
 
 
