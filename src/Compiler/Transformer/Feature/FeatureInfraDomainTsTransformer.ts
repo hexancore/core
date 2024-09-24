@@ -4,6 +4,7 @@ import { AbstractFeatureTsTransformer } from './AbstractFeatureTsTransformer';
 import { TsTransfromerHelper } from '../TsTransformerHelper';
 import type { AddImportTransformDef } from '../ModuleClassTsTransformer';
 import type { FeatureTransformContext } from './FeatureTransformContext';
+import type { FeatureSourcePath } from "../../../Util/Feature/FeatureModuleDiscoverer";
 
 export class FeatureInfraDomainModuleTsTransformer extends AbstractFeatureTsTransformer {
 
@@ -43,14 +44,14 @@ export class FeatureInfraDomainModuleTsTransformer extends AbstractFeatureTsTran
           ts.factory.createPropertyAssignment("domainErrors", ts.factory.createIdentifier(domainErrorsClassName)),
         ]);
 
-        const createMeta = TsTransfromerHelper.createConstStatement("HcDomainInfraModuleMetaExtra", ts.factory.createCallExpression(
+        const createMeta = TsTransfromerHelper.createConstStatement("HcDomainInfraModuleMetaExtra", undefined, ts.factory.createCallExpression(
           ts.factory.createPropertyAccessExpression(classIdentifier, methodIdentifier),
           undefined,
           [optionsObject]
         ));
 
         return [
-          TsTransfromerHelper.createConstStatement("HcDomainInfraAggrgateRootRepositories",
+          TsTransfromerHelper.createConstStatement("HcDomainInfraAggrgateRootRepositories", undefined,
             ts.factory.createArrayLiteralExpression(repos.map((r) => ts.factory.createIdentifier(r)))
           ),
           createMeta
@@ -65,7 +66,7 @@ export class FeatureInfraDomainModuleTsTransformer extends AbstractFeatureTsTran
     });
   }
 
-  public supports(sourcefilePath: string, feature: FeatureMeta): boolean {
-    return sourcefilePath.endsWith("DomainInfraModule.ts");
+  public supports(featureSourcePath: FeatureSourcePath, feature: FeatureMeta): boolean {
+    return featureSourcePath.localSourcePath.endsWith("DomainInfraModule.ts");
   }
 }

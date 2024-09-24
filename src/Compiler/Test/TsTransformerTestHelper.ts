@@ -38,12 +38,19 @@ export class TsTransformerTestHelper {
     return ts.createSourceFile(
       filePath,
       code,
-      this.compilerOptions.target ?? ts.ScriptTarget.Latest
+      this.compilerOptions.target ?? ts.ScriptTarget.Latest,
+      true,
     );
   }
 
-  public createTransformerFactory(transformer: (sourceFile: ts.SourceFile) => ts.SourceFile): ts.TransformerFactory<ts.SourceFile> {
-    return (context: ts.TransformationContext) => transformer;
+  public createTransformerFactory(transformer: (sourceFile: ts.SourceFile, context: ts.TransformationContext,) => ts.SourceFile): ts.TransformerFactory<ts.SourceFile> {
+    return (context: ts.TransformationContext) => (sourceFile: ts.SourceFile) => transformer(sourceFile, context);
+  }
+
+
+  public transformExistingAndReturnAsString(sourceFilePath: string, transformers: ts.TransformerFactory<ts.SourceFile>[]): string {
+    const sourceFile = this.createSourceFileFromExisting(sourceFilePath);
+    return this.transformAndReturnAsString(sourceFile, transformers);
   }
 
   public transformAndReturnAsString(sourceFile: ts.SourceFile, transformers: ts.TransformerFactory<ts.SourceFile>[]): string {
@@ -63,7 +70,6 @@ export class TsTransformerTestHelper {
 
   public transpileModule(transformer: ContextAwareCustomTransformer, sourceFilePath: string, sourceText?: string): ts.TranspileOutput {
     const sourceFile = sourceText ? this.createSourceFile(sourceFilePath, sourceText) : this.createSourceFileFromExisting(sourceFilePath);
-
     return ts.transpileModule(sourceFile.text, {
       compilerOptions: this.compilerOptions,
       fileName: sourceFilePath,

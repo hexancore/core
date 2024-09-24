@@ -4,6 +4,7 @@ import { AbstractFeatureTsTransformer } from "./AbstractFeatureTsTransformer";
 import type { ProviderModuleMetaTransformDef } from '../ModuleClassTsTransformer';
 import type { FeatureTransformContext } from './FeatureTransformContext';
 import type { FeatureApplicationMessageMeta } from '../../../Util/Feature/Meta';
+import type { FeatureSourcePath } from "../../../Util/Feature/FeatureModuleDiscoverer";
 
 /**
  * Adding automatic injection of message handlers, services, infra module to `[Feature]Module` source.
@@ -11,8 +12,8 @@ import type { FeatureApplicationMessageMeta } from '../../../Util/Feature/Meta';
  */
 export class FeatureModuleTsTransformer extends AbstractFeatureTsTransformer {
 
-  public supports(sourcefilePath: string, feature: FeatureMeta): boolean {
-    return sourcefilePath.endsWith(feature.name + "Module.ts");
+  public supports(featureSourcePath: FeatureSourcePath, feature: FeatureMeta): boolean {
+    return featureSourcePath.localSourcePath.endsWith(feature.name + "Module.ts");
   }
 
   public transform(source: ts.SourceFile, context: FeatureTransformContext): ts.SourceFile {

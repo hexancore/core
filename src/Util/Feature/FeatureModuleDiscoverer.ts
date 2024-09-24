@@ -8,7 +8,11 @@ import { FeatureDomainDiscoverer } from "./FeatureDomainDiscoverer";
 import { FeatureInfrastructureDiscoverer } from "./FeatureInfrastructureDiscoverer";
 import { FeatureMeta } from "./Meta/FeatureMeta";
 
-export const CORE_FEATURE_NAME = "Core";
+export interface FeatureSourcePath {
+  featureName: string;
+  localSourcePath: string;
+  sourcePath: string;
+}
 
 export class FeatureModuleDiscoverer {
 
@@ -24,18 +28,22 @@ export class FeatureModuleDiscoverer {
     this.infrastructureDiscoverer = new FeatureInfrastructureDiscoverer();
   }
 
-  public static extractFeatureNameFromPath(sourceRoot: string, sourcePath: string): string | null {
+  public static extractFeatureNameFromPath(sourceRoot: string, sourcePath: string): FeatureSourcePath | null {
     if (!sourcePath.startsWith(sourceRoot)) {
       return null;
     }
 
-    const withoutSourceRootParts = sourcePath.substring(sourceRoot.length + 1).split("/", 2);
+    const withoutRoot = sourcePath.substring(sourceRoot.length + 1);
+    const withoutSourceRootParts = withoutRoot.split("/", 2);
     if (withoutSourceRootParts.length < 2) {
       return null;
     }
 
-    const featureName = withoutSourceRootParts[0];
-    return featureName === CORE_FEATURE_NAME ? null : featureName;
+    return {
+      featureName: withoutSourceRootParts[0],
+      sourcePath,
+      localSourcePath: withoutRoot.substring(withoutSourceRootParts[0].length + 1),
+    };
   }
 
   public async discoverAll(): Promise<Map<string, FeatureMeta>> {
@@ -43,10 +51,6 @@ export class FeatureModuleDiscoverer {
     const features = new Map<string, FeatureMeta>();
     for (const featureDir of featureDirs) {
       const featureName = path.basename(featureDir);
-      if (featureName === CORE_FEATURE_NAME) {
-        continue;
-      }
-
       const discovery = await this.discover(featureName, featureDir);
       features.set(featureName, discovery);
     }

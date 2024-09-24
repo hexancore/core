@@ -1,4 +1,4 @@
-import { FeatureModuleDiscoverer } from '../../Util/Feature/FeatureModuleDiscoverer';
+import { FeatureModuleDiscoverer, type FeatureSourcePath } from '../../Util/Feature/FeatureModuleDiscoverer';
 import type { AsyncTransformer, TransformedSource } from '@jest/transform';
 import { hash } from 'node:crypto';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
@@ -72,12 +72,12 @@ export class HcJestTransformer implements AsyncTransformer<HcJestTransformerOpti
 
   public process(sourceText: string, sourcePath: string, options: TsJestTransformOptions): TransformedSource {
     sourcePath = FsHelper.normalizePathSep(sourcePath);
-    const featureName = this.extractFeatureNameFromPath(sourcePath);
-    if (!featureName || !this.featureTsTransformer.supports(sourcePath, featureName)) {
+    const featureSourcePath = this.extractFeatureNameFromPath(sourcePath);
+    if (!featureSourcePath || !this.featureTsTransformer.supports(featureSourcePath)) {
       return this.tsJestTransformer.process(sourceText, sourcePath, options);
     }
 
-    return this.processFeatureSourceFile(featureName, sourceText, sourcePath, options);
+    return this.processFeatureSourceFile(featureSourcePath, sourceText, options);
   }
 
   public async processAsync(
@@ -86,19 +86,19 @@ export class HcJestTransformer implements AsyncTransformer<HcJestTransformerOpti
     options: TsJestTransformOptions,
   ): Promise<TransformedSource> {
     sourcePath = FsHelper.normalizePathSep(sourcePath);
-    const featureName = this.extractFeatureNameFromPath(sourcePath);
-    if (!featureName || !this.featureTsTransformer.supports(sourcePath, featureName)) {
+    const featureSourcePath = this.extractFeatureNameFromPath(sourcePath);
+    if (!featureSourcePath || !this.featureTsTransformer.supports(featureSourcePath)) {
       return this.tsJestTransformer.processAsync(sourceText, sourcePath, options);
     }
 
-    return this.processFeatureSourceFile(featureName, sourceText, sourcePath, options);
+    return this.processFeatureSourceFile(featureSourcePath, sourceText, options);
   }
 
-  private processFeatureSourceFile(featureName: string, sourceText: string, sourcePath: string, options: TsJestTransformOptions): TransformedSource {
+  private processFeatureSourceFile(featureSourcePath: FeatureSourcePath, sourceText: string, options: TsJestTransformOptions): TransformedSource {
     this.setupTransformedTmpDir(options);
 
     const inSourceFile = ts.createSourceFile(
-      sourcePath,
+      featureSourcePath.sourcePath,
       sourceText,
       this.compilerOptions.target ?? ts.ScriptTarget.Latest
     );
@@ -107,7 +107,7 @@ export class HcJestTransformer implements AsyncTransformer<HcJestTransformerOpti
     const outSourceFile = transformed.transformed[0];
 
     const printed = TsTransfromerHelper.printFile(outSourceFile);
-    const tmpPath = this.tmpDir + '/' + featureName + '-' + hash('md5', sourcePath, 'hex').substring(0, 8) + '-' + path.basename(sourcePath);
+    const tmpPath = this.tmpDir + '/' + featureSourcePath.featureName+ '-' + hash('md5', featureSourcePath.sourcePath, 'hex').substring(0, 8) + '-' + path.basename(featureSourcePath.sourcePath);
     writeFileSync(tmpPath, printed);
 
     const outTranspile = ts.transpileModule(printed, {
@@ -144,13 +144,13 @@ export class HcJestTransformer implements AsyncTransformer<HcJestTransformerOpti
     sourcePath = FsHelper.normalizePathSep(sourcePath);
     const extracted = this.extractFeatureNameFromPath(sourcePath);
     if (extracted) {
-      return this.featuresHashMap.get(extracted)!;
+      return this.featuresHashMap.get(extracted.featureName)!;
     }
 
     return null;
   }
 
-  private extractFeatureNameFromPath(sourcePath: string): string | null {
+  private extractFeatureNameFromPath(sourcePath: string): FeatureSourcePath | null {
     return FeatureModuleDiscoverer.extractFeatureNameFromPath(this.sourceRoot, sourcePath);
   }
 }
