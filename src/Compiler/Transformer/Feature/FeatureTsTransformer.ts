@@ -11,7 +11,7 @@ import { FeatureModuleDiscoverer, type FeatureSourcePath } from "../../../Util/F
 import { TsImportHelper } from "../TsImportHelper";
 import { ModuleClassTsTransformer } from "../ModuleClassTsTransformer";
 import type { FeatureTransformContext } from "./FeatureTransformContext";
-//import { HObjectTsTransformer } from "./HObject/HObjectTsTransformer";
+import { HObjectTsTransformer } from "./HObject/HObjectTsTransformer";
 
 
 /**
@@ -36,7 +36,7 @@ export class FeatureTsTransformer {
     this.transformers = [
       new FeatureInfraDomainModuleTsTransformer(helpers),
       new FeatureModuleTsTransformer(helpers),
-      //new HObjectTsTransformer(helpers),
+      new HObjectTsTransformer(helpers),
     ];
   }
 
