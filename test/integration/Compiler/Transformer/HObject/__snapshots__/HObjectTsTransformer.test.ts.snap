@@ -1,0 +1,123 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Function transform: Command 1`] = `
+"import { HCommand, R, OK, type JsonObjectType, type PlainParsableHObjectType, type PlainParseError, PlainParseHelper, InvalidTypePlainParseIssue, HObjectTypeMeta, PlainParseIssue, TooBigPlainParseIssue, TooSmallPlainParseIssue } from "@hexancore/common";
+export class BookCreateCommand extends HCommand<BookCreateCommand, void> {
+    public static HOBJ_META = HObjectTypeMeta.application("Book", "Book", "Command", "Create", BookCreateCommand);
+    public title!: string;
+    public constructor(title: any) {
+        this.title = title;
+    }
+    public static parse(plain: unknown): common_1.R<BookCreateCommand> {
+        if (typeof plain !== "object") {
+            return PlainParseHelper.HObjectIsNotObjectParseErr(BookCreateCommand as any, plain);
+        }
+        const p = plain as Record<keyof BookCreateCommand, unknown>;
+        const issues: PlainParseIssue[] = [];
+        const title = PlainParseHelper.parseString(p.title, "title", issues);
+    }
+    public static toJSON(): common_1.JsonObjectType<BookCreateCommand> {
+        return {
+            title: this.title
+        };
+    }
+}
+"
+`;
+
+exports[`Function transform: DTO 1`] = `
+"import { Dto, v, RefId, R, OK, type JsonObjectType, type PlainParsableHObjectType, type PlainParseError, PlainParseHelper, InvalidTypePlainParseIssue, HObjectTypeMeta, PlainParseIssue, TooBigPlainParseIssue, TooSmallPlainParseIssue } from '@hexancore/common';
+export class TestTransformDto extends Dto {
+    public static HOBJ_META = HObjectTypeMeta.application("Book", "Book", "Dto", "TestTransformDto", TestTransformDto);
+    public optionalField?: string;
+    public numberField!: number;
+    public stringField!: string;
+    public booleanField!: boolean;
+    public bigintField!: bigint;
+    public primitiveArrayField!: string[];
+    public uintField!: v.uint;
+    public ruleWithArgsField!: v.int.between<-10, 100>;
+    public ruleArrayField!: v.int.between<-10, 100>[];
+    public ruleArrayWithItemsField!: v.int.between<-10, 100>[] & v.items.between<2, 5>;
+    public hObjField!: RefId;
+    public hObjArrayField!: RefId[];
+    public constructor(numberField: any, stringField: any, booleanField: any, bigintField: any, primitiveArrayField: any, uintField: any, ruleWithArgsField: any, ruleArrayField: any, ruleArrayWithItemsField: any, hObjField: any, hObjArrayField: any, optionalField?: any) {
+        this.numberField = numberField;
+        this.stringField = stringField;
+        this.booleanField = booleanField;
+        this.bigintField = bigintField;
+        this.primitiveArrayField = primitiveArrayField;
+        this.uintField = uintField;
+        this.ruleWithArgsField = ruleWithArgsField;
+        this.ruleArrayField = ruleArrayField;
+        this.ruleArrayWithItemsField = ruleArrayWithItemsField;
+        this.hObjField = hObjField;
+        this.hObjArrayField = hObjArrayField;
+        this.optionalField = optionalField;
+    }
+    public static parse(plain: unknown): common_1.R<TestTransformDto> {
+        if (typeof plain !== "object") {
+            return PlainParseHelper.HObjectIsNotObjectParseErr(TestTransformDto as any, plain);
+        }
+        const p = plain as Record<keyof TestTransformDto, unknown>;
+        const issues: PlainParseIssue[] = [];
+        let optionalField;
+        if (p.optionalField !== undefined) {
+            optionalField = PlainParseHelper.parseString(p.optionalField, "optionalField", issues);
+        }
+        const stringField = PlainParseHelper.parseString(p.stringField, "stringField", issues);
+        const primitiveArrayField = PlainParseHelper.parsePrimitiveArray(p.primitiveArrayField, PlainParseHelper.parseString, "primitiveArrayField", issues);
+    }
+    public static toJSON(): common_1.JsonObjectType<TestTransformDto> {
+        return {
+            optionalField: this.optionalField,
+            numberField: this.numberField,
+            stringField: this.stringField,
+            booleanField: this.booleanField,
+            bigintField: this.bigintField.toString(),
+            primitiveArrayField: this.primitiveArrayField,
+            uintField: this.uintField,
+            ruleWithArgsField: this.ruleWithArgsField,
+            ruleArrayField: this.ruleArrayField,
+            ruleArrayWithItemsField: this.ruleArrayWithItemsField,
+            hObjField: this.hObjField,
+            hObjArrayField: this.hObjArrayField.map(item => item.toJSON())
+        };
+    }
+}
+"
+`;
+
+exports[`Function transform: Query 1`] = `
+"import { HQuery, R, OK, type JsonObjectType, type PlainParsableHObjectType, type PlainParseError, PlainParseHelper, InvalidTypePlainParseIssue, HObjectTypeMeta, PlainParseIssue, TooBigPlainParseIssue, TooSmallPlainParseIssue } from "@hexancore/common";
+import type { BookDto } from "../../Dto/BookDto";
+export class BookGetByIdQuery extends HQuery<BookGetByIdQuery, BookDto> {
+    public static HOBJ_META = HObjectTypeMeta.application("Book", "Book", "Query", "GetById", BookGetByIdQuery);
+    public title!: string;
+    public constructor(title: any) {
+        this.title = title;
+    }
+    public static parse(plain: unknown): common_1.R<BookGetByIdQuery> {
+        if (typeof plain !== "object") {
+            return PlainParseHelper.HObjectIsNotObjectParseErr(BookGetByIdQuery as any, plain);
+        }
+        const p = plain as Record<keyof BookGetByIdQuery, unknown>;
+        const issues: PlainParseIssue[] = [];
+        const title = PlainParseHelper.parseString(p.title, "title", issues);
+    }
+    public static toJSON(): common_1.JsonObjectType<BookGetByIdQuery> {
+        return {
+            title: this.title
+        };
+    }
+}
+"
+`;
+
+exports[`Function transform: ValueObject 1`] = `
+"import { UIntValue, R, OK, type JsonObjectType, type PlainParsableHObjectType, type PlainParseError, PlainParseHelper, InvalidTypePlainParseIssue, HObjectTypeMeta, PlainParseIssue, TooBigPlainParseIssue, TooSmallPlainParseIssue } from "@hexancore/common";
+export class BookId extends UIntValue<BookId> {
+    public static HOBJ_META = HObjectTypeMeta.domain("Book", "Book", "ValueObject", "BookId", BookId);
+}
+"
+`;
