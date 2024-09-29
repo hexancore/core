@@ -1,0 +1,213 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HObject.Rules.String parse when invalid 1`] = `
+Result {
+  "value": {
+    "cause": null,
+    "code": 400,
+    "data": {
+      "code": "invalid_hobject",
+      "i18n": "core.plain.parse_issue.invalid_hobject",
+      "issues": [
+        {
+          "code": "invalid_type",
+          "expected": "string",
+          "i18n": "core.plain.parse_issue.invalid_type",
+          "message": "Expected value type: 'string', received: 'number'",
+          "path": "field",
+          "received": "number",
+        },
+        {
+          "code": "too_big",
+          "current": 12,
+          "i18n": "core.plain.parse_issue.too_big",
+          "max": 5,
+          "message": "String must contain exactly 5 character(s), current: 12",
+          "mode": "string_len_exactly",
+          "path": "lengthField",
+        },
+        {
+          "code": "too_small",
+          "current": 1,
+          "i18n": "core.plain.parse_issue.too_small.string_len_inclusively",
+          "message": "String must contain at least 5 character(s), current: 1",
+          "min": 5,
+          "mode": "string_len_inclusively",
+          "path": "lengthMinField",
+        },
+        {
+          "code": "too_big",
+          "current": 21,
+          "i18n": "core.plain.parse_issue.too_big",
+          "max": 20,
+          "message": "String must contain maximum 20 character(s), current: 21",
+          "mode": "string_len_inclusively",
+          "path": "lengthMaxField",
+        },
+        {
+          "code": "out_of_range",
+          "current": 21,
+          "i18n": "core.plain.parse_issue.out_of_range.number.inclusively",
+          "inclusively": true,
+          "max": 20,
+          "message": "String length must be between 5 and 20 inclusively, current: 21",
+          "min": 5,
+          "path": "lengthBetweenField",
+          "valueType": "number",
+        },
+        {
+          "code": "invalid_string",
+          "i18n": "core.plain.parse_issue.invalid_string.regex",
+          "message": "String must pass pattern: /[a-z]{2}\\d{3}/",
+          "path": "regexField",
+          "validatorArgs": {
+            "regex": /\\[a-z\\]\\{2\\}\\\\d\\{3\\}/,
+          },
+          "validatorType": "regex",
+        },
+        {
+          "code": "invalid_type",
+          "expected": "array",
+          "i18n": "core.plain.parse_issue.invalid_type",
+          "message": "Expected value type: 'array', received: 'undefined'",
+          "path": "arrayField",
+          "received": "undefined",
+        },
+        {
+          "code": "invalid_type",
+          "expected": "string",
+          "i18n": "core.plain.parse_issue.invalid_type",
+          "message": "Expected value type: 'string', received: 'number'",
+          "path": "optionalField",
+          "received": "number",
+        },
+        {
+          "code": "invalid_type",
+          "expected": "array",
+          "i18n": "core.plain.parse_issue.invalid_type",
+          "message": "Expected value type: 'array', received: 'string'",
+          "path": "optionalArrayField",
+          "received": "string",
+        },
+      ],
+      "message": "Invalid plain object to parse to HObject: book.application.book.dto.string_test_dto",
+      "path": undefined,
+      "typeId": "book.application.book.dto.string_test_dto",
+    },
+    "error": null,
+    "i18n": "",
+    "message": "",
+    "type": "core.plain.parse",
+  },
+}
+`;
+
+exports[`HObject.Rules.String parse when valid 1`] = `
+Result {
+  "value": {
+    "arrayField": [
+      "test_0",
+      "test_1",
+    ],
+    "field": "test",
+    "lengthBetweenField": "test_between",
+    "lengthField": "test_",
+    "lengthMaxField": "test_max",
+    "lengthMinField": "test_min",
+    "optionalArrayField": [
+      "test_optional_0",
+      "test_optional_1",
+    ],
+    "optionalField": "test_optional",
+    "regexField": "ab123",
+  },
+}
+`;
+
+exports[`HObject.Rules.String toJSON 1`] = `
+"{
+  "field": "test",
+  "optionalField": "test_optional",
+  "lengthField": "test_",
+  "lengthMinField": "test_min",
+  "lengthMaxField": "test_max",
+  "lengthBetweenField": "test_between",
+  "regexField": "ab123",
+  "arrayField": [
+    "test_0",
+    "test_1"
+  ],
+  "optionalArrayField": [
+    "test_optional_0",
+    "test_optional_1"
+  ]
+}"
+`;
+
+exports[`HObject.Rules.String transform 1`] = `
+"import { Dto, v, R, OK, PlainParseHelper, IntegerPlainParseHelper, ArrayPlainParseHelper, StringPlainParseHelper, NumberPlainParseHelper, HObjectTypeMeta, type JsonObjectType, type PlainParseError, type PlainParseIssue, type AnyDto, type DtoType } from '@hexancore/common';
+export class StringTestDto extends Dto<StringTestDto> {
+    public static HOBJ_META = HObjectTypeMeta.application("Book", "Book", "Dto", "StringTestDto", StringTestDto);
+    public field!: string;
+    public optionalField?: string;
+    public lengthField!: v.string.length<5>;
+    public lengthMinField!: v.string.length.min<5>;
+    public lengthMaxField!: v.string.length.max<20>;
+    public lengthBetweenField!: v.string.length.between<5, 20>;
+    public regexField!: v.string.regex<'[a-z]{2}\\\\d{3}'>;
+    public arrayField!: v.string.length.min<5>[];
+    public optionalArrayField?: v.string.length.min<5>[];
+    public constructor(field: any, lengthField: any, lengthMinField: any, lengthMaxField: any, lengthBetweenField: any, regexField: any, arrayField: any, optionalField?: any, optionalArrayField?: any) {
+        super();
+        this.field = field;
+        this.lengthField = lengthField;
+        this.lengthMinField = lengthMinField;
+        this.lengthMaxField = lengthMaxField;
+        this.lengthBetweenField = lengthBetweenField;
+        this.regexField = regexField;
+        this.arrayField = arrayField;
+        this.optionalField = optionalField;
+        this.optionalArrayField = optionalArrayField;
+    }
+    public static parse<T extends AnyDto>(this: HDtoType<T>, plain: unknown): R<StringTestDto> {
+        if (typeof plain !== "object") {
+            return PlainParseHelper.HObjectIsNotObjectParseErr(StringTestDto as any, plain);
+        }
+        const p = plain as Record<keyof StringTestDto, unknown>;
+        const issues: PlainParseIssue[] = [];
+        const field = StringPlainParseHelper.parseString(p.field, "field", issues);
+        const lengthField = StringPlainParseHelper.parseStringLength(p.lengthField, 5, "lengthField", issues);
+        const lengthMinField = StringPlainParseHelper.parseStringLengthMin(p.lengthMinField, 5, "lengthMinField", issues);
+        const lengthMaxField = StringPlainParseHelper.parseStringLengthMax(p.lengthMaxField, 20, "lengthMaxField", issues);
+        const lengthBetweenField = StringPlainParseHelper.parseStringLengthBetween(p.lengthBetweenField, 5, 20, "lengthBetweenField", issues);
+        const regexField = StringPlainParseHelper.parseStringRegex(p.regexField, /[a-z]{2}\\d{3}/, "regexField", issues);
+        const arrayField = ArrayPlainParseHelper.parsePrimitiveArray(p.arrayField, pi => StringPlainParseHelper.parseStringLengthMin(pi, 5), "arrayField", issues);
+        let optionalField;
+        if (p.optionalField !== undefined) {
+            optionalField = StringPlainParseHelper.parseString(p.optionalField, "optionalField", issues);
+        }
+        let optionalArrayField;
+        if (p.optionalArrayField !== undefined) {
+            optionalArrayField = ArrayPlainParseHelper.parsePrimitiveArray(p.optionalArrayField, pi => StringPlainParseHelper.parseStringLengthMin(pi, 5), "optionalArrayField", issues);
+        }
+        if (issues.length > 0) {
+            return PlainParseHelper.HObjectParseErr(StringTestDto as any, issues);
+        }
+        return OK(new StringTestDto(field as any, lengthField as any, lengthMinField as any, lengthMaxField as any, lengthBetweenField as any, regexField as any, arrayField as any, optionalField as any, optionalArrayField as any)) as any;
+    }
+    public toJSON(): JsonObjectType<StringTestDto> {
+        return {
+            field: this.field,
+            optionalField: this.optionalField,
+            lengthField: this.lengthField,
+            lengthMinField: this.lengthMinField,
+            lengthMaxField: this.lengthMaxField,
+            lengthBetweenField: this.lengthBetweenField,
+            regexField: this.regexField,
+            arrayField: this.arrayField,
+            optionalArrayField: this.optionalArrayField
+        };
+    }
+}
+"
+`;

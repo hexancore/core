@@ -1,20 +1,36 @@
-import ts from "typescript";
+import ts, { SyntaxKind } from "typescript";
+import { LogicError } from "@hexancore/common";
 import { TsTransfromerHelper } from "../../TsTransformerHelper";
-import { CollectionType, HObjectPropertyKind, HObjectPropertyTsMeta, HObjectPropertyPrimitiveType, ValueValidationRule } from "./HObjectPropertyTsMeta";
+import { CollectionType, HObjectPropertyKind, HObjectPropertyTsMeta, HObjectPropertyPrimitiveType, ValueValidationRule, type HObjectPropertyType, PrimitiveHObjectPropertyTsMeta, ObjectHObjectPropertyTsMeta } from "./HObjectPropertyTsMeta";
+import type { ImportDeclarationWrapper } from "../../Helper/ImportDeclarationWrapper";
+
+interface HObjectExtractPropertyTypeMeta {
+  kind: HObjectPropertyKind;
+  tsType: HObjectPropertyType;
+  validationRules?: ValueValidationRule[],
+  collectionType?: CollectionType,
+  tsImportDeclaration?: ImportDeclarationWrapper;
+}
+
+export interface HObjectPropertyExtractContext {
+  sourceFile: ts.SourceFile;
+  diagnostics: ts.Diagnostic[];
+  importNameToDeclarationMap: Map<string, ImportDeclarationWrapper>;
+}
 
 export class HObjectPropertyExtractor {
-  public extract(node: ts.ClassDeclaration, sourceFile: ts.SourceFile, diagnostics: ts.Diagnostic[]): HObjectPropertyTsMeta[] {
+  public extract(node: ts.ClassDeclaration, context: HObjectPropertyExtractContext): HObjectPropertyTsMeta[] {
     const properties: HObjectPropertyTsMeta[] = [];
     node.members.forEach(member => {
       if (ts.isPropertyDeclaration(member) && ts.isIdentifier(member.name)) {
-        const meta = this.extractPropertyMeta(member, sourceFile, diagnostics);
+        const meta = this.extractPropertyMeta(member, context);
         if (meta) {
           properties.push(meta);
         }
       }
 
       if (ts.isConstructorDeclaration(member)) {
-        diagnostics.push(TsTransfromerHelper.createDiagnostic(node, "HObject user defined constructor is unsupported"));
+        context.diagnostics.push(TsTransfromerHelper.createDiagnostic(member, "HObject user defined constructor is unsupported", context.sourceFile));
         //this.collectFromConstructor(member, properties, sourceFile, diagnostics);
       }
     }, this);
@@ -22,6 +38,7 @@ export class HObjectPropertyExtractor {
     return properties;
   }
 
+  /*
   private collectFromConstructor(node: ts.ConstructorDeclaration, properties: HObjectPropertyTsMeta[], sourceFile: ts.SourceFile, diagnostics: ts.Diagnostic[]): void {
     for (const param of node.parameters) {
       if (ts.isParameterPropertyDeclaration(param, node) && ts.isIdentifier(param.name)) {
@@ -32,40 +49,52 @@ export class HObjectPropertyExtractor {
       }
     }
   }
+    */
 
-  private extractPropertyMeta(member: ts.PropertyDeclaration | ts.ParameterPropertyDeclaration, sourceFile: ts.SourceFile, diagnostics: ts.Diagnostic[]) {
+  private extractPropertyMeta(member: ts.PropertyDeclaration | ts.ParameterPropertyDeclaration, context: HObjectPropertyExtractContext) {
     if (member.type === undefined) {
-      diagnostics.push(TsTransfromerHelper.createDiagnostic(member, 'Property has type "any", which is not allowed in HObject'));
+      context.diagnostics.push(TsTransfromerHelper.createDiagnostic(member, 'Property has type "any", which is not allowed in HObject', context.sourceFile));
 
       return undefined;
     }
 
-    const typeMeta = this.extractPropertyType(member, member.type, sourceFile, diagnostics);
+    const typeMeta = this.extractPropertyType(member, member.type, context);
     if (!typeMeta) {
       return;
     }
 
-    return new HObjectPropertyTsMeta(
-      typeMeta.kind,
-      (member.name as ts.Identifier).text,
-      typeMeta.tsType,
-      !!member.questionToken,
-      typeMeta.validationRules,
-      typeMeta.collectionType
-    );
+    const name = (member.name as ts.Identifier).text;
+    const optional = !!member.questionToken;
+    if (typeMeta.kind === HObjectPropertyKind.PRIMITIVE) {
+      return new PrimitiveHObjectPropertyTsMeta(
+        name,
+        typeMeta.tsType as any,
+        optional,
+        typeMeta.validationRules,
+        typeMeta.collectionType
+      );
+    } else {
+      return new ObjectHObjectPropertyTsMeta(
+        name,
+        typeMeta.tsType as any,
+        typeMeta.tsImportDeclaration!,
+        optional,
+        typeMeta.validationRules,
+        typeMeta.collectionType
+      );
+    }
   }
 
   private extractPropertyType(
     parentNode: ts.Node,
     typeNode: ts.TypeNode,
-    sourceFile: ts.SourceFile,
-    diagnostics: ts.Diagnostic[]
-  ): Pick<HObjectPropertyTsMeta, 'tsType' | 'kind' | 'validationRules' | 'collectionType'> | undefined {
+    context: HObjectPropertyExtractContext,
+  ): HObjectExtractPropertyTypeMeta | undefined {
     // v.int.between<10, 100>[] & v.items.exactly<10>
     // v.int[] & v.items.exactly<10>
     // string[] & v.items.exactly<10>
     if (ts.isIntersectionTypeNode(typeNode)) {
-      return this.extractTypeFromIntesectionTypeNode(parentNode, typeNode, sourceFile, diagnostics);
+      return this.extractTypeFromIntesectionTypeNode(parentNode, typeNode, context);
     }
 
     // TODO: support type union
@@ -74,64 +103,61 @@ export class HObjectPropertyExtractor {
     // v.int[]
     // string[]
     if (ts.isArrayTypeNode(typeNode)) {
-      return this.extractTypeFromArrayTypeNode(parentNode, typeNode, sourceFile, diagnostics);
+      return this.extractTypeFromArrayTypeNode(parentNode, typeNode, context);
     }
 
     // v.int.between<10, 100>
     // v.int
     // string
-    return this.extractTypeFromNode(parentNode, typeNode, sourceFile, diagnostics);
+    return this.extractTypeFromNode(parentNode, typeNode, context);
   }
 
   private extractTypeFromIntesectionTypeNode(
     parentNode: ts.Node,
     typeNode: ts.IntersectionTypeNode,
-    sourceFile: ts.SourceFile,
-    diagnostics: ts.Diagnostic[]
-  ): Pick<HObjectPropertyTsMeta, 'tsType' | 'kind' | 'validationRules' | 'collectionType'> | undefined {
+    context: HObjectPropertyExtractContext
+  ): HObjectExtractPropertyTypeMeta | undefined {
     if (ts.isArrayTypeNode(typeNode.types[0])) {
-      const itemType = this.extractTypeFromNode(parentNode, typeNode.types[0].elementType, sourceFile, diagnostics);
+      const itemType = this.extractTypeFromNode(parentNode, typeNode.types[0].elementType, context);
       if (!itemType) {
         return undefined;
       }
 
-      const itemsRuleType = this.extractTypeFromNode(parentNode, typeNode.types[1], sourceFile, diagnostics);
+      const itemsRuleType = this.extractTypeFromNode(parentNode, typeNode.types[1], context);
       if (!itemsRuleType) {
         return itemType;
       }
 
-      if (itemsRuleType.validationRules && itemsRuleType.validationRules[0].rule.startsWith('v.items')) {
+      if (itemsRuleType.validationRules && itemsRuleType.validationRules[0].isCollectionItemsRule()) {
         return {
           tsType: itemType.tsType,
           kind: itemType.kind,
           validationRules: [...itemType.validationRules!, itemsRuleType.validationRules[0]],
           collectionType: CollectionType.Array,
+          tsImportDeclaration: itemType.tsImportDeclaration,
         };
       } else {
-        diagnostics.push(TsTransfromerHelper.createDiagnostic(parentNode, 'Only v.items.* can be used for array HObject property'));
+        context.diagnostics.push(TsTransfromerHelper.createDiagnostic(parentNode, 'v.items.* can be used only for `Array|Set|Map` property', context.sourceFile));
         return undefined;
       }
     }
 
-    diagnostics.push(TsTransfromerHelper.createDiagnostic(parentNode, 'unsupported property type intersection definition'));
+    context.diagnostics.push(TsTransfromerHelper.createDiagnostic(parentNode, 'unsupported property type intersection definition', context.sourceFile));
     return undefined;
   }
 
   private extractTypeFromArrayTypeNode(
     parentNode: ts.Node,
     typeNode: ts.ArrayTypeNode,
-    sourceFile: ts.SourceFile,
-    diagnostics: ts.Diagnostic[]
-  ): Pick<HObjectPropertyTsMeta, 'tsType' | 'kind' | 'validationRules' | 'collectionType'> | undefined {
-    const itemType = this.extractTypeFromNode(parentNode, typeNode.elementType, sourceFile, diagnostics);
+    context: HObjectPropertyExtractContext
+  ): HObjectExtractPropertyTypeMeta | undefined {
+    const itemType = this.extractTypeFromNode(parentNode, typeNode.elementType, context);
     if (!itemType) {
       return undefined;
     }
 
     return {
-      tsType: itemType.tsType,
-      kind: itemType.kind,
-      validationRules: itemType.validationRules,
+      ...itemType,
       collectionType: CollectionType.Array,
     };
   }
@@ -139,9 +165,8 @@ export class HObjectPropertyExtractor {
   private extractTypeFromNode(
     parentNode: ts.Node,
     node: ts.TypeNode,
-    sourceFile: ts.SourceFile,
-    diagnostics: ts.Diagnostic[]
-  ): Pick<HObjectPropertyTsMeta, 'tsType' | 'kind' | 'validationRules'> | undefined {
+    context: HObjectPropertyExtractContext
+  ): HObjectExtractPropertyTypeMeta | undefined {
     const primitiveType = this.extractPrimitiveTypeFromNode(node);
     if (primitiveType) {
       return {
@@ -153,9 +178,9 @@ export class HObjectPropertyExtractor {
 
     if (ts.isTypeReferenceNode(node)) {
       if (ts.isQualifiedName(node.typeName)) {
-        const typeName = node.typeName.getText(sourceFile);
+        const typeName = node.typeName.getText(context.sourceFile);
         if (typeName.startsWith('v.')) {
-          const validationRule = this.extractValidationRuleFromNode(typeName, node, sourceFile);
+          const validationRule = this.extractValidationRuleFromNode(typeName, node, context.sourceFile);
           return {
             kind: HObjectPropertyKind.PRIMITIVE,
             tsType: validationRule.primitiveType,
@@ -163,14 +188,20 @@ export class HObjectPropertyExtractor {
           };
         }
       } else {
+        const importDeclaration = context.importNameToDeclarationMap.get(node.typeName.text);
+        if (!importDeclaration) {
+          context.diagnostics.push(TsTransfromerHelper.createDiagnostic(parentNode, `Missing type import: ${node.typeName.text}`, context.sourceFile));
+        }
+
         return {
           kind: HObjectPropertyKind.HOBJECT,
-          tsType: node,
+          tsType: node.typeName,
+          tsImportDeclaration: importDeclaration
         };
       }
     }
 
-    diagnostics.push(TsTransfromerHelper.createDiagnostic(parentNode, 'unsupported property type definition'));
+    context.diagnostics.push(TsTransfromerHelper.createDiagnostic(parentNode, 'unsupported property type definition', context.sourceFile));
     return undefined;
   }
 
@@ -189,7 +220,22 @@ export class HObjectPropertyExtractor {
   }
 
   private extractValidationRuleFromNode(typeName: string, node: ts.TypeReferenceNode, sourceFile: ts.SourceFile): ValueValidationRule {
-    const args = node.typeArguments ? node.typeArguments.map(arg => arg.getText(sourceFile)) : ([] as string[]);
-    return new ValueValidationRule(typeName, args);
+    const mapArgs = (arg: ts.TypeNode) => {
+      if (ts.isLiteralTypeNode(arg)) {
+        switch (arg.literal.kind) {
+          case SyntaxKind.StringLiteral:
+          case SyntaxKind.NumericLiteral:
+            return arg.literal.text;
+          case SyntaxKind.PrefixUnaryExpression:
+            return arg.literal.getText(sourceFile);
+          default:
+            throw new LogicError(`Unsupported type argument literal kind: ${SyntaxKind[arg.literal.kind]}`);
+        }
+      }
+      throw new LogicError(`Unsupported type argument kind: ${SyntaxKind[arg.kind]}`);
+    };
+
+    const args = node.typeArguments ? node.typeArguments.map(mapArgs) : ([] as string[]);
+    return new ValueValidationRule(typeName.substring(2), args);
   }
 }

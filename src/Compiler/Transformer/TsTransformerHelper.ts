@@ -191,11 +191,11 @@ export class TsTransfromerHelper {
     );
   }
 
-  public static createDiagnostic(node: ts.Node, message: string): ts.Diagnostic {
+  public static createDiagnostic(node: ts.Node, message: string, source: ts.SourceFile): ts.Diagnostic {
     return {
-      file: node.getSourceFile(),
-      start: node.getStart(),
-      length: node.getWidth(),
+      file: source,
+      start: node.getStart(source),
+      length: node.getWidth(source),
       messageText: message,
       category: ts.DiagnosticCategory.Error,
       code: 9001

@@ -43,10 +43,9 @@ export class TsTransformerTestHelper {
     );
   }
 
-  public createTransformerFactory(transformer: (sourceFile: ts.SourceFile, context: ts.TransformationContext,) => ts.SourceFile): ts.TransformerFactory<ts.SourceFile> {
+  public createTransformerFactory(transformer: ContextAwareCustomTransformer): ts.TransformerFactory<ts.SourceFile> {
     return (context: ts.TransformationContext) => (sourceFile: ts.SourceFile) => transformer(sourceFile, context);
   }
-
 
   public transformExistingAndReturnAsString(sourceFilePath: string, transformers: ts.TransformerFactory<ts.SourceFile>[]): string {
     const sourceFile = this.createSourceFileFromExisting(sourceFilePath);
@@ -57,6 +56,7 @@ export class TsTransformerTestHelper {
     const transformResult = ts.transform(sourceFile, transformers, this.compilerOptions);
 
     const transformedSourceFile = transformResult.transformed[0];
+
     const printer = ts.createPrinter();
 
     const result = printer.printNode(

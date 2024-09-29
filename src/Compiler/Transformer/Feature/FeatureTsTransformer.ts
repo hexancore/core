@@ -72,6 +72,7 @@ export class FeatureTsTransformer {
     for (const t of this.transformers) {
       if (t.supports(featureSourceTransformContext.featureSourcePath, featureSourceTransformContext.feature)) {
         const transformed = t.transform(source, featureSourceTransformContext);
+        TsTransfromerHelper.reportDiagnostics(featureSourceTransformContext.diagnostics);
         return transformed;
       }
     }

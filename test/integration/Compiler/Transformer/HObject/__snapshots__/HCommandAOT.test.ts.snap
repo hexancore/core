@@ -1,0 +1,75 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HObject.HCommand parse when invalid 1`] = `
+Result {
+  "value": {
+    "cause": null,
+    "code": 400,
+    "data": {
+      "code": "invalid_hobject",
+      "i18n": "core.plain.parse_issue.invalid_hobject",
+      "issues": [
+        {
+          "code": "invalid_type",
+          "expected": "object",
+          "i18n": "core.plain.parse_issue.invalid_type",
+          "message": "Expected value type: 'object', received: 'string'",
+          "path": undefined,
+          "received": "string",
+        },
+      ],
+      "message": "Invalid plain object to parse to HObject: book.application.book.command.create",
+      "path": undefined,
+      "typeId": "book.application.book.command.create",
+    },
+    "error": null,
+    "i18n": "",
+    "message": "",
+    "type": "core.plain.parse",
+  },
+}
+`;
+
+exports[`HObject.HCommand parse when valid 1`] = `
+Result {
+  "value": {
+    "title": "test",
+  },
+}
+`;
+
+exports[`HObject.HCommand toJSON 1`] = `
+"{
+  "title": "test"
+}"
+`;
+
+exports[`HObject.HCommand transform 1`] = `
+"import { HCommand, R, OK, PlainParseHelper, IntegerPlainParseHelper, ArrayPlainParseHelper, StringPlainParseHelper, NumberPlainParseHelper, HObjectTypeMeta, type JsonObjectType, type PlainParseError, type PlainParseIssue, type AnyCommand, type CommandType } from "@hexancore/common";
+export class BookCreateCommand extends HCommand<BookCreateCommand, void> {
+    public static HOBJ_META = HObjectTypeMeta.application("Book", "Book", "Command", "Create", BookCreateCommand);
+    public title!: string;
+    public constructor(title: any) {
+        super();
+        this.title = title;
+    }
+    public static parse<T extends AnyHCommand>(this: HCommandType<T>, plain: unknown): R<BookCreateCommand> {
+        if (typeof plain !== "object") {
+            return PlainParseHelper.HObjectIsNotObjectParseErr(BookCreateCommand as any, plain);
+        }
+        const p = plain as Record<keyof BookCreateCommand, unknown>;
+        const issues: PlainParseIssue[] = [];
+        const title = StringPlainParseHelper.parseString(p.title, "title", issues);
+        if (issues.length > 0) {
+            return PlainParseHelper.HObjectParseErr(BookCreateCommand as any, issues);
+        }
+        return OK(new BookCreateCommand(title as any)) as any;
+    }
+    public toJSON(): JsonObjectType<BookCreateCommand> {
+        return {
+            title: this.title
+        };
+    }
+}
+"
+`;

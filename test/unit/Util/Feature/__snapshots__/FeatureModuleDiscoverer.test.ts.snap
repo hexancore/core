@@ -2,7 +2,7 @@
 
 exports[`Function discoverAll 1`] = `
 "- name: Book
-  cacheKey: 76938fdd0fe1c572144becfed1ef7427b3f52342
+  cacheKey: b44e0f68146acb946dab46987c547d2664ce6088
   application:
     commands:
       - name: Create
@@ -11,12 +11,27 @@ exports[`Function discoverAll 1`] = `
       - name: GetById
         context: Book
     dtos:
+      - name: ArrayItemsTestDto
+        context: Book
+        path: Application/Book/Dto/ArrayItemsTestDto
       - name: BookDto
         context: Book
         path: Application/Book/Dto/BookDto
+      - name: FloatTestDto
+        context: Book
+        path: Application/Book/Dto/FloatTestDto
+      - name: IntTestDto
+        context: Book
+        path: Application/Book/Dto/IntTestDto
+      - name: StringTestDto
+        context: Book
+        path: Application/Book/Dto/StringTestDto
       - name: TestTransformDto
         context: Book
         path: Application/Book/Dto/TestTransformDto
+      - name: UIntTestDto
+        context: Book
+        path: Application/Book/Dto/UIntTestDto
     services:
       - name: BookInfraPort
         context: Book
@@ -64,15 +79,40 @@ exports[`Function hObjectMap 1`] = `
     className: BookGetByIdQuery
     handlerClass: BookGetByIdQueryHandler
     path: Application/Book/Query/GetById
+  Application/Book/Dto/ArrayItemsTestDto.ts:
+    name: ArrayItemsTestDto
+    context: Book
+    path: Application/Book/Dto/ArrayItemsTestDto
+    layer: application
   Application/Book/Dto/BookDto.ts:
     name: BookDto
     context: Book
     path: Application/Book/Dto/BookDto
     layer: application
+  Application/Book/Dto/FloatTestDto.ts:
+    name: FloatTestDto
+    context: Book
+    path: Application/Book/Dto/FloatTestDto
+    layer: application
+  Application/Book/Dto/IntTestDto.ts:
+    name: IntTestDto
+    context: Book
+    path: Application/Book/Dto/IntTestDto
+    layer: application
+  Application/Book/Dto/StringTestDto.ts:
+    name: StringTestDto
+    context: Book
+    path: Application/Book/Dto/StringTestDto
+    layer: application
   Application/Book/Dto/TestTransformDto.ts:
     name: TestTransformDto
     context: Book
     path: Application/Book/Dto/TestTransformDto
+    layer: application
+  Application/Book/Dto/UIntTestDto.ts:
+    name: UIntTestDto
+    context: Book
+    path: Application/Book/Dto/UIntTestDto
     layer: application
   Domain/Book/Shared/ValueObject/BookCopyId.ts:
     name: BookCopyId

@@ -3,6 +3,9 @@ import type { HObjectPropertyTsMeta } from "./HObjectPropertyTsMeta";
 
 export class HObjectToConstructorTsFactory {
   public create(properties: HObjectPropertyTsMeta[]): ts.ConstructorDeclaration {
+
+    const callSuper = ts.factory.createExpressionStatement(ts.factory.createCallExpression(ts.factory.createSuper(), undefined, undefined));
+
     const propertiesSorted = [...properties.filter(p => !p.optional), ...properties.filter(p => p.optional)];
     const constructorParameters = propertiesSorted.map(p => this.createParameter(p));
     const constructorAssignments = propertiesSorted.map(p => this.createAssignment(p));
@@ -10,7 +13,7 @@ export class HObjectToConstructorTsFactory {
     return ts.factory.createConstructorDeclaration(
       [ts.factory.createModifier(ts.SyntaxKind.PublicKeyword)],
       constructorParameters,
-      ts.factory.createBlock(constructorAssignments, true)
+      ts.factory.createBlock([callSuper, ...constructorAssignments], true)
     );
   }
 

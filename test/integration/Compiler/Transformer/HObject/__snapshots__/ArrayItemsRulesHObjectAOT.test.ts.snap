@@ -1,0 +1,162 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HObject.Rules.ArrayItems parse when invalid 1`] = `
+Result {
+  "value": {
+    "cause": null,
+    "code": 400,
+    "data": {
+      "code": "invalid_hobject",
+      "i18n": "core.plain.parse_issue.invalid_hobject",
+      "issues": [
+        {
+          "code": "too_small",
+          "current": 0,
+          "i18n": "core.plain.parse_issue.too_small.array_size_inclusively",
+          "message": "Array must contain at least 2 element(s), current: 0",
+          "min": 2,
+          "mode": "array_size_inclusively",
+          "path": "arrayMinItemsField",
+        },
+        {
+          "code": "too_big",
+          "current": 3,
+          "i18n": "core.plain.parse_issue.too_big",
+          "max": 2,
+          "message": "Array must contain maximum 2 element(s), current: 3",
+          "mode": "array_size_inclusively",
+          "path": "arrayMaxItemsField",
+        },
+        {
+          "code": "too_small",
+          "current": 0,
+          "i18n": "core.plain.parse_issue.too_small.array_size_exactly",
+          "message": "Array must contain exactly 2 element(s), current: 0",
+          "min": 2,
+          "mode": "array_size_exactly",
+          "path": "arrayExaclyItemsField",
+        },
+        {
+          "code": "too_small",
+          "current": 0,
+          "i18n": "core.plain.parse_issue.too_small.array_size_inclusively",
+          "message": "Array must contain at least 2 element(s), current: 0",
+          "min": 2,
+          "mode": "array_size_inclusively",
+          "path": "optionalArrayItemsField",
+        },
+      ],
+      "message": "Invalid plain object to parse to HObject: book.application.book.dto.array_items_test_dto",
+      "path": undefined,
+      "typeId": "book.application.book.dto.array_items_test_dto",
+    },
+    "error": null,
+    "i18n": "",
+    "message": "",
+    "type": "core.plain.parse",
+  },
+}
+`;
+
+exports[`HObject.Rules.ArrayItems parse when valid 1`] = `
+Result {
+  "value": {
+    "arrayBetweenItemsField": [
+      1,
+    ],
+    "arrayExaclyItemsField": [
+      1,
+      2,
+    ],
+    "arrayMaxItemsField": [
+      1,
+      2,
+    ],
+    "arrayMinItemsField": [
+      1,
+      2,
+      3,
+    ],
+    "optionalArrayItemsField": [
+      1,
+      2,
+      3,
+    ],
+  },
+}
+`;
+
+exports[`HObject.Rules.ArrayItems toJSON 1`] = `
+"{
+  "arrayMinItemsField": [
+    1,
+    2,
+    3
+  ],
+  "arrayMaxItemsField": [
+    1,
+    2
+  ],
+  "arrayExaclyItemsField": [
+    1,
+    2
+  ],
+  "arrayBetweenItemsField": [
+    1
+  ],
+  "optionalArrayItemsField": [
+    1,
+    2,
+    3
+  ]
+}"
+`;
+
+exports[`HObject.Rules.ArrayItems transform 1`] = `
+"import { Dto, v, R, OK, PlainParseHelper, IntegerPlainParseHelper, ArrayPlainParseHelper, StringPlainParseHelper, NumberPlainParseHelper, HObjectTypeMeta, type JsonObjectType, type PlainParseError, type PlainParseIssue, type AnyDto, type DtoType } from '@hexancore/common';
+export class ArrayItemsTestDto extends Dto<ArrayItemsTestDto> {
+    public static HOBJ_META = HObjectTypeMeta.application("Book", "Book", "Dto", "ArrayItemsTestDto", ArrayItemsTestDto);
+    public arrayMinItemsField!: v.int[] & v.items.min<2>;
+    public arrayMaxItemsField!: v.int[] & v.items.max<2>;
+    public arrayExaclyItemsField!: v.int[] & v.items.exactly<2>;
+    public arrayBetweenItemsField!: v.int[] & v.items.between<0, 2>;
+    public optionalArrayItemsField?: v.int[] & v.items.min<2>;
+    public constructor(arrayMinItemsField: any, arrayMaxItemsField: any, arrayExaclyItemsField: any, arrayBetweenItemsField: any, optionalArrayItemsField?: any) {
+        super();
+        this.arrayMinItemsField = arrayMinItemsField;
+        this.arrayMaxItemsField = arrayMaxItemsField;
+        this.arrayExaclyItemsField = arrayExaclyItemsField;
+        this.arrayBetweenItemsField = arrayBetweenItemsField;
+        this.optionalArrayItemsField = optionalArrayItemsField;
+    }
+    public static parse<T extends AnyDto>(this: HDtoType<T>, plain: unknown): R<ArrayItemsTestDto> {
+        if (typeof plain !== "object") {
+            return PlainParseHelper.HObjectIsNotObjectParseErr(ArrayItemsTestDto as any, plain);
+        }
+        const p = plain as Record<keyof ArrayItemsTestDto, unknown>;
+        const issues: PlainParseIssue[] = [];
+        const arrayMinItemsField = ArrayPlainParseHelper.parsePrimitiveArrayItemsMin(p.arrayMinItemsField, 2, pi => IntegerPlainParseHelper.parseInt(pi), "arrayMinItemsField", issues);
+        const arrayMaxItemsField = ArrayPlainParseHelper.parsePrimitiveArrayItemsMax(p.arrayMaxItemsField, 2, pi => IntegerPlainParseHelper.parseInt(pi), "arrayMaxItemsField", issues);
+        const arrayExaclyItemsField = ArrayPlainParseHelper.parsePrimitiveArrayItemsExactly(p.arrayExaclyItemsField, 2, pi => IntegerPlainParseHelper.parseInt(pi), "arrayExaclyItemsField", issues);
+        const arrayBetweenItemsField = ArrayPlainParseHelper.parsePrimitiveArrayItemsBetween(p.arrayBetweenItemsField, 0, 2, pi => IntegerPlainParseHelper.parseInt(pi), "arrayBetweenItemsField", issues);
+        let optionalArrayItemsField;
+        if (p.optionalArrayItemsField !== undefined) {
+            optionalArrayItemsField = ArrayPlainParseHelper.parsePrimitiveArrayItemsMin(p.optionalArrayItemsField, 2, pi => IntegerPlainParseHelper.parseInt(pi), "optionalArrayItemsField", issues);
+        }
+        if (issues.length > 0) {
+            return PlainParseHelper.HObjectParseErr(ArrayItemsTestDto as any, issues);
+        }
+        return OK(new ArrayItemsTestDto(arrayMinItemsField as any, arrayMaxItemsField as any, arrayExaclyItemsField as any, arrayBetweenItemsField as any, optionalArrayItemsField as any)) as any;
+    }
+    public toJSON(): JsonObjectType<ArrayItemsTestDto> {
+        return {
+            arrayMinItemsField: this.arrayMinItemsField,
+            arrayMaxItemsField: this.arrayMaxItemsField,
+            arrayExaclyItemsField: this.arrayExaclyItemsField,
+            arrayBetweenItemsField: this.arrayBetweenItemsField,
+            optionalArrayItemsField: this.optionalArrayItemsField
+        };
+    }
+}
+"
+`;
