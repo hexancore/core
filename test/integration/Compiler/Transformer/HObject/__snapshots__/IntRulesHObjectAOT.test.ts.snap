@@ -1,0 +1,245 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HObject.Rules.Int parse when invalid 1`] = `
+Result {
+  "value": {
+    "cause": null,
+    "code": 400,
+    "data": {
+      "code": "invalid_hobject",
+      "i18n": "core.plain.parse_issue.invalid_hobject",
+      "issues": [
+        {
+          "code": "invalid_type",
+          "expected": "int",
+          "i18n": "core.plain.parse_issue.invalid_type",
+          "message": "Expected value type: 'int', received: 'undefined'",
+          "path": "field",
+          "received": "undefined",
+        },
+        {
+          "code": "invalid_type",
+          "expected": "int",
+          "i18n": "core.plain.parse_issue.invalid_type",
+          "message": "Expected value type: 'int', received: 'undefined'",
+          "path": "minField",
+          "received": "undefined",
+        },
+        {
+          "code": "invalid_type",
+          "expected": "int",
+          "i18n": "core.plain.parse_issue.invalid_type",
+          "message": "Expected value type: 'int', received: 'undefined'",
+          "path": "maxField",
+          "received": "undefined",
+        },
+        {
+          "code": "invalid_type",
+          "expected": "int",
+          "i18n": "core.plain.parse_issue.invalid_type",
+          "message": "Expected value type: 'int', received: 'undefined'",
+          "path": "betweenField",
+          "received": "undefined",
+        },
+        {
+          "code": "invalid_type",
+          "expected": "int",
+          "i18n": "core.plain.parse_issue.invalid_type",
+          "message": "Expected value type: 'int', received: 'undefined'",
+          "path": "gtField",
+          "received": "undefined",
+        },
+        {
+          "code": "invalid_type",
+          "expected": "int",
+          "i18n": "core.plain.parse_issue.invalid_type",
+          "message": "Expected value type: 'int', received: 'undefined'",
+          "path": "ltField",
+          "received": "undefined",
+        },
+        {
+          "code": "invalid_type",
+          "expected": "int",
+          "i18n": "core.plain.parse_issue.invalid_type",
+          "message": "Expected value type: 'int', received: 'undefined'",
+          "path": "betweenExclusivelyField",
+          "received": "undefined",
+        },
+        {
+          "code": "invalid_type",
+          "expected": "array",
+          "i18n": "core.plain.parse_issue.invalid_type",
+          "message": "Expected value type: 'array', received: 'undefined'",
+          "path": "arrayField",
+          "received": "undefined",
+        },
+        {
+          "code": "invalid_type",
+          "expected": "array",
+          "i18n": "core.plain.parse_issue.invalid_type",
+          "message": "Expected value type: 'array', received: 'undefined'",
+          "path": "maxArrayField",
+          "received": "undefined",
+        },
+        {
+          "code": "invalid_type",
+          "expected": "int",
+          "i18n": "core.plain.parse_issue.invalid_type",
+          "message": "Expected value type: 'int', received: 'string'",
+          "path": "optionalField",
+          "received": "string",
+        },
+        {
+          "code": "invalid_type",
+          "expected": "array",
+          "i18n": "core.plain.parse_issue.invalid_type",
+          "message": "Expected value type: 'array', received: 'string'",
+          "path": "optionalArrayField",
+          "received": "string",
+        },
+      ],
+      "message": "Invalid plain object to parse to HObject: book.application.book.dto.int_test_dto",
+      "path": undefined,
+      "typeId": "book.application.book.dto.int_test_dto",
+    },
+    "error": null,
+    "i18n": "",
+    "message": "",
+    "type": "core.plain.parse",
+  },
+}
+`;
+
+exports[`HObject.Rules.Int parse when valid 1`] = `
+Result {
+  "value": {
+    "arrayField": [
+      -1,
+      -2,
+      -3,
+    ],
+    "betweenExclusivelyField": -50,
+    "betweenField": -50,
+    "field": -10,
+    "gtField": -99,
+    "ltField": -100,
+    "maxArrayField": [
+      -1,
+      -2,
+      -3,
+    ],
+    "maxField": 100,
+    "minField": -100,
+    "optionalArrayField": [
+      -10,
+      -20,
+      -30,
+    ],
+    "optionalField": -20,
+  },
+}
+`;
+
+exports[`HObject.Rules.Int toJSON 1`] = `
+"{
+  "field": -10,
+  "optionalField": -20,
+  "minField": -100,
+  "maxField": 100,
+  "betweenField": -50,
+  "gtField": -99,
+  "ltField": -100,
+  "betweenExclusivelyField": -50,
+  "arrayField": [
+    -1,
+    -2,
+    -3
+  ],
+  "optionalArrayField": [
+    -10,
+    -20,
+    -30
+  ],
+  "maxArrayField": [
+    -1,
+    -2,
+    -3
+  ]
+}"
+`;
+
+exports[`HObject.Rules.Int transform 1`] = `
+"import { Dto, v, R, OK, PlainParseHelper, IntegerPlainParseHelper, ArrayPlainParseHelper, StringPlainParseHelper, NumberPlainParseHelper, HObjectTypeMeta, type JsonObjectType, type PlainParseError, type PlainParseIssue, type AnyDto, type DtoType } from '@hexancore/common';
+export class IntTestDto extends Dto<IntTestDto> {
+    public static HOBJ_META = HObjectTypeMeta.application("Book", "Book", "Dto", "IntTestDto", IntTestDto);
+    public field!: v.int;
+    public optionalField?: v.int;
+    public minField!: v.int.min<-100>;
+    public maxField!: v.int.max<100>;
+    public betweenField!: v.int.between<-100, 100>;
+    public gtField!: v.int.gt<-100>;
+    public ltField!: v.int.lt<100>;
+    public betweenExclusivelyField!: v.int.between_exclusively<-100, 100>;
+    public arrayField!: v.int[];
+    public optionalArrayField?: v.int[];
+    public maxArrayField!: v.int.max<100>[];
+    public constructor(field: any, minField: any, maxField: any, betweenField: any, gtField: any, ltField: any, betweenExclusivelyField: any, arrayField: any, maxArrayField: any, optionalField?: any, optionalArrayField?: any) {
+        super();
+        this.field = field;
+        this.minField = minField;
+        this.maxField = maxField;
+        this.betweenField = betweenField;
+        this.gtField = gtField;
+        this.ltField = ltField;
+        this.betweenExclusivelyField = betweenExclusivelyField;
+        this.arrayField = arrayField;
+        this.maxArrayField = maxArrayField;
+        this.optionalField = optionalField;
+        this.optionalArrayField = optionalArrayField;
+    }
+    public static parse<T extends AnyDto>(this: HDtoType<T>, plain: unknown): R<IntTestDto> {
+        if (typeof plain !== "object") {
+            return PlainParseHelper.HObjectIsNotObjectParseErr(IntTestDto as any, plain);
+        }
+        const p = plain as Record<keyof IntTestDto, unknown>;
+        const issues: PlainParseIssue[] = [];
+        const field = IntegerPlainParseHelper.parseInt(p.field, "field", issues);
+        const minField = IntegerPlainParseHelper.parseIntGTE(p.minField, -100, "minField", issues);
+        const maxField = IntegerPlainParseHelper.parseIntLTE(p.maxField, 100, "maxField", issues);
+        const betweenField = IntegerPlainParseHelper.parseIntBetween(p.betweenField, -100, 100, "betweenField", issues);
+        const gtField = IntegerPlainParseHelper.parseIntGT(p.gtField, -100, "gtField", issues);
+        const ltField = IntegerPlainParseHelper.parseIntLT(p.ltField, 100, "ltField", issues);
+        const betweenExclusivelyField = IntegerPlainParseHelper.parseIntBetweenExclusively(p.betweenExclusivelyField, -100, 100, "betweenExclusivelyField", issues);
+        const arrayField = ArrayPlainParseHelper.parsePrimitiveArray(p.arrayField, pi => IntegerPlainParseHelper.parseInt(pi), "arrayField", issues);
+        const maxArrayField = ArrayPlainParseHelper.parsePrimitiveArray(p.maxArrayField, pi => IntegerPlainParseHelper.parseIntLTE(pi, 100), "maxArrayField", issues);
+        let optionalField;
+        if (p.optionalField !== undefined) {
+            optionalField = IntegerPlainParseHelper.parseInt(p.optionalField, "optionalField", issues);
+        }
+        let optionalArrayField;
+        if (p.optionalArrayField !== undefined) {
+            optionalArrayField = ArrayPlainParseHelper.parsePrimitiveArray(p.optionalArrayField, pi => IntegerPlainParseHelper.parseInt(pi), "optionalArrayField", issues);
+        }
+        if (issues.length > 0) {
+            return PlainParseHelper.HObjectParseErr(IntTestDto as any, issues);
+        }
+        return OK(new IntTestDto(field as any, minField as any, maxField as any, betweenField as any, gtField as any, ltField as any, betweenExclusivelyField as any, arrayField as any, maxArrayField as any, optionalField as any, optionalArrayField as any)) as any;
+    }
+    public toJSON(): JsonObjectType<IntTestDto> {
+        return {
+            field: this.field,
+            optionalField: this.optionalField,
+            minField: this.minField,
+            maxField: this.maxField,
+            betweenField: this.betweenField,
+            gtField: this.gtField,
+            ltField: this.ltField,
+            betweenExclusivelyField: this.betweenExclusivelyField,
+            arrayField: this.arrayField,
+            optionalArrayField: this.optionalArrayField,
+            maxArrayField: this.maxArrayField
+        };
+    }
+}
+"
+`;

@@ -18,7 +18,7 @@ export class ImportDeclarationWrapper {
   }
 
   public get(name: string): ts.PropertyAccessChain | ts.Identifier {
-    return TsTransfromerHelper.createNamedImportAccess(this.declaration, name, this.context);
+    return ts.factory.createIdentifier(name); //TsTransfromerHelper.createNamedImportAccess(this.declaration, name, this.context);
   }
 
   public hasNamedAccess(name: string): boolean {

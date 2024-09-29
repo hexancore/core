@@ -1,8 +1,8 @@
 import { Dto, v, RefId } from '@hexancore/common';
 
-export class TestTransformDto extends Dto {
+export class TestTransformDto extends Dto<TestTransformDto> {
 
-  public optionalField?: string;
+  public optionalStringField?: string;
 
   public numberField!: number;
   public stringField!: string;
@@ -19,5 +19,6 @@ export class TestTransformDto extends Dto {
   public ruleArrayWithItemsField!: v.int.between<-10, 100>[] & v.items.between<2, 5>;
 
   public hObjField!: RefId;
+  public optionalHObjField?: RefId;
   public hObjArrayField!: RefId[];
 }

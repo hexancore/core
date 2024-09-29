@@ -7,7 +7,7 @@ import {
   DomainErrors,
   OK,
   EnumEntityErrorTypeWrapper,
-  DateTime,
+  HDateTime,
   OKA,
   isIterable,
 } from '@hexancore/common';
@@ -27,13 +27,13 @@ export interface GetQueryOptions<T> {
 export class EntityPropertiesNowInjector<T extends AbstractEntityCommon<any>> {
   public constructor(private properties: string[]) {}
 
-  public inject(now: DateTime, entity: T): void {
+  public inject(now: HDateTime, entity: T): void {
     this.properties.forEach((propertyName: string) => {
       entity[propertyName] = entity[propertyName] ?? now;
     });
   }
 
-  public injectMany(now: DateTime, entities: T[]): void {
+  public injectMany(now: HDateTime, entities: T[]): void {
     this.properties.forEach((propertyName: string) => {
       entities.forEach((e) => {
         e[propertyName] = e[propertyName] ?? now;

@@ -1,3 +1,3 @@
-import { UIntValue } from "@hexancore/common";
+import { UInt } from "@hexancore/common";
 
-export class BookId extends UIntValue<BookId> { }
+export class BookId extends UInt<BookId> { }

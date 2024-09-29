@@ -8,27 +8,32 @@ import { HObjectToJSONTsFactory } from "./HObjectToJSONTsFactory";
 import type { FeatureSourcePath } from "../../../../Util/Feature/FeatureModuleDiscoverer";
 import { HObjectToConstructorTsFactory } from "./HObjectConstructorTsFactory";
 import { ImportDeclarationWrapper } from "../../Helper/ImportDeclarationWrapper";
-import { HObjectKind } from "@/Util/Feature/Meta";
+import { HObjectKind, type FeatureHObjectMeta } from "@/Util/Feature/Meta";
 
 interface VisitContext extends FeatureTransformContext {
   source: ts.SourceFile;
   importNameToDeclarationMap: Map<string, ImportDeclarationWrapper>;
   hCommonImportDecl?: ImportDeclarationWrapper;
+  meta: FeatureHObjectMeta;
 }
 
 const HObjectHCommonImports = [
   'R',
   'OK',
-  'type JsonObjectType',
-  'type PlainParsableHObjectType',
-  'type PlainParseError',
   'PlainParseHelper',
-  'InvalidTypePlainParseIssue',
+  'IntegerPlainParseHelper',
+  'ArrayPlainParseHelper',
+  'StringPlainParseHelper',
+  'NumberPlainParseHelper',
   'HObjectTypeMeta',
-  'PlainParseIssue',
-  'TooBigPlainParseIssue',
-  'TooSmallPlainParseIssue'
 ];
+const HObjectHCommonTypeOnlyImports = [
+  'JsonObjectType',
+  'PlainParseError',
+  'PlainParseIssue'
+];
+
+const GENERATED_METHODS_NAMES = ["parse", "toJSON"];
 
 export class HObjectTsTransformer extends AbstractFeatureTsTransformer {
 
@@ -60,6 +65,7 @@ export class HObjectTsTransformer extends AbstractFeatureTsTransformer {
       ...context,
       importNameToDeclarationMap: new Map(),
       source,
+      meta: context.feature.hObjectMap.get(context.featureSourcePath.localSourcePath)!,
     };
 
     const transformed = ts.factory.updateSourceFile(source, ts.visitNodes(
@@ -96,7 +102,7 @@ export class HObjectTsTransformer extends AbstractFeatureTsTransformer {
 
     if (this.isHexancoreCommonImport(visitContext, node)) {
       visitContext.hCommonImportDecl = wrapper;
-      return this.extendHexancoreCommonImportDecl(visitContext.hCommonImportDecl);
+      this.extendHexancoreCommonImportDecl(visitContext);
     }
 
     wrapper.importNames.forEach(name => {
@@ -111,13 +117,24 @@ export class HObjectTsTransformer extends AbstractFeatureTsTransformer {
     return !visitContext.hCommonImportDecl && ts.isStringLiteral(moduleSpecifier) && moduleSpecifier.text === '@hexancore/common';
   }
 
-  private extendHexancoreCommonImportDecl(decl: ImportDeclarationWrapper): ts.ImportDeclaration {
-    const newImports = HObjectHCommonImports.filter(i => !decl.hasNamedAccess(i));
-    return decl.addNamedImports(newImports);
+  private extendHexancoreCommonImportDecl(visitContext: VisitContext): void {
+    const decl: ImportDeclarationWrapper = visitContext.hCommonImportDecl!;
+
+    const newImports = [
+      ...HObjectHCommonImports.filter(i => !decl.hasNamedAccess(i)),
+      ...HObjectHCommonTypeOnlyImports.filter(i => !decl.hasNamedAccess(i)).map(name => ts.factory.createImportSpecifier(true, undefined, ts.factory.createIdentifier(name))),
+      ts.factory.createImportSpecifier(true, undefined, ts.factory.createIdentifier("Any" + visitContext.meta.kind)),
+      ts.factory.createImportSpecifier(true, undefined, ts.factory.createIdentifier(visitContext.meta.kind + "Type")),
+    ];
+    decl.addNamedImports(newImports);
   }
 
   private updateClassDeclaration(node: ts.ClassDeclaration, visitContext: Required<VisitContext>) {
-    const properties = this.propertyExtractor.extract(node, visitContext.source, visitContext.diagnostics);
+    const properties = this.propertyExtractor.extract(node, {
+      sourceFile: visitContext.source,
+      diagnostics: visitContext.diagnostics,
+      importNameToDeclarationMap: visitContext.importNameToDeclarationMap
+    });
     const hObjectClassName = node.name!.text;
 
     const newMembers = [
@@ -126,9 +143,21 @@ export class HObjectTsTransformer extends AbstractFeatureTsTransformer {
     ];
 
     if (properties.length > 0) {
-      newMembers.push(this.constructorTsFactory.create(properties));
-      newMembers.push(this.parseTsFactory.create(hObjectClassName, properties, visitContext.hCommonImportDecl));
-      newMembers.push(this.toJSONTsFactory.create(hObjectClassName, properties, visitContext.hCommonImportDecl));
+      const currentGeneratedMethods = node.members.filter(
+        m => ts.isConstructorDeclaration(node) || (ts.isMethodDeclaration(m) && GENERATED_METHODS_NAMES.includes(m.name.getText(visitContext.source)))
+      ).map(m => m.name!.getText(visitContext.source));
+
+      if (!currentGeneratedMethods.includes('constructor')) {
+        newMembers.push(this.constructorTsFactory.create(properties));
+      }
+
+      if (!currentGeneratedMethods.includes('parse')) {
+        newMembers.push(this.parseTsFactory.create(visitContext.meta, hObjectClassName, properties, visitContext.hCommonImportDecl));
+      }
+
+      if (!currentGeneratedMethods.includes('toJSON')) {
+        newMembers.push(this.toJSONTsFactory.create(hObjectClassName, properties, visitContext.hCommonImportDecl));
+      }
     }
 
     return ts.factory.updateClassDeclaration(
@@ -155,7 +184,7 @@ export class HObjectTsTransformer extends AbstractFeatureTsTransformer {
     const hobjectTypeMetaCreateExp = ts.factory.createCallExpression(
       ts.factory.createPropertyAccessExpression(
         ts.factory.createIdentifier("HObjectTypeMeta"),
-        ts.factory.createIdentifier(featureHObjMeta.layer)
+        ts.factory.createIdentifier(featureHObjMeta.layer.toLowerCase())
       ),
       undefined,
       hObjTypeMetaCreateParameters

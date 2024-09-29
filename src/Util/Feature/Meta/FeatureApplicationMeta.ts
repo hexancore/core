@@ -33,7 +33,7 @@ export class FeatureApplicationCommandMeta implements FeatureApplicationMessageM
   }
 
   public get layer(): HFeatureBackendLayer {
-    return 'application';
+    return 'Application';
   }
 
   public get hashData(): string {
@@ -78,7 +78,7 @@ export class FeatureApplicationQueryMeta implements FeatureApplicationMessageMet
   }
 
   public get layer(): HFeatureBackendLayer {
-    return 'application';
+    return 'Application';
   }
 
   public get hashData(): string {

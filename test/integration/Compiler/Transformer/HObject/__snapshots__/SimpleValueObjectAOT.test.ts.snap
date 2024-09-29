@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HObject.SimpleValueObject parse when invalid 1`] = `
+Result {
+  "value": {
+    "cause": null,
+    "code": 400,
+    "data": {
+      "code": "invalid_hobject",
+      "i18n": "core.plain.parse_issue.invalid_hobject",
+      "issues": [
+        {
+          "code": "invalid_type",
+          "expected": "uint",
+          "i18n": "core.plain.parse_issue.invalid_type",
+          "message": "Expected value type: 'uint', received: 'string'",
+          "path": undefined,
+          "received": "string",
+        },
+      ],
+      "message": "Invalid plain object to parse to HObject: book.domain.book.value_object.book_id",
+      "path": undefined,
+      "typeId": "book.domain.book.value_object.book_id",
+    },
+    "error": null,
+    "i18n": "",
+    "message": "",
+    "type": "core.plain.parse",
+  },
+}
+`;
+
+exports[`HObject.SimpleValueObject parse when valid 1`] = `
+Result {
+  "value": 10,
+}
+`;
+
+exports[`HObject.SimpleValueObject toJSON 1`] = `"10"`;
+
+exports[`HObject.SimpleValueObject transform 1`] = `
+"import { UInt, R, OK, PlainParseHelper, IntegerPlainParseHelper, ArrayPlainParseHelper, StringPlainParseHelper, NumberPlainParseHelper, HObjectTypeMeta, type JsonObjectType, type PlainParseError, type PlainParseIssue, type AnyValueObject, type ValueObjectType } from "@hexancore/common";
+export class BookId extends UInt<BookId> {
+    public static HOBJ_META = HObjectTypeMeta.domain("Book", "Book", "ValueObject", "BookId", BookId);
+}
+"
+`;

@@ -671,9 +671,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hexancore/common@npm:^0.16.0":
-  version: 0.16.0
-  resolution: "@hexancore/common@npm:0.16.0"
+"@hexancore/common@npm:0.16.1":
+  version: 0.16.1
+  resolution: "@hexancore/common@npm:0.16.1"
   dependencies:
     "@js-joda/core": "npm:^5.6.1"
     class-transformer: "npm:^0.5.1"
@@ -685,7 +685,7 @@ __metadata:
   peerDependenciesMeta:
     axios:
       optional: true
-  checksum: 10c0/1f80c1838bd44331ba7094874166aefaf3781ae6434f42a5f8adc40c6b841834a4fe02e51bdc58e4267bd9fd573952a9f189efd3e922d20d8060ddfa6308cff7
+  checksum: 10c0/d628db6daa7573a797a0d5510ed332d28400cb1554f2e04656ad3e7b1aec87a028f13342e4cdf8e54591360f4894e2cbe5b252d644da0405228ae2f5a37481bf
   languageName: node
   linkType: hard
 
@@ -699,7 +699,7 @@ __metadata:
     "@fastify/multipart": "npm:^8.3.0"
     "@fastify/static": "npm:^7.0.4"
     "@fastify/swagger": "npm:^8.14.0"
-    "@hexancore/common": "npm:^0.16.0"
+    "@hexancore/common": "npm:0.16.1"
     "@hexancore/mocker": "npm:^1.1.2"
     "@nestjs/cli": "npm:^10.3.2"
     "@nestjs/common": "npm:^10.3.9"
@@ -742,9 +742,9 @@ __metadata:
     ts-node: "npm:^10.9.2"
     tsconfig-paths: "npm:^4.2.0"
     tslib: "npm:^2.6.3"
-    typescript: "npm:5.4.5"
+    typescript: "npm:5.6.2"
   peerDependencies:
-    "@hexancore/common": ^0.16.0
+    "@hexancore/common": ^0.16.1
     "@nestjs/common": ^10.3.9
     "@nestjs/config": ^3.0.0
     "@nestjs/core": ^10.3.9
@@ -7494,13 +7494,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.4.5":
-  version: 5.4.5
-  resolution: "typescript@npm:5.4.5"
+"typescript@npm:5.6.2":
+  version: 5.6.2
+  resolution: "typescript@npm:5.6.2"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/2954022ada340fd3d6a9e2b8e534f65d57c92d5f3989a263754a78aba549f7e6529acc1921913560a4b816c46dce7df4a4d29f9f11a3dc0d4213bb76d043251e
+  checksum: 10c0/3ed8297a8c7c56b7fec282532503d1ac795239d06e7c4966b42d4330c6cf433a170b53bcf93a130a7f14ccc5235de5560df4f1045eb7f3550b46ebed16d3c5e5
   languageName: node
   linkType: hard
 
@@ -7514,13 +7514,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A5.4.5#optional!builtin<compat/typescript>":
-  version: 5.4.5
-  resolution: "typescript@patch:typescript@npm%3A5.4.5#optional!builtin<compat/typescript>::version=5.4.5&hash=d69c25"
+"typescript@patch:typescript@npm%3A5.6.2#optional!builtin<compat/typescript>":
+  version: 5.6.2
+  resolution: "typescript@patch:typescript@npm%3A5.6.2#optional!builtin<compat/typescript>::version=5.6.2&hash=d69c25"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/9cf4c053893bcf327d101b6c024a55baf05430dc30263f9adb1bf354aeffc11306fe1f23ba2f9a0209674359f16219b5b7d229e923477b94831d07d5a33a4217
+  checksum: 10c0/e6c1662e4852e22fe4bbdca471dca3e3edc74f6f1df043135c44a18a7902037023ccb0abdfb754595ca9028df8920f2f8492c00fc3cbb4309079aae8b7de71cd
   languageName: node
   linkType: hard
 

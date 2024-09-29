@@ -43,7 +43,7 @@ export class FeatureAggregateRootMeta implements FeatureHObjectMeta {
   }
 
   public get layer(): HFeatureBackendLayer {
-    return 'domain';
+    return 'Domain';
   }
 
   public get hashData(): string {
@@ -97,7 +97,7 @@ export class FeatureEntityMeta implements FeatureHObjectMeta {
   }
 
   public get layer(): HFeatureBackendLayer {
-    return 'domain';
+    return 'Domain';
   }
 
   public get hashData(): string {
@@ -150,7 +150,7 @@ export class FeatureValueObjectMeta implements FeatureHObjectMeta {
   }
 
   public get layer(): HFeatureBackendLayer {
-    return 'domain';
+    return 'Domain';
   }
 
   public toJSON(): any {

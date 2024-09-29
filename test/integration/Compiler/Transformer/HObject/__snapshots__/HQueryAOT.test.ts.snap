@@ -1,0 +1,76 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HObject.HQuery parse when invalid 1`] = `
+Result {
+  "value": {
+    "cause": null,
+    "code": 400,
+    "data": {
+      "code": "invalid_hobject",
+      "i18n": "core.plain.parse_issue.invalid_hobject",
+      "issues": [
+        {
+          "code": "invalid_type",
+          "expected": "object",
+          "i18n": "core.plain.parse_issue.invalid_type",
+          "message": "Expected value type: 'object', received: 'string'",
+          "path": undefined,
+          "received": "string",
+        },
+      ],
+      "message": "Invalid plain object to parse to HObject: book.application.book.query.get_by_id",
+      "path": undefined,
+      "typeId": "book.application.book.query.get_by_id",
+    },
+    "error": null,
+    "i18n": "",
+    "message": "",
+    "type": "core.plain.parse",
+  },
+}
+`;
+
+exports[`HObject.HQuery parse when valid 1`] = `
+Result {
+  "value": {
+    "title": "test",
+  },
+}
+`;
+
+exports[`HObject.HQuery toJSON 1`] = `
+"{
+  "title": "test"
+}"
+`;
+
+exports[`HObject.HQuery transform 1`] = `
+"import { HQuery, R, OK, PlainParseHelper, IntegerPlainParseHelper, ArrayPlainParseHelper, StringPlainParseHelper, NumberPlainParseHelper, HObjectTypeMeta, type JsonObjectType, type PlainParseError, type PlainParseIssue, type AnyQuery, type QueryType } from "@hexancore/common";
+import type { BookDto } from "../../Dto/BookDto";
+export class BookGetByIdQuery extends HQuery<BookGetByIdQuery, BookDto> {
+    public static HOBJ_META = HObjectTypeMeta.application("Book", "Book", "Query", "GetById", BookGetByIdQuery);
+    public title!: string;
+    public constructor(title: any) {
+        super();
+        this.title = title;
+    }
+    public static parse<T extends AnyHQuery>(this: HQueryType<T>, plain: unknown): R<BookGetByIdQuery> {
+        if (typeof plain !== "object") {
+            return PlainParseHelper.HObjectIsNotObjectParseErr(BookGetByIdQuery as any, plain);
+        }
+        const p = plain as Record<keyof BookGetByIdQuery, unknown>;
+        const issues: PlainParseIssue[] = [];
+        const title = StringPlainParseHelper.parseString(p.title, "title", issues);
+        if (issues.length > 0) {
+            return PlainParseHelper.HObjectParseErr(BookGetByIdQuery as any, issues);
+        }
+        return OK(new BookGetByIdQuery(title as any)) as any;
+    }
+    public toJSON(): JsonObjectType<BookGetByIdQuery> {
+        return {
+            title: this.title
+        };
+    }
+}
+"
+`;
