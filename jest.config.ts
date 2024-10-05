@@ -15,6 +15,7 @@ const jestConfig: JestConfigWithTsJest = {
       rootDir,
       tsconfig: compilerOptions,
       diagnostics: false,
+      isolatedModules: true,
     }]
   },
   testMatch: ["<rootDir>/test/**/*.test.ts"],

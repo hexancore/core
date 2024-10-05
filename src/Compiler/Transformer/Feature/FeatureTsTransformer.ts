@@ -12,6 +12,7 @@ import { TsImportHelper } from "../TsImportHelper";
 import { ModuleClassTsTransformer } from "../ModuleClassTsTransformer";
 import type { FeatureTransformContext } from "./FeatureTransformContext";
 import { HObjectTsTransformer } from "./HObject/HObjectTsTransformer";
+import { FeatureApplicationMessageHandlerTsTransformer } from "./FeatureApplicationMessageHandlerTsTransformer";
 
 
 /**
@@ -37,6 +38,7 @@ export class FeatureTsTransformer {
       new FeatureInfraDomainModuleTsTransformer(helpers),
       new FeatureModuleTsTransformer(helpers),
       new HObjectTsTransformer(helpers),
+      new FeatureApplicationMessageHandlerTsTransformer(helpers)
     ];
   }
 
@@ -89,6 +91,7 @@ export class FeatureTsTransformer {
 
     const feature = this.features.get(featureSourcePath.featureName)!;
     return {
+      source,
       feature,
       featureSourcePath,
       tsContext: context,

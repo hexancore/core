@@ -28,6 +28,10 @@ export class FeatureApplicationCommandMeta implements FeatureApplicationMessageM
     return this.path + '/' + this.className + '.ts';
   }
 
+  public get handlerFilePath(): string {
+    return this.path + '/' + this.handlerClass + '.ts';
+  }
+
   public get kind(): HObjectKind.Command {
     return HObjectKind.Command;
   }
@@ -71,6 +75,10 @@ export class FeatureApplicationQueryMeta implements FeatureApplicationMessageMet
 
   public get filePath(): string {
     return this.path + '/' + this.className + '.ts';
+  }
+
+  public get handlerFilePath(): string {
+    return this.path + '/' + this.handlerClass + '.ts';
   }
 
   public get kind(): HObjectKind.Query {
@@ -126,6 +134,8 @@ export class FeatureApplicationServiceMeta implements FeatureClassMeta {
   }
 }
 
+export type FeatureApplicationCqrsHandlerMap = Map<string, FeatureApplicationCommandMeta | FeatureApplicationQueryMeta>;
+
 export class FeatureApplicationMeta implements JsonSerialize {
 
   public constructor(
@@ -151,13 +161,15 @@ export class FeatureApplicationMeta implements JsonSerialize {
     return new this(commands, queries, dtos, services);
   }
 
-  public collectHObjects(map: FeatureHObjectMap): void {
+  public collectHObjects(map: FeatureHObjectMap, handlerMap: FeatureApplicationCqrsHandlerMap): void {
     for (const i of this.commands) {
       map.set(i.filePath, i);
+      handlerMap.set(i.handlerFilePath, i);
     }
 
     for (const i of this.queries) {
       map.set(i.filePath, i);
+      handlerMap.set(i.handlerFilePath, i);
     }
 
     for (const i of this.dtos) {
