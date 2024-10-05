@@ -1,7 +1,7 @@
-import { type JsonSerialize, LogicError } from '@hexancore/common';
+import { LogicError, type JsonSerialize } from '@hexancore/common';
 import { hash } from "node:crypto";
-import type { FeatureHObjectMap, FeatureHObjectMeta } from './CommonFeatureMeta';
-import { FeatureApplicationMeta } from './FeatureApplicationMeta';
+import type { FeatureHObjectMeta } from './CommonFeatureMeta';
+import { FeatureApplicationMeta, type FeatureApplicationCqrsHandlerMap } from './FeatureApplicationMeta';
 import { FeatureDomainMeta } from './FeatureDomainMeta';
 import { FeatureInfrastructureMeta } from './FeatureInfrastructureMeta';
 
@@ -9,6 +9,7 @@ export type FeatureMap = Map<string, FeatureMeta>;
 
 export class FeatureMeta implements JsonSerialize {
   private _hObjectMap!: Map<string, FeatureHObjectMeta>;
+  private _applicationCqrsHandlerMap!: FeatureApplicationCqrsHandlerMap;
   public cacheKey!: string;
 
   public constructor(
@@ -50,19 +51,25 @@ export class FeatureMeta implements JsonSerialize {
   }
 
   public get hObjectMap(): Map<string, FeatureHObjectMeta> {
-    if (!this._hObjectMap) {
-      this._hObjectMap = this.createHObjectMap();
-    }
-
+    this.initHObjectMaps();
     return this._hObjectMap;
   }
 
-  private createHObjectMap(): FeatureHObjectMap {
-    const map = new Map();
-    this.application.collectHObjects(map);
-    this.domain.collectHObjects(map);
+  public get applicationCqrsHandlerMap(): FeatureApplicationCqrsHandlerMap {
+    this.initHObjectMaps();
+    return this._applicationCqrsHandlerMap;
+  }
 
-    return map;
+  private initHObjectMaps(): void {
+    if (this._hObjectMap) {
+      return;
+    }
+
+    this._hObjectMap = new Map();
+    this._applicationCqrsHandlerMap = new Map();
+
+    this.application.collectHObjects(this._hObjectMap, this._applicationCqrsHandlerMap);
+    this.domain.collectHObjects(this._hObjectMap);
   }
 
   public toJSON(): any {

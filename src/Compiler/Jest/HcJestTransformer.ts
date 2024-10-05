@@ -107,7 +107,7 @@ export class HcJestTransformer implements AsyncTransformer<HcJestTransformerOpti
     const outSourceFile = transformed.transformed[0];
 
     const printed = TsTransfromerHelper.printFile(outSourceFile);
-    const tmpPath = this.tmpDir + '/' + featureSourcePath.featureName+ '-' + hash('md5', featureSourcePath.sourcePath, 'hex').substring(0, 8) + '-' + path.basename(featureSourcePath.sourcePath);
+    const tmpPath = this.tmpDir + '/' + featureSourcePath.featureName+ '-' + hash('md5', featureSourcePath.sourcePath, 'hex').substring(0, 12) + '-' + path.basename(featureSourcePath.sourcePath);
     writeFileSync(tmpPath, printed);
 
     const outTranspile = ts.transpileModule(printed, {

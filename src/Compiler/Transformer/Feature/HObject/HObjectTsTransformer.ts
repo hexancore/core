@@ -8,7 +8,7 @@ import { HObjectToJSONTsFactory } from "./HObjectToJSONTsFactory";
 import type { FeatureSourcePath } from "../../../../Util/Feature/FeatureModuleDiscoverer";
 import { HObjectToConstructorTsFactory } from "./HObjectConstructorTsFactory";
 import { ImportDeclarationWrapper } from "../../Helper/ImportDeclarationWrapper";
-import { HObjectKind, type FeatureHObjectMeta } from "@/Util/Feature/Meta";
+import { HObjectKind, type FeatureHObjectMeta } from "../../../../Util/Feature/Meta";
 
 interface VisitContext extends FeatureTransformContext {
   source: ts.SourceFile;
