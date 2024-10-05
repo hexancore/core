@@ -1,4 +1,4 @@
-import { AbstractValueObject } from '@hexancore/common';
+import { HValueObject } from '@hexancore/common';
 
 /**
  * Entity Id type alias
@@ -9,7 +9,7 @@ export type EntityIdTypeOf<T extends AbstractEntityCommon<any>> = T extends Abst
  * Common base of Entity and AggregateRoot
  * Can track changes in entity for use in persistance libs
  */
-export abstract class AbstractEntityCommon<ID extends AbstractValueObject<ID>> {
+export abstract class AbstractEntityCommon<ID extends HValueObject> {
   /**
    * Entity id
    */

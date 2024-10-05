@@ -1,6 +1,6 @@
 import { Dto, v } from '@hexancore/common';
 
-export class FloatTestDto extends Dto<FloatTestDto> {
+export class FloatTestDto extends Dto {
 
   public field!: v.float;
   public optionalField?: v.float;

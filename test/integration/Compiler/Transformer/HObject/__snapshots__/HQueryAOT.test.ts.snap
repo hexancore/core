@@ -47,7 +47,7 @@ exports[`HObject.HQuery toJSON 1`] = `
 exports[`HObject.HQuery transform 1`] = `
 "import { HQuery, R, OK, PlainParseHelper, IntegerPlainParseHelper, ArrayPlainParseHelper, StringPlainParseHelper, NumberPlainParseHelper, HObjectTypeMeta, type JsonObjectType, type PlainParseError, type PlainParseIssue, type AnyQuery, type QueryType } from "@hexancore/common";
 import type { BookDto } from "../../Dto/BookDto";
-export class BookGetByIdQuery extends HQuery<BookGetByIdQuery, BookDto> {
+export class BookGetByIdQuery extends HQuery<BookDto> {
     public static HOBJ_META = HObjectTypeMeta.application("Book", "Book", "Query", "GetById", BookGetByIdQuery);
     public title!: string;
     public constructor(title: any) {

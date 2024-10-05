@@ -1,5 +1,5 @@
 
-import ts, { type Identifier } from "typescript";
+import ts from "typescript";
 import type { HObjectPropertyTsMeta } from "./HObjectPropertyTsMeta";
 
 import type { ImportDeclarationWrapper } from "../../Helper/ImportDeclarationWrapper";

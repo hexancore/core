@@ -1,6 +1,6 @@
 import { Dto, v } from '@hexancore/common';
 
-export class StringTestDto extends Dto<StringTestDto> {
+export class StringTestDto extends Dto {
 
   public field!: string;
   public optionalField?: string;

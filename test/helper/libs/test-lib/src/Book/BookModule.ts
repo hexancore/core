@@ -5,10 +5,8 @@ import { BookInfraModule } from "./Infrastructure/BookInfraModule";
 
 export const SOME_ASSIGMENT_NOISE = 10;
 
-
-
 @Module({
-  imports: [BookInfraModule]
+  imports: [BookInfraModule],
 })
 export class BookModule {
 }

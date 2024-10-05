@@ -171,7 +171,7 @@ exports[`HObject.Rules.UInt toJSON 1`] = `
 
 exports[`HObject.Rules.UInt transform 1`] = `
 "import { Dto, v, R, OK, PlainParseHelper, IntegerPlainParseHelper, ArrayPlainParseHelper, StringPlainParseHelper, NumberPlainParseHelper, HObjectTypeMeta, type JsonObjectType, type PlainParseError, type PlainParseIssue, type AnyDto, type DtoType } from '@hexancore/common';
-export class UIntTestDto extends Dto<UIntTestDto> {
+export class UIntTestDto extends Dto {
     public static HOBJ_META = HObjectTypeMeta.application("Book", "Book", "Dto", "UIntTestDto", UIntTestDto);
     public field!: v.uint;
     public optionalField?: v.uint;

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { AbstractValueObject } from '@hexancore/common';
+import { HValueObject } from '@hexancore/common';
 import { AbstractEntityCommon } from './AbstractEntityCommon';
 import { AbstractEntity } from './AbstractEntity';
 
@@ -10,4 +10,4 @@ export type AggregateRootConstructor<T extends AnyAggregateRoot = AnyAggregateRo
 /**
  * Base of AggregateRoot in domain
  */
-export abstract class AbstractAggregateRoot<ID extends AbstractValueObject<ID>> extends AbstractEntityCommon<ID> {}
+export abstract class AbstractAggregateRoot<ID extends HValueObject> extends AbstractEntityCommon<ID> {}

@@ -671,21 +671,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hexancore/common@npm:0.16.1":
-  version: 0.16.1
-  resolution: "@hexancore/common@npm:0.16.1"
+"@hexancore/common@npm:0.16.2":
+  version: 0.16.2
+  resolution: "@hexancore/common@npm:0.16.2"
   dependencies:
     "@js-joda/core": "npm:^5.6.1"
-    class-transformer: "npm:^0.5.1"
     lambda-log: "npm:^3.1.0"
     nanoid: "npm:3"
     tslib: "npm:^2.6.3"
   peerDependencies:
-    axios: ^1.7.2
+    axios: ^1.7.7
   peerDependenciesMeta:
     axios:
       optional: true
-  checksum: 10c0/d628db6daa7573a797a0d5510ed332d28400cb1554f2e04656ad3e7b1aec87a028f13342e4cdf8e54591360f4894e2cbe5b252d644da0405228ae2f5a37481bf
+  checksum: 10c0/094dca106cd36d82e1b2c43da8bb4b817acc898ef68f1b58c2fe007ca0c50ad134140b0b0ec0bcb07a6f36c0f27b0f935dca24110cae0538578ffe2e8d46a6a4
   languageName: node
   linkType: hard
 
@@ -699,7 +698,7 @@ __metadata:
     "@fastify/multipart": "npm:^8.3.0"
     "@fastify/static": "npm:^7.0.4"
     "@fastify/swagger": "npm:^8.14.0"
-    "@hexancore/common": "npm:0.16.1"
+    "@hexancore/common": "npm:0.16.2"
     "@hexancore/mocker": "npm:^1.1.2"
     "@nestjs/cli": "npm:^10.3.2"
     "@nestjs/common": "npm:^10.3.9"
@@ -714,7 +713,6 @@ __metadata:
     "@types/node": "npm:^20.14.2"
     "@typescript-eslint/eslint-plugin": "npm:^7.13.1"
     "@typescript-eslint/parser": "npm:^7.13.1"
-    class-transformer: "npm:^0.5.1"
     deep-equal: "npm:^2.2.3"
     eslint: "npm:^8.3.0"
     eslint-plugin-unused-imports: "npm:^3.0.0"
@@ -2601,13 +2599,6 @@ __metadata:
   version: 1.3.1
   resolution: "cjs-module-lexer@npm:1.3.1"
   checksum: 10c0/cd98fbf3c7f4272fb0ebf71d08d0c54bc75ce0e30b9d186114e15b4ba791f3d310af65a339eea2a0318599af2818cdd8886d353b43dfab94468f72987397ad16
-  languageName: node
-  linkType: hard
-
-"class-transformer@npm:^0.5.1":
-  version: 0.5.1
-  resolution: "class-transformer@npm:0.5.1"
-  checksum: 10c0/19809914e51c6db42c036166839906420bb60367df14e15f49c45c8c1231bf25ae661ebe94736ee29cc688b77101ef851a8acca299375cc52fc141b64acde18a
   languageName: node
   linkType: hard
 
