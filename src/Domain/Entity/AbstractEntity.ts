@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { AbstractValueObject } from '@hexancore/common';
+import { HValueObject } from '@hexancore/common';
 import { AbstractAggregateRoot, AggregateRootConstructor } from './AbstractAggregateRoot';
 import { AbstractEntityCommon, EntityIdTypeOf } from './AbstractEntityCommon';
 import { ENTITY_META_PROPERTY } from './EntityDecorator';
@@ -21,7 +21,7 @@ export type EntityConstructor<T extends AnyEntity = AnyEntity> = new (...args: a
 /**
  * Base for create Entity attached to selected AggregateRoot type in domain.
  */
-export abstract class AbstractEntity<IDT extends AbstractValueObject<IDT>, ART extends AbstractAggregateRoot<any>> extends AbstractEntityCommon<IDT> {
+export abstract class AbstractEntity<IDT extends HValueObject, ART extends AbstractAggregateRoot<any>> extends AbstractEntityCommon<IDT> {
   public getAggregateRootClass(): AggregateRootConstructor<ART> {
     return this.constructor[ENTITY_META_PROPERTY].aggregateRoot;
   }

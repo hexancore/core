@@ -1,5 +1,5 @@
 import { AbstractEntityCommon, EntityMetaCommon, EntityIdTypeOf } from '@/Domain';
-import { AR, AbstractValueObject, AsyncResult, CurrentTime, OK, OKA, wrapToArray } from '@hexancore/common';
+import { AR, HValueObject, AsyncResult, CurrentTime, OK, OKA, wrapToArray } from '@hexancore/common';
 import { AbstractEntityPersister, AbstractEntityRepositoryCommon } from '../Generic';
 
 export const MEMORY_PERSISTER_TYPE = "memory";
@@ -88,7 +88,7 @@ export class MemoryEntityPersister<T extends AbstractEntityCommon<any>, M extend
   public getBy(criteria: Record<string, any>): AR<T[]> {
     const result = this.persisted.filter((e) => {
       for (const prop in criteria) {
-        if (criteria[prop] instanceof AbstractValueObject) {
+        if (criteria[prop] instanceof HValueObject) {
           if (!criteria[prop].equals(e[prop])) {
             return false;
           }

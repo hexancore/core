@@ -1,6 +1,6 @@
 import { Dto, v } from '@hexancore/common';
 
-export class IntTestDto extends Dto<IntTestDto> {
+export class IntTestDto extends Dto {
 
   public field!: v.int;
   public optionalField?: v.int;

@@ -1,5 +1,5 @@
 import { Dto } from "@hexancore/common";
 
-export class BookDto extends Dto<BookDto> {
+export class BookDto extends Dto {
   public title?: string;
 }

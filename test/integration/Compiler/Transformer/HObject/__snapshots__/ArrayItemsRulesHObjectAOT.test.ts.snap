@@ -114,7 +114,7 @@ exports[`HObject.Rules.ArrayItems toJSON 1`] = `
 
 exports[`HObject.Rules.ArrayItems transform 1`] = `
 "import { Dto, v, R, OK, PlainParseHelper, IntegerPlainParseHelper, ArrayPlainParseHelper, StringPlainParseHelper, NumberPlainParseHelper, HObjectTypeMeta, type JsonObjectType, type PlainParseError, type PlainParseIssue, type AnyDto, type DtoType } from '@hexancore/common';
-export class ArrayItemsTestDto extends Dto<ArrayItemsTestDto> {
+export class ArrayItemsTestDto extends Dto {
     public static HOBJ_META = HObjectTypeMeta.application("Book", "Book", "Dto", "ArrayItemsTestDto", ArrayItemsTestDto);
     public arrayMinItemsField!: v.int[] & v.items.min<2>;
     public arrayMaxItemsField!: v.int[] & v.items.max<2>;

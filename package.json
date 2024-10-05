@@ -86,7 +86,6 @@
     "@fastify/multipart": "^8.3.0",
     "@fastify/static": "^7.0.4",
     "@fastify/swagger": "^8.14.0",
-    "class-transformer": "^0.5.1",
     "deep-equal": "^2.2.3",
     "fastest-validator": "^1.18.0",
     "fastify": "^4.28.0",
@@ -103,7 +102,7 @@
     "tslib": "^2.6.3"
   },
   "devDependencies": {
-    "@hexancore/common": "0.16.1",
+    "@hexancore/common": "0.16.2",
     "@hexancore/mocker": "^1.1.2",
     "@nestjs/cli": "^10.3.2",
     "@nestjs/common": "^10.3.9",

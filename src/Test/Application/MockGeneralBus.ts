@@ -1,8 +1,15 @@
-import { AR, OKA, AnyHCommand, AnyHQuery, AnyHEvent } from '@hexancore/common';
+import {
+  AR,
+  OKA,
+  AnyHCommand,
+  AnyHQuery,
+  HEvent,
+  type HCommandAsyncResultType,
+  type HQueryAsyncResultType
+} from '@hexancore/common';
 import { Injectable } from '@nestjs/common';
 import { IEvent } from '@nestjs/cqrs';
 import deepEqual from 'deep-equal';
-import type { HCommandHandleResult, HQueryHandleResult } from "../../Application";
 import { GeneralBus } from '../../Application/GeneralBus';
 
 interface HandleExpectation {
@@ -23,28 +30,28 @@ export class MockGeneralBus extends GeneralBus {
     this.queriesToHandle = [];
   }
 
-  public expectHandleCommand<T extends AnyHCommand>(command: T, result: HCommandHandleResult<T>): void {
+  public expectHandleCommand<T extends AnyHCommand>(command: T, result: HCommandAsyncResultType<T>): void {
     this.commandsToHandle.unshift({ message: command as any, result });
   }
 
-  public expectHandleEvent(event: AnyHEvent | ((event: AnyHEvent) => boolean)): void {
+  public expectHandleEvent(event: HEvent | ((event: HEvent) => boolean)): void {
     this.eventsToHandle.unshift(event);
   }
 
-  public expectHandleQuery<T extends AnyHQuery>(query: T, result: HQueryHandleResult<T>): void {
+  public expectHandleQuery<T extends AnyHQuery>(query: T, result: HQueryAsyncResultType<T>): void {
     this.queriesToHandle.unshift({ message: query as any, result });
   }
 
-  public handleCommand<T extends AnyHCommand>(command: T): HCommandHandleResult<T> {
+  public handleCommand<T extends AnyHCommand>(command: T): HCommandAsyncResultType<T> {
     const expectation = this.commandsToHandle.pop();
     if (expectation && deepEqual(expectation.message, command)) {
-      return expectation.result;
+      return expectation.result as any;
     }
 
     throw new Error('Unexpected command to handle: ' + command.constructor.name + ' ' + JSON.stringify(command, null, 1));
   }
 
-  public handleEvent(event: AnyHEvent): AR<boolean> {
+  public handleEvent(event: HEvent): AR<boolean> {
     const expectation = this.eventsToHandle.pop();
     if (typeof expectation == 'function') {
       if (!expectation(event)) {
@@ -57,10 +64,10 @@ export class MockGeneralBus extends GeneralBus {
     return OKA(true);
   }
 
-  public handleQuery<T extends AnyHQuery>(query: T): HQueryHandleResult<T> {
+  public handleQuery<T extends AnyHQuery>(query: T): HQueryAsyncResultType<T> {
     const expectation = this.queriesToHandle.pop();
     if (expectation && deepEqual(expectation.message, query)) {
-      return expectation.result;
+      return expectation.result as any;
     }
 
     throw new Error('Unexpected query to handle: ' + query.constructor.name + ' ' + JSON.stringify(query, null, 1));

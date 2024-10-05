@@ -46,7 +46,8 @@ exports[`HObject.HCommand toJSON 1`] = `
 
 exports[`HObject.HCommand transform 1`] = `
 "import { HCommand, R, OK, PlainParseHelper, IntegerPlainParseHelper, ArrayPlainParseHelper, StringPlainParseHelper, NumberPlainParseHelper, HObjectTypeMeta, type JsonObjectType, type PlainParseError, type PlainParseIssue, type AnyCommand, type CommandType } from "@hexancore/common";
-export class BookCreateCommand extends HCommand<BookCreateCommand, void> {
+import { BookDto } from "../../Dto/BookDto";
+export class BookCreateCommand extends HCommand<BookDto> {
     public static HOBJ_META = HObjectTypeMeta.application("Book", "Book", "Command", "Create", BookCreateCommand);
     public title!: string;
     public constructor(title: any) {

@@ -146,7 +146,7 @@ exports[`HObject.Rules.String toJSON 1`] = `
 
 exports[`HObject.Rules.String transform 1`] = `
 "import { Dto, v, R, OK, PlainParseHelper, IntegerPlainParseHelper, ArrayPlainParseHelper, StringPlainParseHelper, NumberPlainParseHelper, HObjectTypeMeta, type JsonObjectType, type PlainParseError, type PlainParseIssue, type AnyDto, type DtoType } from '@hexancore/common';
-export class StringTestDto extends Dto<StringTestDto> {
+export class StringTestDto extends Dto {
     public static HOBJ_META = HObjectTypeMeta.application("Book", "Book", "Dto", "StringTestDto", StringTestDto);
     public field!: string;
     public optionalField?: string;

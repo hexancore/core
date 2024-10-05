@@ -11,7 +11,7 @@ export const BookInfraPortProvider = {
 @Module({
   imports: [BookDomainInfraModule],
   providers: [
-    BookInfraPortProvider
+    BookInfraPortProvider,
   ],
   exports: [BookInfraPortProvider, BookDomainInfraModule]
 })

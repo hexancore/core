@@ -5,32 +5,32 @@
 import { Email, OK, OKA, JsonObjectType, HCommand,HQuery, HEvent } from '@hexancore/common';
 import { MockGeneralBus } from '@/Test/Application/MockGeneralBus';
 
-class TestCommand extends HCommand<TestCommand, boolean> {
+class TestCommand extends HCommand<boolean> {
   public readonly email!: Email;
-  public toJSON(): JsonObjectType<TestCommand> {
+  public toJSON(): JsonObjectType<this> {
     return {
       email: this.email.toJSON(),
-    };
+    } as any;
   }
 }
 
-class TestEvent extends HEvent<TestEvent> {
+class TestEvent extends HEvent {
   public readonly email!: Email;
 
-  public toJSON(): JsonObjectType<TestEvent> {
+  public toJSON(): JsonObjectType<this> {
     return {
       email: this.email.toJSON(),
-    };
+    } as any;
   }
 }
 
-class TestQuery extends HQuery<TestQuery, boolean> {
+class TestQuery extends HQuery<boolean> {
   public readonly email!: Email;
 
-  public toJSON(): JsonObjectType<TestQuery> {
+  public toJSON(): JsonObjectType<this> {
     return {
       email: this.email.toJSON(),
-    };
+    } as any;
   }
 }
 
@@ -89,7 +89,7 @@ describe('MockGeneralBus', () => {
   });
 
   test('handleEvent() when use function matcher and expected is correct', () => {
-    generalBus.expectHandleEvent((event: IEvent) => event instanceof TestEvent && event.email.v === 'test@test.com');
+    generalBus.expectHandleEvent((event) => event instanceof TestEvent && event.email.v === 'test@test.com');
 
     expect(() => generalBus.handleEvent(TestEvent.cs({ email: email }))).not.toThrow();
   });
